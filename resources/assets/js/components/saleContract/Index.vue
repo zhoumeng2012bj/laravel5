@@ -497,7 +497,7 @@
                     if(res.data.code=="200"){
                         this.saleContractList();
 						console.log(resoin);
-                        if(version == 'x20180907' || version == 'x20180927' || version == 'x20181101'){
+                        if(version == 'x20180907' || version == 'x20180927' || version == 'x20181101' || version == 'x20181106'){
                             window.open('/#/saleContract/dump'+version+'homepage?id=' + row.id+'&isdump=1');
                         }
                         window.open('/#/saleContract/dump'+version+'?id=' + row.id+'&isdump=1');

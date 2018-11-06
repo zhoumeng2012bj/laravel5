@@ -210,6 +210,7 @@
                                     message: '保存成功',
                                     type: 'success'
                                 });
+								window.location.reload();
                             }else{
                                 this.$message({
                                     message: res.data.msg,

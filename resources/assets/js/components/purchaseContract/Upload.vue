@@ -262,6 +262,7 @@
                                     message: '保存成功',
                                     type: 'success'
                                 });
+								window.location.reload();
                                 history.go(-1);
                             }else{
                                 this.$message({

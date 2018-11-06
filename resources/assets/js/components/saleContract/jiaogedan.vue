@@ -17,6 +17,10 @@
         <el-dialog v-model="dialogVisible" size="large">
             <img width="100%" :src="dialogImageUrl" alt="">
         </el-dialog>
+		<div style="position: fixed;right:10%;top:50%;">
+			<el-button type="primary" v-if="fun('saleJGDUploadEdit')"  @click="save" style="margin-top:100px;">保存</el-button>
+			<!--<el-button type="warning"   @click="cansel" style="margin-top:100px;">取消</el-button>-->
+		</div>
     </div>
 </template>
 <script>
@@ -67,26 +71,27 @@
         },
         methods: {
             save(){
-                this.$refs.copyForm.validate((valid) => {
-                    if(valid){
-                        let para = Object.assign({}, this.copyForm,{id:parseInt(this.$route.query.id)});
-                        isCopySaleComplete(para).then((res)=>{
-                            if(res.data.code=='200'){
-                                this.$message({
-                                    message: '保存成功',
-                                    type: 'success'
-                                });
-                            }else{
-                                this.$message({
-                                    message: res.data.msg,
-                                    type: 'error'
-                                });
-                            }
-
-                        });
-                    }
-                });
-
+//                 this.$refs.copyForm.validate((valid) => {
+//                     if(valid){
+//                         let para = Object.assign({}, this.copyForm,{id:parseInt(this.$route.query.id)});
+//                         isCopySaleComplete(para).then((res)=>{
+//                             if(res.data.code=='200'){
+									this.$message({
+										message: '保存成功',
+										type: 'success'
+									});
+									window.location.reload();									
+//                             }else{
+//                                 this.$message({
+//                                     message: res.data.msg,
+//                                     type: 'error'
+//                                 });
+//                             }
+// 
+//                         });
+//                     }
+//                 });
+// 
 
             },
             cansel(){},
@@ -134,6 +139,11 @@
                 copySaleImageList(para).then((res)=>{
                     if(res.data.code=='200'){
                         this.jiaogedan = res.data.data[9];//合同
+						if(!this.fun('saleJGDUploadDel')){
+							setTimeout(function(){
+								$('.el-upload-list--picture-card .el-upload-list__item-actions .el-upload-list__item-delete').remove();
+							})						
+						}
                     }
                 })
             },

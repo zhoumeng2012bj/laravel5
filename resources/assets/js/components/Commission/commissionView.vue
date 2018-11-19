@@ -90,7 +90,7 @@
                     银行账号：
                 </td>
                 <td >
-                    {{Payable.zhanghao.replace(/\s/g, '').replace(/(.{4})/g, "$1 ")}}
+                    {{Payable.zhanghao | card_str}}
                 </td>
             </tr>
             </tbody>
@@ -101,7 +101,7 @@
 
             </tbody>
         </table>
-        <el-upload v-if='fapiao' style="margin-top:30px"
+        <!-- <el-upload v-if='fapiao' style="margin-top:30px"
                 action=""
                 list-type="picture-card"
                 disabled="true"
@@ -121,20 +121,27 @@
 				    <input type="button" value="" id="rotRight" @click="toright" @mousedown="torights" @mouseup="torights1" @mouseleave="leav">
 				</div>
             </div>
-        </el-dialog>
+        </el-dialog> -->
+        <div class="big_box">
+            <ul id="img_box">
+                <li v-for="(item,index) in imgArr">
+                    <img :src="item" alt="">
+                </li>
+            </ul>
+        </div>
         <table  width="1280px" border="1" bordercolor="#DFE6EC"  style="border-collapse:collapse!important;text-align:center;margin-top:30px" >
             <tbody>
             <tr style=" text-align:left;background-color:#EEF1F6;height: 40px"><td colspan="6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 审批进度</td></tr>
             <tr style=" text-align:left; height: 40px;">
             	<td colspan="6">
 	                <!--<div style="margin-left:60px;margin-top:30px;width: 100%;height: 130px"  >-->
-	
+
 			                <!--<el-steps :active=shenpijindu align-center >
 					              <el-step v-for="(item, index) in options" :title="item.value" :key="index" :description="item.label">
 					              </el-step>
-					        </el-steps>--> 
+					        </el-steps>-->
 					        <ul class="plan_box" v-for="(i,idx) in spDatas.length">
-					        	<li v-for="(item, index) in spDatas[idx]">
+					        	<li v-for="(item, index) in spDatas[idx]" :title="item.shuoming">
 					        		<p :class="item.shenpi==1 && !item.isfock?'zt':(item.shenpi!=1 && item.shenpi!=2 && item.isfock?'zt spz':(item.shenpi==2?'zt ybh':'zt dsp'))">
 					        			<span :class="item.shenpi==1 && !item.isfock?'xh':(item.shenpi!=1 && item.shenpi!=2 && item.isfock?'xh xh3':(item.shenpi==2?'xh xh2':'xh xh1'))">{{(idx * 8 + index + 1)}}</span>
 					        			<span>
@@ -163,6 +170,7 @@
 
             </tbody>
         </table>
+
         <div style="text-align:left;margin-top:30px;width:1280px" > {{Payable.shuoming}}</div>
 
 <div style="text-align:center;margin-top:30px;width:1280px"> <el-button @click.native="fanhui">返回</el-button></div>
@@ -184,12 +192,15 @@
 	}
 </style>
 <script>
-
+    import Viewer from 'viewerjs';
+    import '../../../../../node_modules/viewerjs/dist/viewer.min.css';
     import {
         showcommission,
     } from '../../api/api';
     import ElForm from "../../../../../node_modules/element-ui/packages/form/src/form";
+
     export default{
+        name:'Viewer',
         components: {ElForm},
         data(){
             return {
@@ -206,10 +217,11 @@
                 spDatas:[],//分组后的数据
                 rote:-1,//旋转状态
                 sizes:0,
+                imgArr:[]
+				
             }
         },
         methods: {
-
             //时间戳转日期格式
             changeDate(value){
                 if (value != '' && value != null) {
@@ -242,6 +254,15 @@
                 	console.log(this.spData);
                     this.Payable = res.data.data;
                     this.fapiao=res.data.imgs;
+					for(var m = 0; m < res.data.imgs.length; m++){
+						this.imgArr.push(res.data.imgs[m].url);
+					}
+					setTimeout(function(){
+						const ViewerDom = document.getElementById('img_box');
+						const viewer = new Viewer(ViewerDom, {
+							// 配置
+						})
+					});
                     this.listLoading = false;
                     for (var item in res.data.shenPi) {
                         this.shenpijindu=parseInt(item)+1;
@@ -261,12 +282,12 @@
 					        b = a;
 					        newArr[a] = new Array();
 					    }
-					    newArr[a].push(item);         
+					    newArr[a].push(item);
 					});
 					this.spDatas = newArr;
 					console.log(this.spDatas)
-                    
-                    
+
+
                 });
             },
             toDecimal(x) {
@@ -365,7 +386,6 @@
             this.getPayable();
             var t = document.getElementsByClassName('jb3')[0];
             console.log(t);
-            //
             if(this.dialogVisible){
 			    var param = {
 			        right: document.getElementById("rotRight"),
@@ -392,7 +412,8 @@
 			    };
 			    $('#imageView_container').imageView({ width: 800, height: 500 });
 			    var size = 0;
-            }  
+            }
+
         },
         filters:{
         	//时间戳转日期格式
@@ -410,6 +431,10 @@
                     return newDate.toLocaleDateString() + ' ' + hour + ':' + minute + ':' + second;
                 }
             },
+			card_str(num){
+				var str=String(num).replace(/(\d{4})/g,'$1 ').replace(/\s*$/,'');
+				return str;
+			}
         }
     }
 </script>
@@ -439,6 +464,7 @@
 		align-items: center;
 		width: 120px;
 		margin-right: 35px;
+        cursor: pointer;
 	}
 	.zt{
 		position: relative;
@@ -640,4 +666,19 @@
         	background: url(../../../../../public/image/rotes1.png) no-repeat center;
         	background-size: 45%;
         }
+	.big_box{margin-top: 30px;}
+    #img_box{
+        display: flex;
+    }
+    #img_box li{
+        width: 146px;
+        height: 146px;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-right: 10px;
+    }
+    #img_box li img{
+        width: 100%;
+        height: 100%;
+    }
 </style>

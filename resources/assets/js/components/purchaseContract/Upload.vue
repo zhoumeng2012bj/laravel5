@@ -262,6 +262,7 @@
                                     message: '保存成功',
                                     type: 'success'
                                 });
+								window.location.reload();
                                 history.go(-1);
                             }else{
                                 this.$message({
@@ -290,22 +291,28 @@
                 return isJPG && isLt2M;
             },
             handleRemove(file, fileList) {
-                if(!this.fun('purchaseUploadDel')){
-                    this.$message.error('你没有删除权限!');
-                    return false;
-                }
                 this.$confirm('确认删除吗?', '提示', {
                     type: 'warning'
                 }).then(() => {
                     let para ={
-                        id :file.id,
+                        id :file.id?file.id:file.response.data,
                     }
                     copyImageDelete(para).then((res)=>{
 
                     });
-                })
+                }).catch(()=>{
+					fileList.push(file);
+					// fileList.sort(this.compare('id'));
+				})
 
             },
+			compare(property){
+				return function(a,b){
+					var value1 = a[property];
+					var value2 = b[property];
+					return value2 - value1;
+				}
+			},
             handlePictureCardPreview(file) {
                 this.dialogImageUrl = file.url;
                 this.dialogVisible = true;
@@ -329,6 +336,11 @@
                         this.yezhushouquan = res.data.data[7];//合同
                         this.weituoren = res.data.data[8];//合同
                         this.jiaogedan = res.data.data[9];//合同
+						if(!this.fun('purchaseUploadDel')){
+							setTimeout(function(){
+								$('.el-upload-list--picture-card .el-upload-list__item-actions .el-upload-list__item-delete').remove();
+							})						
+						}
                     }
                 })
             },

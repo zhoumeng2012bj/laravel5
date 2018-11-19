@@ -238,6 +238,7 @@
                     ispaydeposit:2,
                     nengyuanyajin:'',
                     ispaydeposit2:2,
+                    housetax:2,
                 },
             }
         },
@@ -506,6 +507,7 @@
                 this.addDate.ispaydeposit = res.data.data.ispaydeposit;
                 this.addDate.ispaydeposit2 = res.data.data.ispaydeposit;
                 this.addDate.nengyuanyajin = res.data.data.nengyuanyajin;
+                this.addDate.housetax = res.data.data.housetax;
             },
             disabledInput(){
                 this.reviewVisible = true;

@@ -298,6 +298,14 @@
                                   placeholder="能源押金金额"></el-input>
                     </el-form-item>
                 </el-col>
+                <el-col :span="8">
+                    <el-form-item label="税金" prop="housetax" required>
+                        <el-radio-group v-model="addDate.housetax"    :disabled="lydisabled">
+                            <el-radio :label="1">含</el-radio>
+                            <el-radio :label="2">不含</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
             </el-row>
             <!--首期支付 二期支付 三期支付-->
             <el-row>

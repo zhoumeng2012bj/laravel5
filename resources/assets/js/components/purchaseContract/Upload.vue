@@ -290,6 +290,7 @@
                 return isJPG && isLt2M;
             },
             handleRemove(file, fileList) {
+                console.log(file);
                 if(!this.fun('purchaseUploadDel')){
                     this.$message.error('你没有删除权限!');
                     return false;

@@ -398,14 +398,17 @@
                 let para = {
                     id:_this.id,
                 }
-                if(version == 'x20180907' || version == 'x20180927'){
-                    window.open('/#/saleContract/dump'+version+'homepage?id='+_this.id+'&isdump=2&bianhao='+this.bianhao)
+                if(version == 'x20180907' || version == 'x20180927' || version == 'x20181101' || version == 'x20181106'|| version == 'x20181119'){
+                    window.open('/#/saleContract/dump'+version+'homepage?id='+_this.id+'&isdump=2&bianhao='+this.bianhao);
                 }
-                window.open('/#/saleContract/dump'+version+'?id='+_this.id+'&isdump=2&bianhao='+this.bianhao)
-                window.open('/#/saleContract/dump'+version+'pub?id='+_this.id+'&isdump=2&bianhao='+this.bianhao)
+                window.open('/#/saleContract/dump'+version+'?id='+_this.id+'&isdump=2&bianhao='+this.bianhao);
+                window.open('/#/saleContract/dump'+version+'pub?id='+_this.id+'&isdump=2&bianhao='+this.bianhao);
                 if(version == 'x20180927'){
-                    window.open('/#/saleContract/dump'+version+'enclosure?id='+_this.id+'&isdump=2&bianhao='+this.bianhao)
+                    window.open('/#/saleContract/dump'+version+'enclosure?id='+_this.id+'&isdump=2&bianhao='+this.bianhao);
                 }
+								if(version == 'x20181101' && this.addDate.mianzuqiList.length >0){
+										window.open('/#/saleContract/dump'+version+'suppleagree?id='+_this.id+'&isdump=2&bianhao='+this.bianhao);
+								}
             },
             fuzhi(res){
                 this.id = res.data.data.id;

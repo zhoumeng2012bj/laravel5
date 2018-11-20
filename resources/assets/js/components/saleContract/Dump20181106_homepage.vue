@@ -3,7 +3,7 @@
         <div class="tc">北京市房屋租赁合同</div><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
         <div class="jffone">甲方：<input type="text" style="width: 300px" disabled /></div><br><br><br>
         <div class="jffone">乙方：<input type="text" style="width: 300px" disabled /></div><br><br><br>
-        <div v-if="hetongtype==2" class="jffone">丙方：<input type="text" style="width: 300px" disabled /></div><br>
+        <div class="jffone">丙方：<input type="text" style="width: 300px" disabled /></div><br>
     </div>
     
 </template>

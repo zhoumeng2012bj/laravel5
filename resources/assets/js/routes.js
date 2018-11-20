@@ -60,6 +60,11 @@ import SaleContractDump20181101suppleagree from "./components/saleContract/Dump2
 import SaleContractDump20181106homepage from "./components/saleContract/Dump20181106_homepage.vue";
 import SaleContractDump20181106 from "./components/saleContract/Dump20181106.vue";//版本6
 import SaleContractDump20181106pub from "./components/saleContract/Dump20181106_pub.vue";//版本6
+
+import SaleContractDump20181119homepage from "./components/saleContract/Dump20181119_homepage.vue";
+import SaleContractDump20181119 from "./components/saleContract/Dump20181119.vue";
+import SaleContractDump20181119pub from "./components/saleContract/Dump20181119_pub.vue";//版本7
+
 import SaleContractZhanghao from "./components/saleContract/Zhanghao.vue";
 import SaleContractHedan from "./components/saleContract/Hedan.vue";
 import SaleContractJiaogedan from "./components/saleContract/jiaogedan.vue";
@@ -456,6 +461,13 @@ let routes = [
 				hidden: true
 		},
     {
+        //版本6
+        path:'/saleContract/dumpx20181119homepage',
+        component: SaleContractDump20181119homepage,
+        name: '出方合同打印',
+        hidden: true
+    },
+    {
         //版本3
         path:'/saleContract/dumpx20180907',
         component: SaleContractDump20180907,
@@ -484,6 +496,13 @@ let routes = [
 				hidden: true
 		},
     {
+        //版本7
+        path:'/saleContract/dumpx20181119',
+        component: SaleContractDump20181119,
+        name: '出方合同打印',
+        hidden: true
+    },
+    {
         //版本3
         path:'/saleContract/dumpx20180907pub',
         component: SaleContractDump20180907pub,
@@ -511,6 +530,13 @@ let routes = [
 				name: '出房打印补充条款',
 				hidden: true
 		},
+    {
+        //版本6
+        path:'/saleContract/dumpx20181119pub',
+        component: SaleContractDump20181119pub,
+        name: '出房打印补充条款',
+        hidden: true
+    },
     {
         //版本4
         path:'/saleContract/dumpx20180927enclosure',

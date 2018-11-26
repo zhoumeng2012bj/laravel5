@@ -51,6 +51,87 @@ FKFS,ZJXX,DiZengDate,DiZengLiang,Price,YaJin,NowYueZuJin,NowPrice,NowPriceCha,No
         }
         return $data = ['total'=>$count[0]->countNum,'data'=>$bk];
     }
+    /**
+     * Display a listing of the resource.
+     *显示共享数据列表
+     * @return \Illuminate\Http\Response
+     */
+    public function omcindex()
+    {
+        $pageSize = Input::get('size');
+        $page = Input::get('page');
+        $lpname = Input::get('lpname');
+        $zdname = Input::get('zdname');
+        $fh = Input::get('fh');
+        $sfstatus = Input::get('sfstatus');
+        $cfstatus = Input::get('cfstatus');
+        $sfstartdate = Input::get('sfstartdate');
+        $sfenddate = Input::get('sfenddate');
+        $cfstartdate = Input::get('cfstartdate');
+        $cfenddate = Input::get('cfenddate');
+
+        $limitStart=($page-1)*$pageSize;
+        $limitEnd = $pageSize;
+        $user = Auth::user();
+        if(empty($user)){
+            return   ['code'=>500, 'msg'=>'当前用户没有登陆'];
+        }
+        $phone= $user->phone;
+        if(empty($phone)){
+            return   ['code'=>500, 'msg'=>'当前用户无手机号'];
+        }
+        $select ="select DISTINCT f.id omcid,l.topic  lpname,z.zdh zdname,f.fybh,vsf.Jianzhumianji,sfzt,sfdate,cfzt,cfdate";
+        $sql="  from (select id,fybh,lpid,zdid from yhcms2.yh_zdfyxx where isdelete=0  and ( hystate =1  or hystate=2) ";
+        if(!empty($fh)){
+            $sql= $sql." and fybh like '%".$fh."%' ";
+        }
+        $sql=$sql." and zdid in(
+select   fd_buildingseat_id from  yhcms2.tb_buildingseat_business,yhcms2.base_personnel where fd_isenable=1 and isdelete=0 and rzstatus=0 and phone='$phone' and FIND_IN_SET(fd_business_id,businessArea ) > 0
+))f   INNER JOIN (select id,zdgzid from yhcms2.yh_lpzdxx where isdelete=0  )p on p.id=f.zdid
+INNER JOIN (select id,zdh from yhcms2.yh_zdxx where isdelete=0";
+        if(!empty($zdname)){
+            $sql= $sql." and zdh like '%".$zdname."%' ";
+        }
+        $sql=$sql.")z on z.id=p.zdgzid INNER JOIN (select id,topic from yhcms2.yh_lpjbxx where isdelete=0 ";
+        if(!empty($lpname)){
+            $sql= $sql." and topic like '%".$lpname."%' ";
+        }
+        $sql= $sql."  )l on l.id=f.lpid ";
+        if(!empty($sfstatus)||!empty($sfstartdate)||!empty($sfenddate)){
+            $sql= $sql." inner join t_shoufang_office tso on tso.omc_id=f.id and tso.hetongid in (select id from t_shoufanghetong where 1=1 ";
+            if(!empty($sfstartdate)){
+                $sql= $sql." and  UpdateTime>='".$sfstartdate."' ";
+            }
+            if(!empty($sfenddate)){
+                $sql= $sql." and UpdateTime<='".$sfenddate."' ";
+            }
+            if(!empty($sfstatus)){
+                $sql= $sql." and Zhuangtai=".$sfstatus ;
+            }
+            $sql= $sql." ) " ;
+        }
+        if(!empty($cfstatus)||!empty($cfstartdate)||!empty($cfenddate)){
+            $sql= $sql." inner join t_xs_office txo on f.id=txo.omc_id  and txo.hetongid in (select id from t_xs_hetong where 1=1  ";
+            if(!empty($cfstartdate)){
+                $sql= $sql." and  UpdateTime>='".$cfstartdate."' ";
+            }
+            if(!empty($cfenddate)){
+                $sql= $sql." and UpdateTime<='".$cfenddate."' ";
+            }
+            if(!empty($cfstatus)){
+                $sql= $sql." and Zhuangtai=".$cfstatus ;
+            }
+            $sql= $sql." )  " ;
+        }
+       // print_r("select count(DISTINCT f.id ) as countNum   ".$sql);die;
+        $count =  DB::connection('mysql2')->select("select count(DISTINCT f.id ) as countNum  ".$sql ) ;
+
+        $sql=$select.$sql." left join  v_sfztsj vsf on f.id= vsf.omc_id
+             left join  v_cfztsj vcf on f.id= vcf.omc_id order by lpname,zdname,fybh  limit ".$limitStart.", ".$limitEnd;
+        $bk = DB::connection('mysql2')->select($sql);
+
+        return $data = ['code'=>200, 'total'=>$count[0]->countNum,'data'=>$bk];
+    }
 
     /**
      * Show the form for creating a new resource.

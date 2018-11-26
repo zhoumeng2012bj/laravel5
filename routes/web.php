@@ -218,6 +218,7 @@ Route::get('projectReport/ExportExcel','Report\projectReportController@ExportExc
 Route::get('projectSaleReport/ExportExcel','Report\projectSaleReportController@ExportExcel');
 Route::get('coreDataReport/ExportExcel','Report\coreDataReportController@ExportExcel');
 Route::get('daikanReport/ExportExcel','Report\daikanReportController@ExportExcel');
+Route::get('chanpinReport/omcindex','Report\chanPinHeYueReportController@omcindex');
 //合同房源
 Route::group(['prefix' => 'office'], function () {
     Route::get('loupanList','Contract\officeController@loupanList');

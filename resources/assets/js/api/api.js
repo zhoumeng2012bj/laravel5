@@ -51,6 +51,8 @@ export const rejectPayable = params =>  { return axios.post(`${base}/financePaya
 export const getReceivableRecordListPage = params => { return axios.get(`${base}/receivableRecord`, { params: params }); };
 export const confirmPayable = params =>  { return axios.post(`${base}/financePayable/confirmPayable` , { params: params }); };
 export const getAccountsReceivableListPage = params => { return axios.get(`${base}/accountsReceivable`, { params: params }); };
+export const pressmoneyPurchaseContract = params => { return axios.get(`${base}/permission/pressmoney`, { params: params }); };//催款跟进列表
+export const addpressmoneyPurchaseContract = params =>  { return axios.post(`${base}/permission/addpressmoney` , { params: params }); };//催款跟进列表
 export const addReceivable = params => { return axios.post(`${base}/accountsReceivable`, { params: params }); };
 export const removeReceivable = params => { return axios.delete(`${base}/accountsReceivable/`+params.id, {}); };
 export const editMoney = params => { return axios.post(`${base}/payable/editMoney`, { params: params }); };
@@ -86,6 +88,14 @@ export const getPurchaseContractTiaoKuan = params => { return axios.get(`${base}
 export const editPurchaseContractTiaoKuan= params => { return axios.post(`${base}/purchaseContract/editTiaoKuan`, { params: params }); };
 export const confirmPurchaseContract= params => { return axios.get(`${base}/purchaseContract/confirm`, {params:params}); };
 export const optimizePurchaseContract= params => { return axios.put(`${base}/purchaseContract/`+params.id, {params:params}); };//二次优化
+
+export const optiplanPurchaseContract= params => { return axios.post(`${base}/purchaseContract/opssplan`, { params: params }); };//新增优化方案
+export const viewoptimiPurchaseContract= params => { return axios.get(`${base}/purchaseContract/viewoptimi`, {params:params}); };//二次优化
+export const formfollowPurchaseContract= params => { return axios.post(`${base}/purchaseContract/formfollow`, { params: params }); };//新增优化方案
+export const vieformfollowPurchaseContract= params => { return axios.get(`${base}/purchaseContract/vieformfollow`, { params: params }); };//新增优化方案
+export const violatePurchaseContract= params => { return axios.get(`${base}/purchaseContract/violate`, { params: params }); };//新增优化方案
+export const addviolatePurchaseContract= params => { return axios.post(`${base}/purchaseContract/addviolate`, { params: params }); };//新增优化方案
+
 export const getOptimizePurchaseContract= params => { return axios.get(`${base}/purchaseContract/optimize`, {params:params}); };//二次优化
 export const approvingPurchaseContract= params => { return axios.get(`${base}/purchaseContract/approving`, {params:params}); };//状态变更为：审核中
 export const approvingPrePurchaseContract= params => { return axios.get(`${base}/purchaseContract/preApproving`, {params:params}); };//状态变更为：初审核中

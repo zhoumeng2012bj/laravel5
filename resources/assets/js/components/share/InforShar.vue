@@ -2,11 +2,11 @@
 <template>
     <el-row >
         <el-form :inline="true" :model="filters" class="demo-form-inline">
+			<el-form-item label="">
+				<el-input v-model="filters.name" @keyup.enter.native="purchaseContractList" placeholder="请输入项目"></el-input>
+			</el-form-item>
             <el-form-item label="">
-                <el-input v-model="filters.name" @keyup.enter.native="purchaseContractList" placeholder="请输入项目"></el-input>
-            </el-form-item>
-            <el-form-item label="">
-                <el-select v-model="filters.status" @change="purchaseContractList" placeholder="请选择合同状态">
+                <el-select v-model="filters.status" @change="purchaseContractList" placeholder="请选择出房合同">
                     <el-option
                             v-for="item in options"
                             :key="item.value"
@@ -15,35 +15,57 @@
                     </el-option>
                 </el-select>
             </el-form-item>
+			<el-form-item label="">
+				<el-select v-model="filters.statuspur" @change="purchaseContractList" placeholder="请选择收房合同">
+					<el-option
+							v-for="item in options2"
+							:key="item.value"
+							:label="item.label"
+							:value="item.value">
+					</el-option>
+				</el-select>
+			</el-form-item>
             <el-form-item>
                 <el-date-picker
                         v-model="filters.startDate"
                         type="date"
-                        placeholder="开始时间"
+                        placeholder="请选择收房开始时间"
                         @keyup.enter.native="purchaseContractList"
                 >
                 </el-date-picker>
             </el-form-item>
-            <el-form-item>
+            <el-form-item label="——">
                 <el-date-picker
                         v-model="filters.endDate"
                         type="date"
-                        placeholder="结束时间"
+                        placeholder="请选择收房结束时间"
                         @keyup.enter.native="purchaseContractList"
                 >
                 </el-date-picker>
             </el-form-item>
-            <el-form-item label="">
-                <el-input v-model="filters.yongyouid" @keyup.enter.native="purchaseContractList" placeholder="请输入用友编号"></el-input>
-            </el-form-item>
+			<el-form-item>
+				<el-date-picker
+						v-model="filters.startDateSale"
+						type="date"
+						placeholder="请选择出房开始时间"
+						@keyup.enter.native="purchaseContractList"
+				>
+				</el-date-picker>
+			</el-form-item>
+			<el-form-item label="——">
+				<el-date-picker
+						v-model="filters.endDateSale"
+						type="date"
+						placeholder="请选择出房结束时间"
+						@keyup.enter.native="purchaseContractList"
+				>
+				</el-date-picker>
+			</el-form-item>
             <el-form-item>
                 <el-button type="primary" icon="search" @click="purchaseContractList">搜索</el-button>
-                <el-button v-if="fun('purchaseContractAdd')" type="primary" class="el-icon-plus" @click="addContract"> 新增</el-button>
             </el-form-item>
         </el-form>
         <el-table :data="lists" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中" @selection-change="selsChange" style="width: 100%;">
-            <el-table-column  prop="bianhao" label="编号" width="200" >
-            </el-table-column>
             <el-table-column prop="loupanName" label="楼盘"   >
                 <!--<template slot-scope="scope">/-->
                     <!--<span v-for="(item,index) in  Estate(scope.row.loupanName)">{{item}}</span>-->
@@ -53,28 +75,15 @@
             </el-table-column>
             <el-table-column prop="fanghao" label="房间号"  >
             </el-table-column>
-            <el-table-column prop="zhuangtai" label="状态" :formatter="formatStatus"   >
+            <el-table-column prop="zhuangtai" label="面积" :formatter="formatStatus"   >
             </el-table-column>
-            <el-table-column prop="qianyuedate" label="签约日"  :formatter="changeDate"  >
-            </el-table-column>
-            <el-table-column prop="updatetime" label="更新日期"  :formatter="changeUpdateTime"  >
-            </el-table-column>
-            <el-table-column
-                    label="用友编号"
-                    width="200"
-                    prop="yongyouid"
-                    v-if="fun('setYongYou')"
-            >
-                <template slot-scope="scope" >
-                    <el-input v-model="scope.row.yongyouid" @blur="updatayongyouid(scope.$index, scope.row)"></el-input>
-                </template>
-            </el-table-column>
-            <el-table-column
-                    label="用友编号"
-                    width="200"
-                    prop="yongyouid"
-                    v-if="!fun('setYongYou')"
-            >
+			<el-table-column prop="zhuangtai" label="收房合同状态" :formatter="formatStatus"   >
+			</el-table-column>
+			<el-table-column prop="zhuangtai" label="出房合同状态" :formatter="formatStatus"   >
+			</el-table-column>
+			<el-table-column prop="zhuangtai" label="收房合同更新日期" :formatter="formatStatus"   >
+			</el-table-column>
+			<el-table-column prop="zhuangtai" label="出房合同更新日期" :formatter="formatStatus"   >
             </el-table-column>
             <el-table-column label="操作" width="170">
                 <template slot-scope="scope">
@@ -83,33 +92,10 @@
                             操作<i class="el-icon-caret-bottom el-icon--right"></i>
                         </el-button>
                         <el-dropdown-menu slot="dropdown" >
-                            <el-dropdown-item v-if="fun('purchaseContractIndex')"  ><el-button @click="handleView(scope.$index, scope.row)">查看合同</el-button> </el-dropdown-item>
-                            <el-dropdown-item  v-if="ztin(scope.row,[0,4,5,6,7,8,9,10,12,15])&&fun('purchaseContactUpdate')" ><el-button @click="handleEdit(scope.$index, scope.row)">编辑合同</el-button></el-dropdown-item>
-                            <el-dropdown-item  v-if="fun('purchaseContactMoreUpdate')" ><el-button @click="handleEditMore(scope.$index, scope.row)">专用编辑</el-button></el-dropdown-item>
-                            <el-dropdown-item  v-if="ztin(scope.row,[1,13])&&fun('purchaseContactPreAudit')" ><el-button @click="handlePreReview(scope.$index, scope.row)">初&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;审</el-button> </el-dropdown-item>
-                            <el-dropdown-item  v-if="ztin(scope.row,[2,14])&&fun('purchaseContactAudit')" ><el-button @click="handleReview(scope.$index, scope.row)">复&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;审</el-button> </el-dropdown-item>
-                            <el-dropdown-item  v-if="ztin(scope.row,[3])&&fun('purchaseContactDump')"><el-button @click="handleDump(scope.$index, scope.row)">打印合同</el-button></el-dropdown-item>
-                            <el-dropdown-item  v-if="ztin(scope.row,[5])&&fun('purchaseContactConfirm')"  > <el-button @click="handleConfirm(scope.$index, scope.row)">签约完成</el-button></el-dropdown-item>
-                            <el-dropdown-item  v-if="ztin(scope.row,[6,10])&&fun('purchaseContactWeiyue')" ><el-button @click="handleWeiyue(scope.$index, scope.row)">违&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;约</el-button></el-dropdown-item>
-                            <el-dropdown-item  v-if="ztin(scope.row,[7])&&fun('purchaseContactEnd')" ><el-button @click="openEndDialog(scope.$index, scope.row)">合同终止</el-button></el-dropdown-item>
-                            <!-- <el-dropdown-item  v-if="ztin(scope.row,[6,10])&&fun('addOptimize')" ><el-button @click="handleOptimize(scope.$index, scope.row)">优&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;化</el-button></el-dropdown-item> -->
-							
-							
-							<el-dropdown-item v-if="ztin(scope.row,[6,7,8,9,10,11])&&fun('addOptimize')"><el-button  @click="handleOfur(scope.$index, scope.row)">优化跟进</el-button></el-dropdown-item>
-
-							
-							
-                            <el-dropdown-item  v-if="ztin(scope.row,[9])&&fun('editOptimize')" ><el-button @click="editOptimize(scope.$index, scope.row)">修改协议</el-button></el-dropdown-item>
-                            <!--<el-dropdown-item   v-if="ztin(scope.row,[10])" ><el-button @click="handleCheckOptimize(scope.$index, scope.row)">当前协议</el-button></el-dropdown-item>-->
-                            <!--<el-dropdown-item   v-if="ztin(scope.row,[9,10])" ><el-button @click="checkhistoryOptimize(scope.$index, scope.row)">历史协议</el-button></el-dropdown-item>-->
-                            <el-dropdown-item  v-if="ztin(scope.row,[6,7,8,9,10,11])&&fun('purchaseContactUpload')" ><el-button  @click="handleupload(scope.$index, scope.row)">扫描件&nbsp;&nbsp;&nbsp;</el-button></el-dropdown-item>
-                            <el-dropdown-item  v-if="ztin(scope.row,[6,7,8,9,10,11])&&fun('purchaseContactZH')"><el-button @click="handleZhanghao(scope.$index, scope.row)">收款账号</el-button></el-dropdown-item>
-                            <el-dropdown-item  v-if="ztin(scope.row,[6,7,8,9,10,11])&&fun('purchaseContactHD')"><el-button @click="handleHedan(scope.$index, scope.row)">合单管理</el-button></el-dropdown-item>
-                            <el-dropdown-item  v-if="ztin(scope.row,[6,7,8,9,10,11])&&fun('purchaseContactSummary')"><el-button @click="handleSummary(scope.$index, scope.row)">打印核心数据</el-button></el-dropdown-item>
-                            <el-dropdown-item  v-if="ztin(scope.row,[6,7,8,9,10,11])&&fun('purchaseContactJGD')"><el-button @click="handleJiaogedan(scope.$index, scope.row)">交割单</el-button></el-dropdown-item>
-                            <el-dropdown-item  v-if="ztin(scope.row,[0,1,2,3,4,5,13,14,15])&&fun('purchaseContactZF')"><el-button @click="handleZuofei(scope.$index, scope.row)">合同作废</el-button></el-dropdown-item>
-                            <el-dropdown-item  v-if="ztin(scope.row,[6,7,8,9,10,11])&&fun('purchaseContactAppZH')"><el-button @click="handleAppZhanghao(scope.$index, scope.row)">app账号管理</el-button></el-dropdown-item>
-							
+                            <el-dropdown-item><el-button @click="handHousekeeper(scope.$index, scope.row)">管家信息共享</el-button> </el-dropdown-item>
+							<el-dropdown-item><el-button @click="handBreach(scope.$index, scope.row)">违约信息共享</el-button> </el-dropdown-item>
+							<el-dropdown-item><el-button @click="handOptimi(scope.$index, scope.row)">优化信息共享</el-button> </el-dropdown-item>
+							<el-dropdown-item><el-button @click="handConstruction(scope.$index, scope.row)">施工记录</el-button> </el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
 
@@ -227,8 +213,11 @@
                 filters: {
                     name: '',
                     status:'',
+					statuspur:'',
                     startDate:null,
                     endDate:null,
+					startDateSale:null,
+					endDateSale:null,
                     yongyouid: '',
                 },
                 options:[
@@ -249,6 +238,24 @@
                     {value:11, label:'合同终止（合同到期）',},
                     {value:12, label:'合同作废',},
                 ],
+				options2:[
+					{value:0, label:'已创建',},
+					{value:1, label:'待初审',},
+					{value:13, label:'初审中',},
+					{value:15, label:'初审拒绝',},
+					{value:14, label:'待复审',},
+					{value:2, label:'复审中',},
+					{value:4, label:'复审拒绝',},
+					{value:3, label:'待打印',},
+					{value:5, label:'待确认',},
+					{value:6, label:'履约中',},
+					{value:7, label:'违约处理中',},
+					{value:8, label:'合同终止（违约处理完成）',},
+					{value:9, label:'优化中',},
+					{value:10, label:'已优化，履约中',},
+					{value:11, label:'合同终止（合同到期）',},
+					{value:12, label:'合同作废',},
+				],
                 //分页类数据
                 total:0,
                 currentPage:0,
@@ -436,10 +443,10 @@
                 })
 
             },
-            //查看
-            handleView(index,row){
+            //管家信息共享
+            handHousekeeper(index,row){
                 //this.$router.push('/purchaseContract/view?id='+row.id);
-                window.open('/#/purchaseContract/view?id='+row.id);
+                window.open('/#/inforShar/viewHousekeeper?id='+row.id);
             },
             //违约 弹窗确认是否违约
             handleWeiyue(index,row){
@@ -539,7 +546,10 @@
 				// this.$router.push('/purchaseContract/ofur?hetongid='+row.id+'&type=1'+'&bianhao='+row.bianhao);12
 				this.$router.push('/purchaseContract/ofur?hetongid='+row.id+'&type=1'+'&bianhao='+row.bianhao+'&status='+row.zhuangtai);
 			},
-			
+			//违约处理跟进记录
+			handleViolated(index,row){
+				this.$router.push('/purchaseContract/violated?hetongid='+row.id+'&type=1'+'&bianhao='+row.bianhao+'&status='+row.zhuangtai);
+			},
             //修改协议
             editOptimize(index,row){
                 let para = {

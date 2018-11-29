@@ -238,6 +238,7 @@
                     ispaydeposit:2,
                     nengyuanyajin:'',
                     ispaydeposit2:2,
+                    housetax:2,
                 },
             }
         },
@@ -397,7 +398,7 @@
                 let para = {
                     id:_this.id,
                 }
-                if(version == 'x20180907' || version == 'x20180927' || version == 'x20181101' || version == 'x20181106'){
+                if(version == 'x20180907' || version == 'x20180927' || version == 'x20181101' || version == 'x20181106'|| version == 'x20181119'){
                     window.open('/#/saleContract/dump'+version+'homepage?id='+_this.id+'&isdump=2&bianhao='+this.bianhao);
                 }
                 window.open('/#/saleContract/dump'+version+'?id='+_this.id+'&isdump=2&bianhao='+this.bianhao);
@@ -509,6 +510,7 @@
                 this.addDate.ispaydeposit = res.data.data.ispaydeposit;
                 this.addDate.ispaydeposit2 = res.data.data.ispaydeposit;
                 this.addDate.nengyuanyajin = res.data.data.nengyuanyajin;
+                this.addDate.housetax = res.data.data.housetax;
             },
             disabledInput(){
                 this.reviewVisible = true;

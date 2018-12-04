@@ -795,4 +795,106 @@ class purchaseContractController extends Controller
         ]);
         echo $response->getBody();
     }
+		
+		//新增优化方案
+		public function opssplanadd(Request $request){
+				//return $request->params;
+				//数据格式化
+				$client = new Client([
+						'base_uri' => $this->base_url,
+						'headers' =>['access_token'=>'XXXX','app_id'=>'123']
+				]);
+// 						$json=[
+// 							'optimizationnum'=>'3',
+// 							'plancontext'=>'111111111111',
+// 							'plandate'=>'2018-11-13',
+// 							'hetongid'=>'111',
+// 							'hetongtid'=>'0',
+// 							'createuser'=>'11',
+// 							'createusername'=>'11111111',
+// 							];
+				//获取当前登录用户的名称和id
+				$user = Auth::user();
+				$obj=array_merge($request->params,Array('createusername'=>$user->name,'createuser'=>$user->id));
+				
+				$response = $client->request('POST', '/api/follow/plan/add', [
+					 'json' => $obj
+				]);
+				
+				//echo输出的值就是要返回值
+				echo $response->getBody();
+		}
+		public function viewoptimi(Request $request){
+				$htid = Input::get('htid');
+				$httid = Input::get('httid');
+				//return $request->params;
+				//数据格式化
+				$client = new Client([
+						'base_uri' => $this->base_url,
+				]);
+				$response = $client->request('GET', '/api/follow/plan/list?htid='.$htid.'&httid='.$httid, [
+				]);
+				
+				//echo输出的值就是要返回值
+				echo $response->getBody();
+		}
+		public function formfollow(Request $request){
+				//return $request->params;
+				//数据格式化
+				$client = new Client([
+						'base_uri' => $this->base_url,
+				]);
+				//获取当前登录用户的名称和id
+				$user = Auth::user();
+				$obj=array_merge($request->params,Array('createusername'=>$user->name,'createuser'=>$user->id));
+				
+				$response = $client->request('POST', '/api/follow/optimization/add', [
+					 'json' => $obj
+				]);
+				
+				echo $response->getBody();
+		}
+		public function vieformfollow(Request $request){
+				$htid = Input::get('htid');
+				$httid = Input::get('httid');
+				$currentPage = Input::get('currentPage');
+				$pageSize = Input::get('pageSize');
+				//return $request->params;
+				//数据格式化
+				$client = new Client([
+						'base_uri' => $this->base_url,
+				]);
+				$response = $client->request('GET', '/api/follow/optimization/list?htid='.$htid.'&httid='.$httid.'&page='.$currentPage.'&size='.$pageSize, [
+				]);
+				
+				//echo输出的值就是要返回值
+				echo $response->getBody();
+		}
+		public function violate(Request $request){
+				$htid = Input::get('htid');
+				$httid = Input::get('httid');
+				$currentPage = Input::get('currentPage');
+				$pageSize = Input::get('pageSize');
+				$client = new Client([
+						'base_uri' => $this->base_url,
+				]);
+				$response = $client->request('GET', '/api/follow/break/list?htid='.$htid.'&httid='.$httid.'&page='.$currentPage.'&size='.$pageSize, [
+				]);
+				
+				echo $response->getBody();
+		}
+		public function addviolate(Request $request){
+				$client = new Client([
+						'base_uri' => $this->base_url,
+				]);
+				$user = Auth::user();
+				$obj=array_merge($request->params,Array('createusername'=>$user->name,'createuser'=>$user->id));
+				
+				$response = $client->request('POST', '/api/follow/break/add', [
+					'json' => $obj
+				]);
+				
+				echo $response->getBody();
+		}
+		
 }

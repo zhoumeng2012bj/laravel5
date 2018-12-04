@@ -85,6 +85,11 @@
                                   <el-dropdown-item v-if="ztin(scope.row,[1,2,3,4])&&fun('receivableRecord')">
                                       <el-button @click="handleOpenUp(scope.$index, scope.row)">提交记录</el-button>
                                   </el-dropdown-item>
+																	
+																	<el-dropdown-item>
+																			<el-button @click="handleCollect(scope.$index, scope.row)">催收跟进</el-button>
+																	</el-dropdown-item>
+																	
                                   <el-dropdown-item v-if="ztin(scope.row,[0,1,3,4])&&fun('receivableEidtDate')">
                                       <el-button  v-if="scope.row.sktype<20"  @click="handleEdit(scope.$index, scope.row)">编辑收款日期</el-button>
                                   </el-dropdown-item>
@@ -961,6 +966,9 @@
             handleOpenUp: function (index, row) {
                 this.$router.push('/receivableRecord?id=' + row.tCwSrId);
             },
+						handleCollect: function (index, row) {
+								this.$router.push('/receivableCollect?id=' + row.tCwSrId + '&hetongid=' + row.hetongid);
+						},
 
             selsChange: function (sels) {
                 this.sels = sels;

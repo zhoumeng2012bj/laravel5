@@ -88,6 +88,7 @@
                             <el-dropdown-item v-if="ztin(scope.row,[3])&&fun('saleContactDump')"><el-button @click="handleDump(scope.$index, scope.row)">打印合同</el-button></el-dropdown-item>
                             <el-dropdown-item v-if="ztin(scope.row,[5])&&fun('saleContactConfirm')"><el-button @click="handleConfirm(scope.$index, scope.row)">签约成功</el-button></el-dropdown-item>
                             <el-dropdown-item v-if="ztin(scope.row,[6,13])&&fun('saleContactWeiyue')"><el-button @click="handleWeiyue(scope.$index, scope.row)">违 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;约</el-button></el-dropdown-item>
+					<el-dropdown-item v-if="ztin(scope.row,[6,7,8,9,10,11])&&fun('addOptimize')"><el-button  @click="handleViolated(scope.$index, scope.row)">违约跟进</el-button></el-dropdown-item>
                             <el-dropdown-item v-if="ztin(scope.row,[6,13])&&fun('saleContactJieyue')"><el-button @click="handleJieyue(scope.$index, scope.row)">解 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;约</el-button></el-dropdown-item>
                             <el-dropdown-item v-if="ztin(scope.row,[9])&&fun('saleContactJieyueFinish')"><el-button @click="handleJieyuewancheng(scope.$index, scope.row)">解约完成</el-button></el-dropdown-item>
                             <!--<el-dropdown-item v-if="ztin(scope.row,[10])"><el-button @click="handleCheckJieyue(scope.$index, scope.row)">查看协议</el-button></el-dropdown-item>-->
@@ -532,6 +533,10 @@
 
                 });
             },
+		//违约处理跟进记录
+			handleViolated(index,row){
+				this.$router.push('/purchaseContract/violated?hetongid='+row.id+'&type=1'+'&bianhao='+row.bianhao+'&status='+row.zhuangtai);
+			},
             //合同确认
             handleConfirm(index, row){
                 this.$confirm('确认合同已完成吗?', '提示', {

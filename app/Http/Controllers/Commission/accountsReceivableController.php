@@ -140,5 +140,31 @@ class accountsReceivableController extends Controller
         );
         return $response->getBody();
     }
+		//催款跟进列表
+		public function pressmoney(Request $request){
+				$cwid = Input::get('cwid');
+				$currentPage = Input::get('currentPage');
+				$pageSize = Input::get('pageSize');
+				$client = new Client([
+						'base_uri' => $this->base_url,
+				]);
+				$response = $client->request('GET', '/api/follow/pressmoney/list?cwid='.$cwid.'&page='.$currentPage.'&size='.$pageSize, [
+				]);
+				
+				echo $response->getBody();
+		}
+		public function addpressmoney(Request $request){
+				$client = new Client([
+						'base_uri' => $this->base_url,
+				]);
+				$user = Auth::user();
+				$obj=array_merge($request->params,Array('createusername'=>$user->name,'createuser'=>$user->id));
+				
+				$response = $client->request('POST', '/api/follow/pressmoney/add', [
+					'json' => $obj
+				]);
+				
+				echo $response->getBody();
+		}
 
 }

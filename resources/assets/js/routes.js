@@ -9,12 +9,16 @@ import NotFound from "./components/404.vue";
 import User from "./components/rbac/User.vue";
 import Permission from "./components/rbac/Permission.vue";
 import Role from "./components/rbac/Role.vue";
+import InforShar from "./components/share/InforShar.vue";
+import InforSharViewHousekeeper from "./components/share/Housekeeper.vue";
 //收房合同
 import PurchaseContractIndex from "./components/purchaseContract/Index.vue";
 import PurchaseContractAdd from "./components/purchaseContract/Add.vue";
 import PurchaseContractUpload from "./components/purchaseContract/Upload.vue";
 import PurchaseContractOptimize from "./components/purchaseContract/Optimize.vue";
 import PurchaseContractCheckOptimize from "./components/purchaseContract/Optimize.vue";
+import PurchaseContractOfur from "./components/purchaseContract/Ofur.vue";
+import PurchaseContractViolated from "./components/saleContract/Violated.vue";
 import PurchaseContractCheckOptimizeList from "./components/purchaseContract/HistoryOptimize.vue";
 import PurchaseContractDump20170719 from "./components/purchaseContract/Dump20170719.vue";//版本1
 import PurchaseContractDump20170406 from "./components/purchaseContract/Dump20170406.vue";//版本12
@@ -105,6 +109,7 @@ import commissionBalanceList  from "./components/Commission/commissionBalance.vu
 import AccountsReceivable from "./components/Commission/accountsReceivableList.vue";
 import ReceivableRecord from "./components/receivable/receivableRecordList.vue";
 import Receivable from "./components/receivable/receivableList.vue";
+import ReceivableCollect from "./components/receivable/receivableCollect.vue";
 import FinanceReceivable from "./components/receivable/financeReceivableList.vue";
 //应付
 import PaymentRecord from "./components/payable/paymentRecordList.vue";
@@ -220,6 +225,18 @@ let routes = [
     {
         path: '/',
         component: navigation,
+	name: '信息共享',
+	iconCls: 'el-icon-document',//图标样式class
+	hidden:fk_permission,
+	children: [
+			{ path: '/inforShar', component: InforShar, name: '信息共享列表' ,hidden:false},
+			{ path: '/inforShar/viewHousekeeper', component: InforSharViewHousekeeper, name: '管家共享' ,hidden:true},
+	]
+ 
+		},
+    {
+        path: '/',
+        component: navigation,
         name: '合同管理',
         iconCls: 'el-icon-document',//图标样式class
         hidden:fk_contract,
@@ -231,6 +248,8 @@ let routes = [
             { path:'/purchaseContract/review',component:PurchaseContractAdd,name:'收房审核',hidden:true},
             { path:'/purchaseContract/view',component:PurchaseContractAdd,name:'收房查看',hidden:true},
             { path:'/purchaseContract/optimize',component:PurchaseContractOptimize,name:'收房优化',hidden:true},
+	    { path:'/purchaseContract/ofur',component:PurchaseContractOfur,name:'收房优化跟进记录',hidden:true},
+	    { path:'/purchaseContract/violated',component:PurchaseContractViolated,name:'违约跟进列表',hidden:true},
             { path:'/purchaseContract/checkOptimize',component:PurchaseContractCheckOptimize,name:'收房协议查看',hidden:true},
             { path:'/purchaseContract/checkOptimizeList',component:PurchaseContractCheckOptimizeList,name:'历史协议',hidden:true},
             { path:'/purchaseContract/upload',component:PurchaseContractUpload,name:'上传扫描件',hidden:true},
@@ -399,6 +418,7 @@ let routes = [
             { path:'/financeReceivable',component:FinanceReceivable,name:'实收款管理',hidden:fk_financeReceivableList},
             { path:'/accountsReceivable',component:AccountsReceivable,name:'修改记录',hidden:true},
             { path:'/receivableRecord',component:ReceivableRecord,name:'已收款记录',hidden:true},
+	    { path:'/receivableCollect',component:ReceivableCollect,name:'催款跟进列表',hidden:true},
             { path:'/payableRecord',component:PayableRecord,name:'应付款记录',hidden:true},
             { path:'/paymentRecord',component:PaymentRecord,name:'修改记录',hidden:true},
         ]

@@ -29,6 +29,12 @@ Route::group(['prefix' => 'purchaseContract'], function () {
     Route::post('weiYueSave','Contract\purchaseContractController@weiYueSave');
     Route::post('isCopyComplete','Contract\purchaseContractController@isCopyComplete');
     Route::get('optimize','Contract\purchaseContractController@getOptimize');
+		Route::post('opssplan','Contract\purchaseContractController@opssplanadd');//新增优化方案
+		Route::get('viewoptimi','Contract\purchaseContractController@viewoptimi');
+		Route::post('formfollow','Contract\purchaseContractController@formfollow');//新增优化方案
+		Route::get('vieformfollow','Contract\purchaseContractController@vieformfollow');//新增优化方案
+		Route::get('violate','Contract\purchaseContractController@violate');//新增优化方案
+		Route::post('addviolate','Contract\purchaseContractController@addviolate');//新增优化方案
     Route::post('editTiaoKuan','Contract\purchaseContractController@editTiaoKuan');
     Route::get('approving','Contract\purchaseContractController@changeStatus');
     Route::get('preApproving','Contract\purchaseContractController@changeStatus');//初审合同-审核前
@@ -151,7 +157,9 @@ Route::group(['prefix' => 'permission'], function () {
     Route::get('getAll','Rbac\PermissionController@getAll');
     Route::get('role/{id}','Rbac\PermissionController@getPermission');
     Route::get('update','Rbac\PermissionController@update');
+	Route::get('pressmoney','Commission\accountsReceivableController@pressmoney');//催款跟进列表
     Route::get('list','Rbac\PermissionController@getPermissionList');
+	Route::post('addpressmoney','Commission\accountsReceivableController@addpressmoney');//催款跟进列表
     Route::post('update/{id}','Rbac\PermissionController@update');
 });
 //消息

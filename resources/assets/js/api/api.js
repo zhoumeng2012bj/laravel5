@@ -41,12 +41,51 @@ export const editShouFangCommission = params => { return axios.put(`${base}/shou
 export const selectCommissionPayType = params => { return axios.post(`${base}/Commission/contractPayType`, { params: params }); };
 export const cancelClaim = params => { return axios.post(`${base}/receivableRecord/cancelClaim`, { params: params }); };
 export const getReceivableListPage = params => { return axios.get(`${base}/receivable`, { params: params }); };
+
+
+export const getReceivableAuditList = params => { return axios.get(`${base}/receivable/audit`, { params: params }); };//审核列表首期
+export const getReceiveModifyList = params => { return axios.get(`${base}/receivable/modify`, { params: params }); };//修改记录列表
+export const getReceiveSubmiList = params => { return axios.get(`${base}/receivable/submi`, { params: params }); };//提交记录列表
+export const saveShouKuan = params => { return axios.post(`${base}/receivable/saveShouKuan` , { params: params }); };//提交收款
+export const addYXJReceivable = params => { return axios.post(`${base}/receivable/addYXJ`, { params: params }); };//修改应收金额
+export const bleSubmission = params => { return axios.post(`${base}/receivable/bleSubmi` , { params: params }); };//应收管理修提交记录列表中的审批提交
+export const bleedidSubmission = params => { return axios.post(`${base}/receivable/bleedidSu` , { params: params }); };//应收管理修改记录中的审批提交
+export const getReceivablePlanList = params => { return axios.get(`${base}/receivable/planList`, { params: params }); };//应收计划列表
+export const withdrawReceivable = params => { return axios.post(`${base}/receivable/withdrawlist` , { params: params }); };//应收计划列表中的撤回
+export const getReceivablefinanceList = params => { return axios.get(`${base}/receivable/finance`, { params: params }); };//实收管理列表
+export const getReceivableClaimList = params => { return axios.get(`${base}/receivable/claim`, { params: params }); };//实收管理列表中的认领列表
+export const renlFinance = params => { return axios.post(`${base}/receivable/Claimsub` , { params: params }); };//实收管理列表中的认领
+export const getReceivableClaimRecoedList = params => { return axios.get(`${base}/receivable/ClaimRecoed`, { params: params }); };//实收管理中的认领记录列表
+export const claimRecord = params => { return axios.get(`${base}/receivable/ClaimRdelt`, { params: params }); };//实收管理中的认领记录列表中的取消认领
+export const financefSave = params => { return axios.post(`${base}/receivable/fSave` , { params: params }); };//实收管理列表中的新增
+export const receImageList = params => { return axios.get(`${base}/receivable/ImageList`, { params: params }); };//实收管理中的查看上传凭证图片
+export const receiImageDelete = params => { return axios.get(`${base}/receivable/ImageListDelete`, { params: params }); };//实收管理中的查看上传凭证图片的删除
+
+
+export const getPaySettlementListPage = params => { return axios.get(`${base}/payable/settlement`, { params: params }); };//应付款管理列表(结算)
+export const getPayablePayment = params => { return axios.get(`${base}/payable/payment`, { params: params }); };//应付中付款记录列表
+export const getPayableDeduction = params => { return axios.get(`${base}/payable/deduction`, { params: params }); };//应付中付款记录列表中的扣款记录列表
+export const submissionPayable = params => { return axios.get(`${base}/payable/submissionpayable`, { params: params }); };//应付款管理列表中的提交付款
+export const riskSubmissionPayable = params => { return axios.post(`${base}/payable/riskSubmi` , { params: params }); };//应付款管理(风控)列表中的提交付款
+export const getPayAmontList = params => { return axios.get(`${base}/payable/amont`, { params: params }); };//财务修改金额列表
+export const subCarefulPayable = params => { return axios.post(`${base}/payable/subCareful` , { params: params }); };//财务修改金额列表中的提交
+export const commissionPayable = params => { return axios.post(`${base}/payable/commission` , { params: params }); };//财务修改金额列表中的代付扣款
+export const getPayableListPlan = params => { return axios.get(`${base}/payable/plan`, { params: params }); };//应付计划列表额列表
+export const withdrawPayable = params => { return axios.get(`${base}/payable/withdrawPaya`, { params: params }); };//应付计划列表中的撤回
+export const actualPaymentPayable = params => { return axios.get(`${base}/payable/actualPayment`, { params: params }); };//实付管理列表
+
+
+
+
+
+
+export const editReceivable = params => { return axios.put(`${base}/receivable/`+params.id, { params: params }); };
 export const getReceiveList = params => { return axios.get(`${base}/financeReceivable`, { params: params }); };//财务实收款列表
 export const financeSaveShouKuan = params => { return axios.post(`${base}/financeReceivable/saveShouKuan` , { params: params }); };
 export const renling = params => { return axios.post(`${base}/financeReceivable` , { params: params }); };
-export const editReceivable = params => { return axios.put(`${base}/receivable/`+params.id, { params: params }); };
-export const addYXJReceivable = params => { return axios.post(`${base}/receivable`, { params: params }); };
-export const saveShouKuan = params => { return axios.post(`${base}/receivable/saveShouKuan` , { params: params }); };
+
+
+
 export const rejectPayable = params =>  { return axios.post(`${base}/financePayable/rejectPayable` , { params: params }); };
 export const getReceivableRecordListPage = params => { return axios.get(`${base}/receivableRecord`, { params: params }); };
 export const confirmPayable = params =>  { return axios.post(`${base}/financePayable/confirmPayable` , { params: params }); };

@@ -6,7 +6,7 @@
 			<el-button type="primary" v-if="ztin([6,9,10])" class="el-icon-plus" @click="addFollow"> 写跟进</el-button>
 		</div>
 		<el-dialog title="新增优化方案" :visible.sync="dialogFormVisible">
-			<el-form :model="form">
+			<el-form :model="form" :rules="addformRules" ref="form">
 			<!-- 	<el-form-item label="方案制定日期" :label-width="formLabelWidth">
 					<div class="block">
 						<el-date-picker
@@ -17,18 +17,18 @@
 						</el-date-picker>
 					</div>
 				</el-form-item> -->
-				<el-form-item label="方案制定日期" :label-width="formLabelWidth">
+				<el-form-item label="方案制定日期" prop="plandate" :label-width="formLabelWidth">
 						<el-date-picker type="date" placeholder="请输入方案制定日期"v-model="form.plandate">
 						</el-date-picker>
 				</el-form-item>
-				<el-form-item label="优化次数" :label-width="formLabelWidth">
+				<el-form-item label="优化次数" prop="optimizationnum" :label-width="formLabelWidth">
 					<el-select v-model="form.optimizationnum" placeholder="请选择优化次数">
 						<el-option label="第一次优化" value='1'></el-option>
 						<el-option label="第二次优化" value='2'></el-option>
 						<el-option label="第三次优化" value='3'></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="方案具体内容" :label-width="formLabelWidth">
+				<el-form-item label="方案具体内容" :label-width="formLabelWidth" prop="plancontext">
 					<el-input type="textarea" v-model="form.plancontext" placeholder="请输入方案具体内容"></el-input>
 				</el-form-item>
 			</el-form>
@@ -69,8 +69,8 @@
 			</div>
 		</el-dialog>
 		<el-dialog title="写跟进" :visible.sync="dialogFormVisibleFollow">
-			<el-form :model="formFollow">
-				<el-form-item label="跟进日期" :label-width="formLabelWidthFollow">
+			<el-form :model="formFollow" :rules="addformFollowRules" ref="formFollow">
+				<el-form-item label="跟进日期" :label-width="formLabelWidthFollow" prop="followdate">
 					<div class="block">
 						<el-date-picker
 							v-model="formFollow.followdate"
@@ -79,14 +79,14 @@
 						</el-date-picker>
 					</div>
 				</el-form-item>
-				<el-form-item label="优化次数" :label-width="formLabelWidthFollow">
+				<el-form-item label="优化次数" prop="optimizationnum" :label-width="formLabelWidthFollow">
 					<el-select v-model="formFollow.optimizationnum" placeholder="请选择优化次数">
 						<el-option label="第一次优化" value="1"></el-option>
 						<el-option label="第二次优化" value="2"></el-option>
 						<el-option label="第三次优化" value="3"></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="跟进内容" :label-width="formLabelWidthFollow">
+				<el-form-item label="跟进内容" prop="followcontext" :label-width="formLabelWidthFollow">
 					<el-input type="textarea" v-model="formFollow.followcontext" placeholder="请输入跟进内容"></el-input>
 				</el-form-item>
 			</el-form>
@@ -179,7 +179,29 @@
 					hetongid: null,//合同id
 					hetongtid: 0,//合同类型
         },
+				addformRules:{
+					optimizationnum:[
+						{required: true, message: '不能为空'}
+					],
+					plandate:[
+						{required: true, message: '不能为空'}
+					],
+					plancontext:[
+						{required: true, message: '不能为空'}
+					],
+				},
 				dialogFormVisibleFollow: false,
+				addformFollowRules:{
+					optimizationnum:[
+						{required: true, message: '不能为空'}
+					],
+					followdate:[
+						{required: true, message: '不能为空'}
+					],
+					followcontext:[
+						{required: true, message: '不能为空'}
+					],
+				},
 				formFollow: {
 					id: '',
 					optimizationnum: '',//优化次数
@@ -284,6 +306,7 @@
 				this.dialogFormVisible = true;
 			},
 			cancel(){
+				this.$refs.form.resetFields();//将所有字段值重置为初始值并移除校验结果
 				this.form.optimizationnum = '';
 				this.form.plancontext = '';
 				this.form.plandate = '';
@@ -293,6 +316,7 @@
 				this.dialogFormVisibleFollow = true;
 			},
 			cancelFollow(){
+				this.$refs.formFollow.resetFields();
 				this.formFollow.optimizationnum = '';
 				this.formFollow.followcontext = '';
 				this.formFollow.followdate = '';
@@ -321,81 +345,88 @@
 				});
 			},
 			sure(){
-				var stts = true;
-				for(var i=0;i<this.tableDataView.length;i++){
-					if(this.tableDataView[i].optimizationnum == this.form.optimizationnum){
-						stts = false;
-						this.$message({
-								message:"每次优化只可以制定一次方案！",
-								type:'error'
-						})
-					}else{
-						stts = true;
-					}
-				}
-				if(stts){
-					this.dialogFormVisible = false;
-					// 				let para = {
-					// 					"optimizationnum":this.form.optimiTimes,
-					// 					"plancontext":this.form.content,
-					// 					"plandate":this.value1,
-					// 					"hetongid":this.hetongid,
-					// 					"hetongtid":1,
-					// 					"createuser":1,
-					// 					"createusername":"123"
-					// 				};
-					this.form.hetongid = this.hetongid;
-					//这块是不用再去一个一个的赋值了（向接口参数中），以为我定义的时候和接口参数的变量名称一模一样
-					let para = Object.assign({}, this.form);
-					
-					optiplanPurchaseContract(para).then((res)=>{
-							if(res.data.code == 200)　{
-								this.form.optimizationnum = '';
-								this.form.plancontext = '';
-								this.form.plandate = '';
-								this.viewseexind = true;
-							}else{
+				this.$refs.form.validate((valid) => {//对整个表单进行校验的方法
+					if(valid){
+						var stts = true;
+						for(var i=0;i<this.tableDataView.length;i++){
+							if(this.tableDataView[i].optimizationnum == this.form.optimizationnum){
+								stts = false;
 								this.$message({
-										message:res.data.msg,
+										message:"每次优化只可以制定一次方案！",
 										type:'error'
 								})
+							}else{
+								stts = true;
 							}
-					})
-				}
-				
-			},
-			formFollowsure(){
-				this.formFollow.hetongid = this.hetongid;
-				//这块是不用再去一个一个的赋值了（向接口参数中），以为我定义的时候和接口参数的变量名称一模一样
-				let para = Object.assign({}, this.formFollow);
-				let para1 = {
-					id:this.hetongid,
-				};
-				formfollowPurchaseContract(para).then((res)=>{
-						if(res.data.code == 200)　{
-							youhuaPurchaseContract(para1).then((res)=>{
-								if(res.data.code=='200'){
-									this.dialogFormVisibleFollow = false;
-									location.reload();
-									this.$message({
-										message: '设置成功',
-										type: 'success'
-									});
-									this.purchaseContractList();
-								}else{
-									this.$message({
-										message: '设置failed',
-										type: 'error'
-									});
-								}
-							});
+						}
+						if(stts){
+							this.dialogFormVisible = false;
+							// 				let para = {
+							// 					"optimizationnum":this.form.optimiTimes,
+							// 					"plancontext":this.form.content,
+							// 					"plandate":this.value1,
+							// 					"hetongid":this.hetongid,
+							// 					"hetongtid":1,
+							// 					"createuser":1,
+							// 					"createusername":"123"
+							// 				};
+							this.form.hetongid = this.hetongid;
+							//这块是不用再去一个一个的赋值了（向接口参数中），以为我定义的时候和接口参数的变量名称一模一样
+							let para = Object.assign({}, this.form);
 							
-						}else{
-							this.$message({
-									message:res.data.msg,
-									type:'error'
+							optiplanPurchaseContract(para).then((res)=>{
+									if(res.data.code == 200)　{
+										this.form.optimizationnum = '';
+										this.form.plancontext = '';
+										this.form.plandate = '';
+										this.viewseexind = true;
+									}else{
+										this.$message({
+												message:res.data.msg,
+												type:'error'
+										})
+									}
 							})
 						}
+					}
+				});
+			},
+			formFollowsure(){
+				this.$refs.formFollow.validate((valid) => {
+					if(valid){
+						this.formFollow.hetongid = this.hetongid;
+						//这块是不用再去一个一个的赋值了（向接口参数中），以为我定义的时候和接口参数的变量名称一模一样
+						let para = Object.assign({}, this.formFollow);
+						let para1 = {
+							id:this.hetongid,
+						};
+						formfollowPurchaseContract(para).then((res)=>{
+								if(res.data.code == 200)　{
+									youhuaPurchaseContract(para1).then((res)=>{
+										if(res.data.code=='200'){
+											this.dialogFormVisibleFollow = false;
+											location.reload();
+											this.$message({
+												message: '设置成功',
+												type: 'success'
+											});
+											this.purchaseContractList();
+										}else{
+											this.$message({
+												message: '设置failed',
+												type: 'error'
+											});
+										}
+									});
+									
+								}else{
+									this.$message({
+											message:res.data.msg,
+											type:'error'
+									})
+								}
+						})
+					}
 				})
 			},
 			//将中国标准时间转化为yyy-mmm-ddd格式的日期

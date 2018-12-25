@@ -95,16 +95,16 @@
                                   <el-dropdown-item v-if="ztin(scope.row,[0,1,3,4])&&fun('receivableEidtDate')">
                                       <el-button  v-if="scope.row.sktype<20"  @click="handleEdit(scope.$index, scope.row)">编辑收款日期</el-button>
                                   </el-dropdown-item> -->
-																	<el-dropdown-item v-if="ztin(scope.row,[1,2])&&fun('submissionCollection')">
+																	<el-dropdown-item v-if="ztin(scope.row,[1,2])&&fun('erSubmissionCollection')">
 																			<el-button @click="handleRokeBack(scope.$index, scope.row)">提交收款</el-button>
 																	</el-dropdown-item>
-																	<el-dropdown-item v-if="ztin(scope.row,[1,2])&&fun('amountReceivable')">
+																	<el-dropdown-item v-if="ztin(scope.row,[1,2])&&fun('erAmountReceivable')">
 																			<el-button @click="handleEditYS(scope.$index, scope.row)">修改应收金额</el-button>
 																	</el-dropdown-item>
-																	<el-dropdown-item v-if="ztin(scope.row,[1,2,3])&&fun('modificationRecord')">
+																	<el-dropdown-item v-if="ztin(scope.row,[1,2,3])&&fun('ermodificationRecord')">
 																			<el-button @click="handleCollect(scope.$index, scope.row)">修改记录</el-button>
 																	</el-dropdown-item>
-																	<el-dropdown-item v-if="ztin(scope.row,[2,3])&&fun('submissionRecords')">
+																	<el-dropdown-item v-if="ztin(scope.row,[2,3])&&fun('ersubmissionRecords')">
 																			<el-button @click="handleSubmission(scope.$index, scope.row)">提交记录</el-button>
 																	</el-dropdown-item>
                                  <!-- <el-dropdown-item v-if="ztin(scope.row,[0,1,3,4])&&fun('receivableEidtMoney')">
@@ -145,14 +145,14 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-				<el-form-item label="备注：" prop="beizhu">
-					<el-input
-											type="textarea"
-											:rows="5"
-											placeholder="请输入内容"
-											v-model="rokeBackForm.beizhu">
-										</el-input>
-				</el-form-item>
+								<el-form-item label="备注：" prop="beizhu">
+									<el-input
+															type="textarea"
+															:rows="5"
+															placeholder="请输入内容"
+															v-model="rokeBackForm.beizhu">
+														</el-input>
+								</el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click.native="rokeBackFormVisible = false">取消</el-button>
@@ -388,7 +388,7 @@
                 rokeBackForm: {
                     tCwSrId: '',
                     tijiaomoney: '',
-					beizhu:'',
+										beizhu:'',
                 },
                 headerDate:['合同编号','项目','租户','付款方式','月租金','收款日期','收款科目','应收房租','提交金额','实收金额','修改状态','支付状态','操作'],
                 addFormVisible: false,//新增界面是否显示
@@ -436,6 +436,7 @@
             },
             //标签切换时
             handleClick(tab, event) {
+
                 if (tab.index == 0) {
                     this.filters.zt = '';
                     this.getReceivable();
@@ -660,7 +661,7 @@
                 let para = {
                     page: this.page,
                     size: this.pageSize,
-										isfirst:1,
+										isfirst:2,
                     htno: this.filters.htno,
                     xm: this.filters.xm,
                     zt: this.filters.zt,
@@ -738,18 +739,18 @@
                 this.rokeBackForm = {
                     tCwSrId: row.tCwSrId,
                     tijiaomoney: '',
-					beizhu:'',
+										beizhu:'',
                 };
             },
             //提交数据
             addFormSubmit(){
-				var xzje = Number(this.sjysxz) - Number(this.ysjexz);
-				if(this.addForm.fuKuanMoney > xzje){
-					this.$message({
-							message: '减免金额已超过剩余应收金额！',
-							type: 'success'
-					});
-				}else{
+							var xzje = Number(this.sjysxz) - Number(this.ysjexz);
+							if(this.addForm.fuKuanMoney > xzje){
+								this.$message({
+										message: '减免金额已超过剩余应收金额！',
+										type: 'success'
+								});
+							}else{
                 this.$refs.addForm.validate((valid) => {
                     if (valid) {
                         this.$confirm('确认提交吗？', '提示', {}).then(() => {

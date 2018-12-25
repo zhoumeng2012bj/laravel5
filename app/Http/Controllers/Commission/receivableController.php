@@ -16,19 +16,22 @@ class receivableController extends Controller
      *显示应收款列表
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $htno = Input::get('htno');
         $xm = Input::get('xm');
-        $zh = Input::get('zh');
+        // $zh = Input::get('zh');
+				$isfirst = Input::get('isfirst');
         $zt = Input::get('zt');
         $startdate = Input::get('startdate');
         $enddate = Input::get('enddate');
-        $pageSize = Input::get('pageSize');
+        $pageSize = Input::get('size');
         $page= Input::get('page');
         $client = new Client ([
             'base_uri' => $this->base_url,
         ]);
+				$user = Auth::user();
+				$phone=$user->phone;
         $response = $client->request('GET', '/api/cw/ys/list',[
             'query' => [
                 'page'=>$page,
@@ -36,8 +39,10 @@ class receivableController extends Controller
                 'sdate'=>$startdate,
                 'edate'=>$enddate,
                 'xm'=>$xm,
-                'zh'=>$zh,
-                'zt'=>$zt,
+                // 'zh'=>$zh,
+								'phone'=>$phone,
+								'isfirst'=>$isfirst,
+								'zt'=>$zt,
                 'htno' =>$htno,
                 ]
 
@@ -144,6 +149,7 @@ class receivableController extends Controller
 
 
         $obj=array_merge($request->params,$user);
+				// $obj=$request->params;
         // dd( json_encode( $obj));
         $client = new Client ([
             'base_uri' => $this->base_url,
@@ -218,4 +224,5 @@ class receivableController extends Controller
         ]);
         return  $response ->getBody();
     }
+		
 }

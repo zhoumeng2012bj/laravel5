@@ -1,3 +1,4 @@
+
 <template>
     <el-row >
         <el-form :inline="true" :model="filters" class="demo-form-inline" label-width="80px" lable-width="80px;">
@@ -32,16 +33,19 @@
          		<p>
          			<span style="color:red;font-size: 14px;">(注：红色日期表示付款已延期，请尽快处理)</span>         			
          		</p>
+						<p>
+							<span style="font-size: 14px;border: 1px solid black;padding: 5px;border-radius: 5px;">导出应付计划</span>
+						</p>
          	</div>
         <el-tabs v-model="activeName2" type="border-card" @tab-click="handleClick">
             <el-tab-pane label="全部" name="first"></el-tab-pane>
-            <el-tab-pane label="待提交" name="second"></el-tab-pane>
-            <el-tab-pane label="已提交" name="third"></el-tab-pane>
-           <!-- <el-tab-pane label="部分已付" name="fourth"></el-tab-pane>
-            <el-tab-pane label="已完成" name="fifth"></el-tab-pane>
+            <el-tab-pane label="未付款" name="second"></el-tab-pane>
+            <el-tab-pane label="已付款" name="third"></el-tab-pane>
+            <el-tab-pane label="已撤回" name="fourth"></el-tab-pane>
+            <!-- <el-tab-pane label="已完成" name="fifth"></el-tab-pane>
             <el-tab-pane label="已驳回" name="sixth"></el-tab-pane> -->
             <el-table :data="Payable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中" @selection-change="selsChange" style="width: 100%;">
-                <el-table-column prop="htbianhao" label="合同编号" width="190">
+                <el-table-column prop="hetongbianhao" label="合同编号" width="190"    >
                 </el-table-column>
                 <el-table-column prop="xiangmu" label="项目">
                 </el-table-column>
@@ -55,16 +59,16 @@
 								</el-table-column>
 								<el-table-column prop="zhouqi" label="周期">
 								</el-table-column>
-								<el-table-column prop="fkdate" label="应付日期" width="120"   >
+								<el-table-column prop="fukuandate" label="应付日期" width="120"   >
 										<template slot-scope="scope">
-												<span :class="tableClassName(scope.row.fkdate,scope.row.fkstate)">  {{ changeDate(scope.row.fkdate) }}</span>
+												<span :class="tableClassName(scope.row.fukuandate,scope.row.fukuanstate)">  {{ changeDate(scope.row.fukuandate) }}</span>
 										</template>
 								</el-table-column>
-								<el-table-column prop="fkmoney" label="应付金额" width="110">
+								<el-table-column prop="shifumoney" label="实付金额" width="110">
 								</el-table-column>
 								<el-table-column prop="skinfo" label="收款账号"   width="180">
 								</el-table-column>
-								<el-table-column prop="settlementStatus" label="状态"  :formatter="formatState"  width="95">
+								<el-table-column prop="fukuanstate" label="状态"  :formatter="formatState"  width="95">
 								</el-table-column>
                <!-- <el-table-column prop="tijiaomoney" label="提交金额"  width="95">
                 </el-table-column>
@@ -79,9 +83,9 @@
                                    操作<i class="el-icon-caret-bottom el-icon--right"></i>
                                </el-button>
                                <el-dropdown-menu slot="dropdown" >
-                                   <el-dropdown-item v-if="ztin(scope.row,[0])&&fun('paSub')"><el-button   @click="handleRokeBack(scope.$index, scope.row)">提交付款</el-button></el-dropdown-item>
+                                   <el-dropdown-item v-if="ztin(scope.row,[0])&&fun('PPlanWithdraw')"><el-button   @click="handleRokeBack(scope.$index, scope.row)">撤回</el-button></el-dropdown-item>
                                    <!-- <el-dropdown-item  v-if="scope.row.xiugaizhuangtai=='已修改'&&fun('payableRecord') "> <el-button  @click="handleOpen(scope.$index, scope.row)">修改记录</el-button> </el-dropdown-item> -->
-                                   <el-dropdown-item v-if="ztin(scope.row,[1])&&fun('paSubList')"> <el-button  @click="handleOpenUp(scope.$index, scope.row)">提交记录</el-button> </el-dropdown-item>
+                                   <el-dropdown-item v-if="ztin(scope.row,[0,1,2])&&fun('PPlanDedList')"> <el-button  @click="handleOpenUp(scope.$index, scope.row)">扣款记录</el-button> </el-dropdown-item>
                                    <!-- <el-dropdown-item   v-if="ztin(scope.row,[0,1,2,4])&&fun('payableEidtDate')"><el-button  v-if="scope.row.fktype<20"  @click="handleEdit(scope.$index, scope.row)">编辑付款日期</el-button></el-dropdown-item>
                                    <el-dropdown-item   v-if="ztin(scope.row,[0,1,2,4])&&fun('payableEidtMoney')"><el-button   v-if="scope.row.fktype<20" @click="handleMoneyEdit(scope.$index, scope.row)">编辑付款金额</el-button></el-dropdown-item>
                                    <el-dropdown-item v-if="ztin(scope.row,[0,1,2,4])&&fun('payableEidt')">
@@ -112,7 +116,7 @@
             </el-col>
         </el-tabs>
         <el-dialog title="提交付款" v-model="rokeBackFormVisible" :close-on-click-modal="false">
-            <!-- <el-form :model="rokeBackForm" label-width="120px" :rules="rokeBackFormRules" ref="rokeBackForm"  >
+            <el-form :model="rokeBackForm" label-width="120px" :rules="rokeBackFormRules" ref="rokeBackForm"  >
                 <el-row>
                     <el-col :span="8">
                     <el-form-item label="付款金额：" prop="tijiaomoney">
@@ -146,26 +150,11 @@
                     <el-form-item   label="备注：" prop="beizhu">
                         <el-input type="textarea" v-model="rokeBackForm.beizhu" auto-complete="off"></el-input>
                     </el-form-item>
-            </el-form> -->
-						<el-row>
-							<el-col :span="20">
-								<span>户名：{{rokeBackForm.huming==null?'无数据':rokeBackForm.huming}}</span>
-							</el-col>
-						</el-row><br />
-						<el-row>
-							<el-col :span="20">
-								<span>开户行：{{rokeBackForm.khh==null?'无数据':rokeBackForm.khh}}</span>
-							</el-col>
-						</el-row><br />
-						<el-row>
-							<el-col :span="20">
-								<span>银行账户：{{rokeBackForm.yhzh==null?'无数据':rokeBackForm.yhzh}}</span>
-							</el-col>
-						</el-row>
-						<div slot="footer" class="dialog-footer">
-								<el-button @click.native="rokeBackFormVisible = false">取消</el-button>
-								<el-button type="primary" @click.native="rokeBackSubmit" :loading="rokeBackLoading">确认</el-button>
-						</div>
+            </el-form>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click.native="rokeBackFormVisible = false">取消</el-button>
+                        <el-button type="primary" @click.native="rokeBackSubmit" :loading="rokeBackLoading">保存</el-button>
+                    </div>
         </el-dialog>
 
 
@@ -327,14 +316,14 @@
 <script>
 
     import {
-			getPaySettlementListPage,
-			submissionPayable,
-			
-			
-			
-			
-			
-        getPayableListPage,
+        getPayableListPlan,
+				withdrawPayable,
+				
+				
+				
+				
+				
+				
         editDate,
         saveFuKuan,
         editMoney,
@@ -351,7 +340,6 @@
         components: {ElForm},
         data(){
             return {
-								tjfuid:'',
                 filters:{
                     contractNo: '',
                     yz:'',
@@ -486,9 +474,15 @@
                 //付款界面数据
                 rokeBackForm: {
                     tCwFcId:'',
-                    huming:'',
-                    khh:'',
-                    yhzh:'',
+                    hetongbianhao:'',
+                    xiangmu:'',
+                    fukuankemu:'',
+                    tijiaomoney:'',
+                    fukuandate:'',
+                    beizhu:'',
+                    fukuanyinhang:'',
+                    fukuanzhanghao:'',
+                    zhanghu:'',
                 },
                 YXJ: '',
                 addFormVisible: false,//新增界面是否显示
@@ -532,14 +526,14 @@
         methods:{
             tableClassName(fkdate,fkstate){
                 //return 'info-row';
-                if(fkdate<new Date()&&fkstate!=2){
+                if(fkdate<new Date()&&fkstate!=1){
                     return 'info-row';
                 }else{
                     return '';
                 }
             },
             ztin(row,arr){
-                var status = arr.indexOf(row.settlementStatus);
+                var status = arr.indexOf(row.fukuanstate);
                 if(status>-1){
                     return true;
                 }else{
@@ -550,18 +544,19 @@
                 let status = [];
                 status[0] = '押金';
                 status[1] = '房租';
-								status[2] = '补偿三方佣金';
-								status[10] = '退还租金';
-								status[11] = '退还房租';
-								status[20] = '意向金';
+                status[2] = '补偿三方佣金';
+                status[10] = '退还租金';
+                status[11] = '退还房租';
+                status[20] = '意向金';
                 return status[row.fktype];
             },
             //状态显示转换
             formatState: function (row, column) {
                 let status = [];
-                status[0] = '待提交';
-                status[1] = '已提交';
-                return status[row.settlementStatus];
+                status[0] = '未付款';
+                status[1] = '已付款';
+                status[2] = '已撤回';
+                return status[row.fukuanstate];
             },
             //时间戳转日期格式
             changeDate(fkdate){
@@ -596,7 +591,7 @@
                 this.$router.push('/paymentRecord?id=' + row.tCwFcId);
             },
             handleOpenUp: function (index, row) {
-                this.$router.push('/payableRecord?id=' + row.tCwFcId);
+								this.$router.push('/payableFinanceSubm?id=' + row.tCwFcSubmitId);
             },
             //获取楼盘
             remoteMethod1(query) {
@@ -733,18 +728,16 @@
             //获取应付款列表
             getPayable() {
                 let para = {
-									page: this.page,
-									pageSize: this.pageSize,
-									listState: 0,//1 风控 0结算 
-									htno: this.filters.contractNo,
-									xm: this.filters.xm,
-									sdate: this.filters.startdate,
-									edate: this.filters.enddate,
-									zt: this.filters.zt,
-									zt2:'',
+                    page: this.page,
+                    size: this.pageSize,
+                    htno: this.filters.contractNo,
+                    xm: this.filters.xm,
+                    fukuanstate: this.filters.zt,
+                    sdate: this.filters.startdate,
+                    edate: this.filters.enddate,
                 };
                 this.listLoading = true;
-                getPaySettlementListPage(para).then((res) => {
+                getPayableListPlan(para).then((res) => {
                     this.total = res.data.total;
                     this.Payable = res.data.data;
                     this.DataSum=res.data.dataSum;
@@ -791,13 +784,23 @@
             },
             //显示付款界面
             handleRokeBack: function (index, row) {
-                this.rokeBackFormVisible = true;
-								this.rokeBackForm = {
-									huming:this.Payable[index].skzhanhu,
-									khh:this.Payable[index].skyinhang,
-									yhzh:this.Payable[index].zhanghao,
-								};
-								this.tjfuid = row.tCwFcId;
+								this.$confirm('确认将这条应付计划撤回吗?', '提示', {
+										type: 'warning'
+								}).then(() => {
+										let para = { 
+											tCwFcFinancesubmitId: row.tCwFcFinancesubmitId,
+										};
+										withdrawPayable(para).then((res) => {
+												//NProgress.done();
+												this.$message({
+														message: '撤回成功',
+														type: 'success'
+												});
+												this.getPayable();
+										});
+								}).catch(() => {
+
+								});
             },
             //显示编辑界面
             handleEdit: function (index, row) {
@@ -861,6 +864,7 @@
                                                 message: '提交成功',
                                                 type: 'success'
                                             });
+                                            this.$refs['addForm'].resetFields();
                                         } else {
                                             this.$message({
                                                 message: res.data.msg,
@@ -878,6 +882,7 @@
                                                 message: '提交成功',
                                                 type: 'success'
                                             });
+                                            this.$refs['addForm'].resetFields();
                                         } else {
                                             this.$message({
                                                 message: res.data.msg,
@@ -953,28 +958,31 @@
             },
             //付款
             rokeBackSubmit: function () {
-							this.$confirm('确认提交吗？', '提示', {}).then(() => {
-									this.rokeBackLoading = true;
-									let para = {
-											id: this.tjfuid,
-									}
-									submissionPayable(para).then((res) => {
-											this.rokeBackLoading = false;
-											if(res.data.code==200) {
-											this.$message({
-													message: '提交成功',
-													type: 'success'
-											});
-											}else{
-													this.$message({
-															message: res.data.msg,
-															type: 'error'
-													});
-											}
-											this.rokeBackFormVisible = false;
-											this.getPayable();
-									});
-							});
+                this.$refs.rokeBackForm.validate((valid) => {
+                    if (valid) {
+                        this.$confirm('确认提交吗？', '提示', {}).then(() => {
+                            this.rokeBackLoading = true;
+                            let para = Object.assign({}, this.rokeBackForm);
+                            saveFuKuan(para).then((res) => {
+                                this.rokeBackLoading = false;
+                                if(res.data.code==200) {
+                                this.$message({
+                                    message: '提交成功',
+                                    type: 'success'
+                                });
+                                this.$refs['rokeBackForm'].resetFields();
+                                }else{
+                                    this.$message({
+                                        message: res.data.msg,
+                                        type: 'error'
+                                    });
+                                }
+                                this.rokeBackFormVisible = false;
+                                this.getPayable();
+                            });
+                        });
+                    }
+                });
             },
             selsChange: function (sels) {
                 this.sels = sels;

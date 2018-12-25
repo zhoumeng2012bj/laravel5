@@ -30,46 +30,44 @@
         		<span class="totals">实付金额：{{DataSum.shijiMoney}}</span>
         	</p> -->
         	<p>
-		        <span style="color:red;font-size: 14px;">（注：红色日期表示收款已延期，请尽快处理）</span>
+		        <span style="color:red;font-size: 14px;">（注：红色日期表示付款已延期，请尽快处理）</span>
         	</p>
         </div>
         
         <el-tabs v-model="activeName2" type="border-card" @tab-click="handleClick">
             <el-tab-pane label="全部" name="first"></el-tab-pane>
-            <el-tab-pane label="待提交" name="second"></el-tab-pane>
-            <el-tab-pane label="部分提交" name="fourth"></el-tab-pane>
-            <el-tab-pane label="提交完成" name="fifth"></el-tab-pane>
+            <el-tab-pane label="待审核" name="second"></el-tab-pane>
+            <el-tab-pane label="已通过" name="fourth"></el-tab-pane>
+            <el-tab-pane label="已驳回" name="fifth"></el-tab-pane>
             <el-table :data="Receivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"
                       @selection-change="selsChange" style="width: 100%;">
-                <el-table-column prop="htbianhao" label="合同编号" width="200">
+                <el-table-column prop="hetongbianhao" label="合同编号" width="200">
                 </el-table-column>
-                <el-table-column prop="xiangmu" label="项目" width="200">
+                <el-table-column prop="xiangmu" label="项目">
                 </el-table-column>
                
-                <el-table-column prop="monthmoney" label="月租金" width="110">
+                <el-table-column prop="yuezujin" label="月租金" width="110">
                 </el-table-column>
 								
-								<el-table-column prop="sktype" label="类型" :formatter="formatType">
+								<el-table-column prop="kemu" label="类型" :formatter="formatType" width="100">
 								</el-table-column>
 								<el-table-column prop="zhouqi" label="周期" width="130">
 								</el-table-column>
-                <el-table-column prop="skdate" label="应收日期" width="150">
+                <el-table-column prop="shoukuandate" label="应收日期" width="150">
                     <template slot-scope="scope">
-                        <span :class="tableClassName(scope.row.skdate,scope.row.srstate)">  {{ changeDate(scope.row.skdate)
+                        <span :class="tableClassName(scope.row.shoukuandate,scope.row.fkstatus)">  {{ changeDate(scope.row.shoukuandate)
                             }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="skmoney" label="应收金额" width="110">
+                <el-table-column prop="shoukuanmoney" label="应收金额" width="110">
                 </el-table-column>
                <!-- <el-table-column prop="tijiaomoney" label="提交金额" width="100">
                 </el-table-column> -->
-                <el-table-column prop="shijiyingshoumoney" label="实际应收" width="110">
+                <el-table-column prop="sjyingshoumoney" label="实际应收" width="110">
                 </el-table-column>
-								<el-table-column prop="tijiaomoney" label="已提交金额" width="110">
+								<el-table-column prop="tijiaomoney" label="提交金额" width="110">
 								</el-table-column>
-                <el-table-column prop="shiugaizhuangtai" label="是否修改" width="110" :formatter="formatModified">
-                </el-table-column>
-                <el-table-column prop="tijiaozhuangtai" label="状态" :formatter="formatState" width="100">
+                <el-table-column prop="status" label="状态" :formatter="formatState" width="100">
                 </el-table-column>
                 <el-table-column label="操作" width="180">
                     <template slot-scope="scope">
@@ -95,18 +93,25 @@
                                   <el-dropdown-item v-if="ztin(scope.row,[0,1,3,4])&&fun('receivableEidtDate')">
                                       <el-button  v-if="scope.row.sktype<20"  @click="handleEdit(scope.$index, scope.row)">编辑收款日期</el-button>
                                   </el-dropdown-item> -->
-																	<el-dropdown-item v-if="ztin(scope.row,[1,2])&&fun('submissionCollection')">
-																			<el-button @click="handleRokeBack(scope.$index, scope.row)">提交收款</el-button>
+																	<el-dropdown-item v-if="ztin(scope.row,[1])&&fun('ELExamine')">
+																			<el-button @click="handleRokeBack(scope.$index, scope.row)">审批</el-button>
 																	</el-dropdown-item>
-																	<el-dropdown-item v-if="ztin(scope.row,[1,2])&&fun('amountReceivable')">
+																	<el-dropdown-item v-if="ztin(scope.row,[2,3])">
+																			<el-button @click="handleEditYS(scope.$index, scope.row)">审批意见</el-button>
+																	</el-dropdown-item>
+																	<!-- <el-dropdown-item>
 																			<el-button @click="handleEditYS(scope.$index, scope.row)">修改应收金额</el-button>
 																	</el-dropdown-item>
-																	<el-dropdown-item v-if="ztin(scope.row,[1,2,3])&&fun('modificationRecord')">
+																	<el-dropdown-item>
 																			<el-button @click="handleCollect(scope.$index, scope.row)">修改记录</el-button>
 																	</el-dropdown-item>
-																	<el-dropdown-item v-if="ztin(scope.row,[2,3])&&fun('submissionRecords')">
+																	<el-dropdown-item>
 																			<el-button @click="handleSubmission(scope.$index, scope.row)">提交记录</el-button>
-																	</el-dropdown-item>
+																	</el-dropdown-item> -->
+																	
+																	
+																	
+																	
                                  <!-- <el-dropdown-item v-if="ztin(scope.row,[0,1,3,4])&&fun('receivableEidtMoney')">
                                       <el-button v-if="scope.row.sktype<20" @click="handleMoneyEdit(scope.$index, scope.row)">编辑收款金额</el-button>
                                   </el-dropdown-item>
@@ -125,64 +130,32 @@
               <!-- 分页-->
             <el-col :span="24" class="toolbar">
                 <el-pagination
-									@size-change="handleSizeChange"
-									@current-change="handleCurrentChange"
-									:current-page="currentPage"
-									:page-size="10"
-									layout="total, sizes, prev, pager, next, jumper"
-									:total=total
-									style="float:right"
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="currentPage"
+                        :page-size="10"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total=total
+                        style="float:right"
                 >
                 </el-pagination>
             </el-col>
         </el-tabs>
-        <el-dialog title="提交收款" v-model="rokeBackFormVisible" :close-on-click-modal="false">
-            <el-form :model="rokeBackForm" label-width="120px" :rules="rokeBackFormRules" ref="rokeBackForm">
-                <el-row>
-                    <el-col :span="11">
-                        <el-form-item label="收款金额：" prop="tijiaomoney">
-                            <el-input v-model.number="rokeBackForm.tijiaomoney" auto-complete="off"></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-				<el-form-item label="备注：" prop="beizhu">
-					<el-input
-											type="textarea"
-											:rows="5"
-											placeholder="请输入内容"
-											v-model="rokeBackForm.beizhu">
-										</el-input>
-				</el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click.native="rokeBackFormVisible = false">取消</el-button>
-                <el-button type="primary" @click.native="rokeBackSubmit" :loading="rokeBackLoading">保存</el-button>
-            </div>
+        <el-dialog title="审核" v-model="rokeBackFormVisible" :close-on-click-modal="false">
+        	<el-form :model="addForm" label-width="100px" ref="addForm">
+        		<el-input type="textarea" placeholder="审核意见" v-model="addForm.beizhu"></el-input>
+        	</el-form>
+        	<div slot="footer" class="dialog-footer">
+        		<el-button type="primary" @click.native="addFormSubmit(1)" :loading="addFormLoading">通过</el-button>
+        		<el-button type="primary" @click.native="addFormSubmit(2)" :loading="addFormLoadingbo">驳回</el-button>
+        		<el-button @click.native="rokeBackFormVisible = false">关闭</el-button>
+        	</div>
         </el-dialog>
 
-        <el-dialog :title="YXJ" v-model="addFormVisible" :close-on-click-modal="false">
-            <el-form :model="addForm" label-width="100px" :rules="addFormRules" ref="addForm">
-                <el-row>
-									<el-col :span="8">
-										<el-form-item label="减免：" prop="fuKuanMoney">
-											<el-input v-model.number="addForm.fuKuanMoney" auto-complete="off"></el-input>
-										</el-form-item>
-									</el-col>
-                </el-row>
-                <el-form-item label="备注：" prop="beizhu">
-                    <el-input
-											type="textarea"
-											:rows="5"
-											placeholder="请输入内容"
-											v-model="addForm.beizhu">
-										</el-input>
-                </el-form-item>
-
+        <el-dialog title="审批意见" v-model="addFormVisible" :close-on-click-modal="false">
+            <el-form v-model="beizhu" ref="viewDateForm"  >
+            				{{beizhu==null?'无数据':beizhu}}
             </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click.native="addFormVisible = false">取消</el-button>
-                <el-button type="primary" @click.native="addFormSubmit" :loading="addFormLoading">保存</el-button>
-            </div>
         </el-dialog>
 
         <el-dialog title="编辑收款日期" v-model="editDateFormVisible" :close-on-click-modal="false">
@@ -239,13 +212,19 @@
 	.el-table .info-row {
 			color: red;
 	}
+	.el-textarea__inner{height: 200px;}
 
 </style>
 
 <script>
 
     import {
-        getReceivableListPage,
+			bleSubmission,
+			
+			
+			
+			
+        getReceivableAuditList,
         editReceivable,
         addYXJReceivable,
         saveShouKuan,
@@ -270,8 +249,7 @@
                     enddate: '',
                     zt: 1,
                 },
-								ysjexz:'',
-								sjysxz:'',
+								beizhu:'',
                 optionszt: [
                     {
                         value: 0,
@@ -293,6 +271,7 @@
                     }
                 ],
                 downloadLoading:false,
+								addFormLoadingbo: false,
                 //楼盘数据
                 options1: [],
                 list1: [],
@@ -388,7 +367,6 @@
                 rokeBackForm: {
                     tCwSrId: '',
                     tijiaomoney: '',
-					beizhu:'',
                 },
                 headerDate:['合同编号','项目','租户','付款方式','月租金','收款日期','收款科目','应收房租','提交金额','实收金额','修改状态','支付状态','操作'],
                 addFormVisible: false,//新增界面是否显示
@@ -408,10 +386,11 @@
                 },
                 //新增界面数据
                 addForm: {
-										tCwSrId:'',
-                    fuKuanMoney: '',
-                    beizhu: '',
+										tCwSrSubmitId:'',
+										status: '',
+										beizhu: '',
                 },
+								
 
                 //被选中的权限
                 checked: [],
@@ -427,7 +406,7 @@
                 }
             },
             ztin(row, arr){
-                var status = arr.indexOf(row.tijiaozhuangtai);
+                var status = arr.indexOf(row.status);
                 if (status > -1) {
                     return true;
                 } else {
@@ -436,6 +415,7 @@
             },
             //标签切换时
             handleClick(tab, event) {
+
                 if (tab.index == 0) {
                     this.filters.zt = '';
                     this.getReceivable();
@@ -452,35 +432,32 @@
             },
             formatFKType(row, column){
                 let status = [];
-                status[0] = '押金';
-                status[1] = '房租';
-                status[5] = '杂费';
-                status[20] = '意向金';
+                status[1] = '待审批';
+                status[2] = '已通过';
+                status[3] = '已驳回';
                 return status[row.sktype];
             },
             //状态显示转换
             formatState: function (row, column) {
                 let status = [];
-                status[1] = '待提交';
-                status[2] = '部分提交';
-                status[3] = '提交完成';
-                return status[row.tijiaozhuangtai];
+                status[1] = '待审批';
+                status[2] = '已通过';
+                status[3] = '已驳回';
+                return status[row.status];
             },
 						//类型显示转换
 						formatType: function (row, column) {
 								let status = [];
 								status[0] = '押金';
 								status[1] = '房租';
-								return status[row.sktype];
+								return status[row.kemu];
 						},
 						//是否修改显示转换
 						formatModified: function (row, column) {
 								let status = [];
-								status[1] = '未修改';
-								status[2] = '已修改（待审核）';
-								status[3] = '已修改（审核通过）';
-								status[4] = '已修改（审核不通过）';
-								return status[row.shiugaizhuangtai];
+								status[0] = '押金';
+								status[1] = '待审批';
+								return status[row.srstate];
 						},
 
             //时间戳转日期格式
@@ -668,7 +645,7 @@
                     enddate: this.filters.enddate,
                 };
                 this.listLoading = true;
-                getReceivableListPage(para).then((res) => {
+                getReceivableAuditList(para).then((res) => {
                     this.total = res.data.total;
                     this.Receivable = res.data.data;
                     // this.DataSum = res.data.dataSum;
@@ -696,16 +673,8 @@
             },
             //修改应收金额页面
             handleEditYS: function (index, row) {
-                this.YXJ = '修改应收金额';
                 this.addFormVisible = true;
-								this.addForm = Object.assign({}, row);
-								this.ysjexz = row.tijiaomoney;
-								this.sjysxz = row.shijiyingshoumoney;
-								this.addForm = {
-										tCwSrId: row.tCwSrId,
-										fuKuanMoney: '',
-										beizhu: '',
-								};
+								this.beizhu = this.Receivable[index].auditdesc;
             },
             //显示编辑界面
             handleEdit: function (index, row) {
@@ -733,100 +702,86 @@
             },
             //显示付款界面
             handleRokeBack: function (index, row) {
-                this.rokeBackFormVisible = true;
-                this.rokeBackForm = Object.assign({}, row);
-                this.rokeBackForm = {
-                    tCwSrId: row.tCwSrId,
-                    tijiaomoney: '',
-					beizhu:'',
-                };
+								this.rokeBackFormVisible = true;
+								// this.renlingData.tCwSrCaiwuId=row.tCwSrCaiwuId;
+								this.addForm = Object.assign({}, row);
+								this.addForm = {
+									tCwSrSubmitId: row.tCwSrSubmitId,
+									status: '',
+									beizhu: '',
+								};
             },
+            //提交审核的数据1 通过 2驳回
+            addFormSubmit(type){
+							this.addForm.status = type;
+							this.$refs.addForm.validate((valid) => {
+								if (valid) {
+									this.$confirm('确认提交吗？', '提示', {}).then(() => {
+											if(this.addForm.status == 1){
+												this.addFormLoading = true;
+											}else{
+												this.addFormLoadingbo = true;
+											}
+											
+											let para = Object.assign({}, this.addForm);
+											bleSubmission(para).then((res) => {
+												if(this.addForm.status == 1){
+													this.addFormLoading = false;
+												}else{
+													this.addFormLoadingbo = false;
+												}
+												if(res.data.code==200) {
+												this.$message({
+														message: '提交成功',
+														type: 'success'
+												});
+												this.$refs['addForm'].resetFields();
+												this.rokeBackFormVisible = false;
+												} else{
+														this.$message({
+																message: res.data.msg,
+																type: 'error'
+														});
+												}
+												if(this.addForm.status == 1){
+													this.addFormLoading = false;
+												}else{
+													this.addFormLoadingbo = false;
+												}
+												this.getReceivable();
+											});
+									});
+								}
+							});
+						},
             //提交数据
-            addFormSubmit(){
-				var xzje = Number(this.sjysxz) - Number(this.ysjexz);
-				if(this.addForm.fuKuanMoney > xzje){
-					this.$message({
-							message: '减免金额已超过剩余应收金额！',
-							type: 'success'
-					});
-				}else{
-                this.$refs.addForm.validate((valid) => {
+            editFormSubmit(){
+                this.$refs.editForm.validate((valid) => {
                     if (valid) {
                         this.$confirm('确认提交吗？', '提示', {}).then(() => {
-                                this.addFormLoading = true;
-                                let para = Object.assign({}, this.addForm);
-//                                 if (para.tCwSrId != null && para.tCwSrId != '') {
-//                                     editReceivable(para).then((res) => {
-//                                         this.addFormLoading = false;
-//                                         if (res.data.code == 200) {
-//                                             this.$message({
-//                                                 message: '提交成功',
-//                                                 type: 'success'
-//                                             });
-//                                             this.$refs['addForm'].resetFields();
-//                                         } else {
-//                                             this.$message({
-//                                                 message: res.data.msg,
-//                                                 type: 'error'
-//                                             });
-//                                         }
-//                                         this.addFormVisible = false;
-//                                         this.getReceivable();
-//                                     });
-//                                 } else {
-                                    addYXJReceivable(para).then((res) => {
-                                        this.addFormLoading = false;
-                                        if (res.data.code == 200) {
-                                            this.$message({
-                                                message: '提交成功',
-                                                type: 'success'
-                                            });
-                                            this.$refs['addForm'].resetFields();
-                                        } else {
-                                            this.$message({
-                                                message: res.data.msg,
-                                                type: 'error'
-                                            });
-                                        }
-                                        this.addFormVisible = false;
-                                        this.getReceivable();
+                            this.editFormLoading = true;
+                            let para = Object.assign({}, this.editForm);
+                            editReceivable(para).then((res) => {
+                                this.editFormLoading = false;
+                                if (res.data.code == 200) {
+                                    this.$message({
+                                        message: '提交成功',
+                                        type: 'success'
                                     });
-                                // }
-                            }
-                        );
-
+                                    this.$refs['editForm'].resetFields();
+                                } else {
+                                    this.$message({
+                                        message: res.data.msg,
+                                        type: 'error'
+                                    });
+                                }
+                                this.editFormVisible = false;
+                                this.getReceivable();
+                            });
+                        });
                     }
                 });
-							}
             },
-            //提交数据
-//             editFormSubmit(){
-//                 this.$refs.editForm.validate((valid) => {
-//                     if (valid) {
-//                         this.$confirm('确认提交吗？', '提示', {}).then(() => {
-//                             this.editFormLoading = true;
-//                             let para = Object.assign({}, this.editForm);
-//                             editReceivable(para).then((res) => {
-//                                 this.editFormLoading = false;
-//                                 if (res.data.code == 200) {
-//                                     this.$message({
-//                                         message: '提交成功',
-//                                         type: 'success'
-//                                     });
-//                                     this.$refs['editForm'].resetFields();
-//                                 } else {
-//                                     this.$message({
-//                                         message: res.data.msg,
-//                                         type: 'error'
-//                                     });
-//                                 }
-//                                 this.editFormVisible = false;
-//                                 this.getReceivable();
-//                             });
-//                         });
-//                     }
-//                 });
-//             },
             //编辑
             editDateFormSubmit: function () {
                 this.$refs.editDateForm.validate((valid) => {

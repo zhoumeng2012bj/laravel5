@@ -22,13 +22,13 @@
                         <span>周期： {{hzouqi}}</span>
                     </el-col>
                     <el-col :span="6">
-                    		<span>应付日期： {{ysdata}}</span>
+                    		<span>应收日期： {{ysdata}}</span>
                     </el-col>
 					<el-col :span="6">
-							<span>应付金额： {{ysjine}}</span>
+							<span>应收金额： {{ysjine}}</span>
 					</el-col>
 					<el-col :span="6">
-							<span>实际应付： {{sjys}}</span>
+							<span>实际应收： {{sjys}}</span>
 					</el-col>
                 </el-row>
             </li>
@@ -36,19 +36,19 @@
         <el-row class="rowspacing">
             <el-table height="500" :data="financeReceivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"   style="width: 100%;">
 							
-				<el-table-column prop="tijiaodate" label="提交日期" :formatter="changeDate1">
+				<el-table-column prop="tijiaoriqi" label="提交日期" :formatter="changeDate1">
 				</el-table-column>
 				<el-table-column prop="tijiaomoney" label="提交金额">
 				</el-table-column>
-				<el-table-column prop="daifumoney" label="代付金额">
+				<el-table-column prop="persnoname" label="发起人" >
 				</el-table-column>
-				<el-table-column prop="shifumoney" label="实付金额">
+				<el-table-column prop="audittime" label="审批时间" :formatter="changeDate2">
 				</el-table-column>
-				<el-table-column prop="faqiren" label="发起人" >
+				<el-table-column prop="auditname" label="审批人">
 				</el-table-column>
-				<el-table-column prop="fukuanzhanghao" label="收款账号"   width="180">
+				<el-table-column prop="status" label="审批状态"  :formatter="formatState2" >
 				</el-table-column>
-				<el-table-column prop="zhifustate" label="支付状态"  :formatter="formatState1">
+				<el-table-column prop="fkstatus" label="支付状态"  :formatter="formatState1">
 				</el-table-column>
 				<!-- <el-table-column prop="zhuangtai" label="备注"  :formatter="formatState">
 				</el-table-column> -->
@@ -61,9 +61,9 @@
 										 <el-dropdown-menu slot="dropdown" >
 												 <!-- <el-dropdown-item   v-if="scope.row.zhuangtai==0||scope.row.zhuangtai==2" ><el-button v-if="fun('claim')"   @click="handleRokeBack(scope.row)">认领</el-button></el-dropdown-item>
 												 <el-dropdown-item v-if="fun('queryMemo')" ><el-button   @click="handleView(scope.$index, scope.row)">查看备注</el-button></el-dropdown-item> -->
-												 <el-dropdown-item><el-button @click="handleView(scope.$index, scope.row)">提交备注</el-button></el-dropdown-item>
-												 <el-dropdown-item v-if="fun('paSubListDedList')"><el-button @click="handleviewRokeBack(scope.$index,scope.row)">扣款记录</el-button></el-dropdown-item>
-												 
+												 <el-dropdown-item v-if="ztin(scope.row,[1])"><el-button @click="handleRokeBack(scope.row)">审核</el-button></el-dropdown-item>
+												 <el-dropdown-item v-if="ztin(scope.row,[2,3])"><el-button @click="handleviewRokeBack(scope.$index,scope.row)">审核意见</el-button></el-dropdown-item>
+												 <el-dropdown-item v-if="ztin(scope.row,[1,2,3])"><el-button @click="handleView(scope.$index, scope.row)">查看备注</el-button></el-dropdown-item>
 
 										 </el-dropdown-menu>
 								 </el-dropdown>
@@ -86,7 +86,7 @@
 						{{udopinion==null?'无数据':udopinion}}
 			</el-form>
 		</el-dialog>
-        <el-dialog title="查看提交备注" v-model="viewDateFormVisible" :close-on-click-modal="false">
+        <el-dialog title="查看备注" v-model="viewDateFormVisible" :close-on-click-modal="false">
         		<el-form v-model="beizhu" label-width="120px"   ref="viewDateForm">
 						{{beizhu==null?'无数据':beizhu}}
         		</el-form>
@@ -108,7 +108,7 @@
         hedanUpdataPurchaseContract,
 		
 		
-				getPayablePayment,
+				getReceiveSubmiList,
 				bleSubmission,
 				
 				getReceivableListPage,
@@ -235,6 +235,14 @@
                     return newDate.toLocaleDateString()
                 }
             },
+			ztin(row, arr){
+					var status = arr.indexOf(row.status);
+					if (status > -1) {
+							return true;
+					} else {
+							return false;
+					}
+			},
             cancel(){
                 this.resetForm('hedan');
                 this.Visible = false;
@@ -587,11 +595,10 @@
 					beizhu: '',
 				};
 			},
-			//扣款记录
+			//审核意见的审批
 			handleviewRokeBack(index, row){
-				this.$router.push('/payableFinanceSubm?id=' + row.tCwFcSubmitId);
-// 				this.udopinion = this.financeReceivable[index].auditdesc;
-// 				this.rokeBackFormVisiblevie = true;
+				this.udopinion = this.financeReceivable[index].auditdesc;
+				this.rokeBackFormVisiblevie = true;
 				// this.renlingData.tCwSrCaiwuId=row.tCwSrCaiwuId;
 // 				this.addForm = Object.assign({}, row);
 // 				this.addForm = {
@@ -611,11 +618,10 @@
 			//支付状态显示转换
 			formatState1: function (row, column) {
 					let status = [];
-					status[0] = '未支付';
-					status[1] = '付款成功';
-					status[2] = '付款失败';
+					status[1] = '未支付';
+					status[2] = '已支付';
 					status[3] = '已撤回';
-					return status[row.zhifustate];
+					return status[row.fkstatus];
 			},
 			//审批状态显示转换
 			formatState2: function (row, column) {
@@ -642,14 +648,20 @@
 			//时间戳转日期格式
 			changeDate1(value){
 					var newDate = new Date();
-					newDate.setTime(value.tijiaodate);
+					newDate.setTime(value.tijiaoriqi);
+					return newDate.toLocaleDateString()
+			},
+			//时间戳转日期格式
+			changeDate3(value){
+					var newDate = new Date();
+					newDate.setTime(value);
 					return newDate.toLocaleDateString()
 			},
 			//时间戳转日期格式
 			changeDate2(row, column){
-					if(row.skdate!=null) {
+					if(row.audittime!=null) {
 							var newDate = new Date();
-							newDate.setTime(row.skdate);
+							newDate.setTime(row.audittime);
 							return newDate.toLocaleDateString()
 					}
 			},
@@ -689,40 +701,29 @@
 					this.pageSizerl =val;
 					this.getReceivableRL();
 			},
-			//时间戳转化为日期
-			timeconversion(timestamp){
-				var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-        var Y = date.getFullYear() + '/';
-        var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '/';
-        var D = date.getDate() + ' ';
-        var h = date.getHours() + ':';
-        var m = date.getMinutes() + ':';
-        var s = date.getSeconds();
-        return Y+M+D;
-			},	
 			//获取实收款列表
 			getReceivable() {
 				let para = {
-					id: this.srid,
+					srid: this.srid,
 				};
 				this.listLoading = true;
-				getPayablePayment(para).then((res) => {
-					this.financeReceivable = res.data.data.dfInfos;
-					for(var i=0;i<this.financeReceivable.length;i++){
-						this.financeReceivable[i].fukuanzhanghao = this.financeReceivable[i].fukuanyinhang + this.financeReceivable[i].fukuanzhanghao;
+				getReceiveSubmiList(para).then((res) => {
+					this.total = res.data.total;
+					this.financeReceivable = res.data.data;
+					if(res.data.data.length > 0){
+						this.bianhao = res.data.data[0].hetongbianhao;
+						this.xiangmu = res.data.data[0].xiangmu;
+						this.yuezjin = res.data.data[0].yuezujin;
+						if(res.data.data[0].kemu == 1){
+							this.type = '房租';
+						}else{
+							this.type = '押金';
+						}
+						this.hzouqi = res.data.data[0].zhouqi;
+						this.ysdata = this.changeDate3(res.data.data[0].shoukuandate);
+						this.ysjine = res.data.data[0].shoukuanmoney;
+						this.sjys = res.data.data[0].sjyingshoumoney;
 					}
-					this.bianhao = res.data.data.htbianhao;
-					this.xiangmu = res.data.data.loupanName + ' ' + res.data.data.loudongName + ' ' + res.data.data.houseno;
-					this.yuezjin = res.data.data.monthmoney;
-					if(res.data.data.fktype == 1){
-						this.type = '房租';
-					}else{
-						this.type = '押金';
-					}
-					this.hzouqi = res.data.data.zhouqi;
-					this.ysdata = this.timeconversion(res.data.data.fkdate);
-					this.ysjine = res.data.data.fkmoney;
-					this.sjys = res.data.data.shifumoney;
 					this.listLoading = false;
 				});
 			},
@@ -838,8 +839,9 @@
         },
         mounted(){
             // this.saleHedanContractList();
-					this.srid = this.$route.query.id;
-					this.hedan.qiandanren[0].contractid = this.$route.query.id;
+			this.srid = this.$route.query.id;
+            this.hetongid = this.$route.query.id;
+            this.hedan.qiandanren[0].contractid = this.$route.query.id;
             //根据url得到的合同ID，来获取数据
 //             if(this.$route.query.id!=null){
 //                 //console.log(this.$route.query);

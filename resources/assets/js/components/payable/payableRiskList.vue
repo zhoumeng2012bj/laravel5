@@ -36,9 +36,9 @@
         <el-tabs v-model="activeName2" type="border-card" @tab-click="handleClick">
             <el-tab-pane label="全部" name="first"></el-tab-pane>
             <el-tab-pane label="待提交" name="second"></el-tab-pane>
-            <el-tab-pane label="已提交" name="third"></el-tab-pane>
-           <!-- <el-tab-pane label="部分已付" name="fourth"></el-tab-pane>
-            <el-tab-pane label="已完成" name="fifth"></el-tab-pane>
+            <el-tab-pane label="部分提交" name="third"></el-tab-pane>
+            <el-tab-pane label="提交完成" name="fourth"></el-tab-pane>
+            <!-- <el-tab-pane label="已完成" name="fifth"></el-tab-pane>
             <el-tab-pane label="已驳回" name="sixth"></el-tab-pane> -->
             <el-table :data="Payable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中" @selection-change="selsChange" style="width: 100%;">
                 <el-table-column prop="htbianhao" label="合同编号" width="190">
@@ -62,9 +62,11 @@
 								</el-table-column>
 								<el-table-column prop="fkmoney" label="应付金额" width="110">
 								</el-table-column>
+								<el-table-column prop="tijiaomoney" label="已提交金额" width="110">
+								</el-table-column>
 								<el-table-column prop="skinfo" label="收款账号"   width="180">
 								</el-table-column>
-								<el-table-column prop="settlementStatus" label="状态"  :formatter="formatState"  width="95">
+								<el-table-column prop="windControlState" label="状态"  :formatter="formatState"  width="95">
 								</el-table-column>
                <!-- <el-table-column prop="tijiaomoney" label="提交金额"  width="95">
                 </el-table-column>
@@ -79,9 +81,9 @@
                                    操作<i class="el-icon-caret-bottom el-icon--right"></i>
                                </el-button>
                                <el-dropdown-menu slot="dropdown" >
-                                   <el-dropdown-item v-if="ztin(scope.row,[0])&&fun('paSub')"><el-button   @click="handleRokeBack(scope.$index, scope.row)">提交付款</el-button></el-dropdown-item>
+                                   <el-dropdown-item v-if="ztin(scope.row,[0,1])&&fun('paRiskSub')" ><el-button   @click="handleRokeBack(scope.$index, scope.row)">提交付款</el-button></el-dropdown-item>
                                    <!-- <el-dropdown-item  v-if="scope.row.xiugaizhuangtai=='已修改'&&fun('payableRecord') "> <el-button  @click="handleOpen(scope.$index, scope.row)">修改记录</el-button> </el-dropdown-item> -->
-                                   <el-dropdown-item v-if="ztin(scope.row,[1])&&fun('paSubList')"> <el-button  @click="handleOpenUp(scope.$index, scope.row)">提交记录</el-button> </el-dropdown-item>
+                                   <el-dropdown-item v-if="ztin(scope.row,[1,2])&&fun('paRiskSubL')"  > <el-button  @click="handleOpenUp(scope.$index, scope.row)">提交记录</el-button> </el-dropdown-item>
                                    <!-- <el-dropdown-item   v-if="ztin(scope.row,[0,1,2,4])&&fun('payableEidtDate')"><el-button  v-if="scope.row.fktype<20"  @click="handleEdit(scope.$index, scope.row)">编辑付款日期</el-button></el-dropdown-item>
                                    <el-dropdown-item   v-if="ztin(scope.row,[0,1,2,4])&&fun('payableEidtMoney')"><el-button   v-if="scope.row.fktype<20" @click="handleMoneyEdit(scope.$index, scope.row)">编辑付款金额</el-button></el-dropdown-item>
                                    <el-dropdown-item v-if="ztin(scope.row,[0,1,2,4])&&fun('payableEidt')">
@@ -112,56 +114,18 @@
             </el-col>
         </el-tabs>
         <el-dialog title="提交付款" v-model="rokeBackFormVisible" :close-on-click-modal="false">
-            <!-- <el-form :model="rokeBackForm" label-width="120px" :rules="rokeBackFormRules" ref="rokeBackForm"  >
+            <el-form :model="rokeBackForm" label-width="120px" :rules="rokeBackFormRules" ref="rokeBackForm"  >
                 <el-row>
                     <el-col :span="8">
                     <el-form-item label="付款金额：" prop="tijiaomoney">
                         <el-input    v-model.number="rokeBackForm.tijiaomoney" auto-complete="off"></el-input>
                     </el-form-item>
                     </el-col>
-                    <el-col :span="8">
-                    <el-form-item label="付款时间：" prop="fukuandate">
-                        <el-date-picker type = "date" v-model="rokeBackForm.fukuandate" auto-complete="off">
-                        </el-date-picker>
-                    </el-form-item>
-                    </el-col>
                 </el-row>
-                <el-row>
-                    <el-col :span="8">
-                        <el-form-item label="收款方户名：" prop="zhanghu">
-                            <el-input    v-model="rokeBackForm.zhanghu" auto-complete="off"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="16">
-                   <el-form-item label="收款银行：" prop="fukuanyinhang">
-                    <el-input   v-model="rokeBackForm.fukuanyinhang" auto-complete="off"></el-input>
-                   </el-form-item>
-                    </el-col>
-                </el-row>
-
-                   <el-form-item label="收款账号：" prop="fukuanzhanghao">
-                    <el-input    v-model="rokeBackForm.fukuanzhanghao" auto-complete="off"></el-input>
-                   </el-form-item>
-
-                    <el-form-item   label="备注：" prop="beizhu">
-                        <el-input type="textarea" v-model="rokeBackForm.beizhu" auto-complete="off"></el-input>
-                    </el-form-item>
-            </el-form> -->
-						<el-row>
-							<el-col :span="20">
-								<span>户名：{{rokeBackForm.huming==null?'无数据':rokeBackForm.huming}}</span>
-							</el-col>
-						</el-row><br />
-						<el-row>
-							<el-col :span="20">
-								<span>开户行：{{rokeBackForm.khh==null?'无数据':rokeBackForm.khh}}</span>
-							</el-col>
-						</el-row><br />
-						<el-row>
-							<el-col :span="20">
-								<span>银行账户：{{rokeBackForm.yhzh==null?'无数据':rokeBackForm.yhzh}}</span>
-							</el-col>
-						</el-row>
+								<el-form-item   label="备注：" prop="beizhu">
+										<el-input type="textarea" v-model="rokeBackForm.beizhu" auto-complete="off"></el-input>
+								</el-form-item>
+            </el-form>
 						<div slot="footer" class="dialog-footer">
 								<el-button @click.native="rokeBackFormVisible = false">取消</el-button>
 								<el-button type="primary" @click.native="rokeBackSubmit" :loading="rokeBackLoading">确认</el-button>
@@ -328,7 +292,7 @@
 
     import {
 			getPaySettlementListPage,
-			submissionPayable,
+			riskSubmissionPayable,
 			
 			
 			
@@ -356,11 +320,12 @@
                     contractNo: '',
                     yz:'',
                     xm:'',
-                    zt:'',
+                    zt2:'',
                     startdate:'',
                     enddate:'',
 
                 },
+								xianzaje:'',
                 options:[
                     {
                         value: 1,
@@ -430,18 +395,6 @@
                             }
                         }, trigger: 'blur'
                         }],
-                    fukuandate: [
-                        {required: true, message: '不能为空'},
-                    ],
-                    zhanghu: [
-                        {required: true, message: '不能为空'},
-                    ],
-                    fukuanyinhang: [
-                        {required: true, message: '不能为空'},
-                    ],
-                    fukuanzhanghao: [
-                        {required: true, message: '不能为空'},
-                    ],
                 },
 
                 editDateFormVisible: false,//编辑界面是否显示
@@ -486,9 +439,9 @@
                 //付款界面数据
                 rokeBackForm: {
                     tCwFcId:'',
-                    huming:'',
-                    khh:'',
-                    yhzh:'',
+                    tijiaomoney:'',
+                    beizhu:'',
+										shifumoney:'',
                 },
                 YXJ: '',
                 addFormVisible: false,//新增界面是否显示
@@ -539,7 +492,7 @@
                 }
             },
             ztin(row,arr){
-                var status = arr.indexOf(row.settlementStatus);
+                var status = arr.indexOf(row.windControlState);
                 if(status>-1){
                     return true;
                 }else{
@@ -560,8 +513,9 @@
             formatState: function (row, column) {
                 let status = [];
                 status[0] = '待提交';
-                status[1] = '已提交';
-                return status[row.settlementStatus];
+                status[1] = '部分提交';
+								status[2] = '提交完成';
+                return status[row.windControlState];
             },
             //时间戳转日期格式
             changeDate(fkdate){
@@ -577,7 +531,7 @@
                 }else{
                     ztStatus = tab.index -1;
                 }
-                this.filters.zt = ztStatus;
+                this.filters.zt2 = ztStatus;
                 this.getPayable();
 
             },
@@ -596,7 +550,7 @@
                 this.$router.push('/paymentRecord?id=' + row.tCwFcId);
             },
             handleOpenUp: function (index, row) {
-                this.$router.push('/payableRecord?id=' + row.tCwFcId);
+                this.$router.push('/payableSubm?id=' + row.tCwFcId);
             },
             //获取楼盘
             remoteMethod1(query) {
@@ -735,13 +689,12 @@
                 let para = {
 									page: this.page,
 									pageSize: this.pageSize,
-									listState: 0,//1 风控 0结算 
+									listState: 1,//1 风控 0结算 
 									htno: this.filters.contractNo,
 									xm: this.filters.xm,
 									sdate: this.filters.startdate,
 									edate: this.filters.enddate,
-									zt: this.filters.zt,
-									zt2:'',
+									zt2:this.filters.zt2,
                 };
                 this.listLoading = true;
                 getPaySettlementListPage(para).then((res) => {
@@ -792,12 +745,15 @@
             //显示付款界面
             handleRokeBack: function (index, row) {
                 this.rokeBackFormVisible = true;
-								this.rokeBackForm = {
-									huming:this.Payable[index].skzhanhu,
-									khh:this.Payable[index].skyinhang,
-									yhzh:this.Payable[index].zhanghao,
-								};
-								this.tjfuid = row.tCwFcId;
+                this.rokeBackForm  = Object.assign({}, row);
+								this.xianzaje = Number(row.fkmoney) - Number(row.tijiaomoney);
+								this.tjjexz = Number(row.tijiaomoney);
+                this.rokeBackForm = {
+                		tCwFcId:row.tCwFcId,
+                		tijiaomoney:'',
+                		beizhu:'',
+										shifumoney:row.fkmoney,
+                };
             },
             //显示编辑界面
             handleEdit: function (index, row) {
@@ -953,28 +909,51 @@
             },
             //付款
             rokeBackSubmit: function () {
-							this.$confirm('确认提交吗？', '提示', {}).then(() => {
-									this.rokeBackLoading = true;
-									let para = {
-											id: this.tjfuid,
-									}
-									submissionPayable(para).then((res) => {
-											this.rokeBackLoading = false;
-											if(res.data.code==200) {
-											this.$message({
-													message: '提交成功',
-													type: 'success'
-											});
-											}else{
-													this.$message({
-															message: res.data.msg,
-															type: 'error'
-													});
-											}
-											this.rokeBackFormVisible = false;
-											this.getPayable();
-									});
-							});
+							if(this.rokeBackForm.tijiaomoney > this.xianzaje){
+								this.$message({
+										message: '提交金额不能大于应付金额！',
+										type: 'error'
+								});
+							}else{
+                this.$refs.rokeBackForm.validate((valid) => {
+                    if (valid) {
+                        this.$confirm('确认提交吗？', '提示', {}).then(() => {
+                            this.rokeBackLoading = true;
+                            // let para = Object.assign({}, this.rokeBackForm);
+														let para = {
+																tCwFcId: this.rokeBackForm.tCwFcId,
+																tijiaomoney: this.rokeBackForm.tijiaomoney,
+																beizhu: this.rokeBackForm.beizhu,
+																shifumoney: this.rokeBackForm.shifumoney,
+														}
+                            riskSubmissionPayable(para).then((res) => {
+                                this.rokeBackLoading = false;
+                                if(res.data.code==200) {
+																	if(res.data.success){
+																		this.$message({
+																				message: '提交成功',
+																				type: 'success'
+																		});
+																		this.rokeBackFormVisible = false;
+																		this.getPayable();
+																	}else{
+																		this.$message({
+																				message: res.data.msg,
+																				type: 'error'
+																		});
+																	}
+                               
+                                }else{
+                                    this.$message({
+                                        message: res.data.msg,
+                                        type: 'error'
+                                    });
+                                }
+                            });
+                        });
+                    }
+                });
+							}
             },
             selsChange: function (sels) {
                 this.sels = sels;

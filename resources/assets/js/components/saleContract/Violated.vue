@@ -4,8 +4,8 @@
 			<el-button type="primary" class="el-icon-plus" @click="addFollow"> 写跟进</el-button>
 		</div>
 		<el-dialog title="写跟进" :visible.sync="dialogFormVisibleFollow">
-			<el-form :model="formFollow">
-				<el-form-item label="跟进日期" :label-width="formLabelWidthFollow">
+			<el-form :model="formFollow" :rules="addformFollowRules" ref="formFollow">
+				<el-form-item label="跟进日期" :label-width="formLabelWidthFollow" prop="followdate">
 					<div class="block">
 						<el-date-picker
 							v-model="formFollow.followdate"
@@ -14,7 +14,7 @@
 						</el-date-picker>
 					</div>
 				</el-form-item>
-				<el-form-item label="跟进内容" :label-width="formLabelWidthFollow">
+				<el-form-item label="跟进内容" :label-width="formLabelWidthFollow" prop="followcontext">
 					<el-input type="textarea" v-model="formFollow.followcontext" placeholder="请输入跟进内容"></el-input>
 				</el-form-item>
 			</el-form>
@@ -96,6 +96,14 @@
     data() {
       return {
 				dialogFormVisibleFollow: false,
+				addformFollowRules:{
+					followdate:[
+						{required: true, message: '不能为空'}
+					],
+					followcontext:[
+						{required: true, message: '不能为空'}
+					],
+				},
 				formFollow: {
 					id: '',
 					followcontext: '',///跟进内容
@@ -178,24 +186,29 @@
 				this.dialogFormVisibleFollow = true;
 			},
 			cancelFollow(){
+				this.$refs.formFollow.resetFields();
 				this.formFollow.optimizationnum = '';
 				this.formFollow.followcontext = '';
 				this.formFollow.followdate = '';
 				this.dialogFormVisibleFollow = false;
 			},
 			formFollowsure(){
-				this.formFollow.hetongid = this.hetongid;
-				let para = Object.assign({}, this.formFollow);
-				addviolatePurchaseContract(para).then((res)=>{
-						if(res.data.code == 200)　{
-							this.dialogFormVisibleFollow = false;
-							location.reload();
-						}else{
-							this.$message({
-									message:res.data.msg,
-									type:'error'
-							})
-						}
+				this.$refs.formFollow.validate((valid) => {
+					if(valid){
+						this.formFollow.hetongid = this.hetongid;
+						let para = Object.assign({}, this.formFollow);
+						addviolatePurchaseContract(para).then((res)=>{
+								if(res.data.code == 200)　{
+									this.dialogFormVisibleFollow = false;
+									location.reload();
+								}else{
+									this.$message({
+											message:res.data.msg,
+											type:'error'
+									})
+								}
+						})
+					}
 				})
 			},
 			//将中国标准时间转化为yyy-mmm-ddd格式的日期

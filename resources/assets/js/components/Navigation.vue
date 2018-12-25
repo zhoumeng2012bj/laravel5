@@ -282,4 +282,10 @@
             }
         }
     }
+		.container .main .menu-expanded[data-v-e79f95f8]{
+			overflow: auto;
+		}
+		::-webkit-scrollbar{display: none;}
+// 		.container .main .menu-expanded[data-v-e79f95f8]{position: relative;overflow: hidden;width: 230px;}
+// 		.container .main .menu-expanded[data-v-e79f95f8] ul{ position: absolute; left: 0;overflow-x: hidden;overflow-y: scroll;}
 </style>

@@ -7,7 +7,7 @@
             <el-form-item label="项目名称:">
                 <el-input v-model="filters.xm" placeholder="请输入项目名称"></el-input>
             </el-form-item>
-            <el-form-item label="付款日期:">
+            <el-form-item label="收款日期:">
                 <el-date-picker type="date" placeholder="请选择开始日期" v-model="filters.startdate">
                 </el-date-picker>
             </el-form-item>
@@ -41,12 +41,8 @@
         </el-form>
         <div class="totals_box">
         	<p>
-		        <span style="color:red;font-size: 14px;">（注：红色日期表示付款已延期，请尽快处理）</span>
+		        <span style="color:red;font-size: 14px;">（注：红色日期表示收款已延期，请尽快处理）</span>
         	</p>
-					<p>
-						<span style="font-size: 14px;border: 1px solid black;padding: 5px;border-radius: 5px;">导入实付记录</span>
-						<span style="font-size: 14px;border: 1px solid black;padding: 5px;border-radius: 5px;">导出异常数据</span>
-					</p>
         </div>
         
         <!-- <el-tabs v-model="activeName2" type="border-card" @tab-click="handleClick"> -->
@@ -61,25 +57,23 @@
                 </el-table-column>
                 <el-table-column prop="xiangmu" label="项目">
                 </el-table-column>
-								<el-table-column prop="fktype" label="类型" :formatter="formatFKType" width="100">
+								<el-table-column prop="kemu" label="类型" :formatter="formatFKType" width="100">
 								</el-table-column>
 								<el-table-column prop="zhouqi" label="周期">
 								</el-table-column>
-								<el-table-column prop="fukuanmoney" label="实际应付" width="110">
+								<el-table-column prop="tijiaomoney" label="本期应收" width="110">
 								</el-table-column>
-                <el-table-column prop="shifumoney" label="实付金额" width="110">
+                <el-table-column prop="shoukuanmoney" label="实收金额" width="110">
                 </el-table-column>
-								<el-table-column prop="shifudate" label="实付日期" width="150">
+								<el-table-column prop="shoukuandate" label="实收日期" width="150">
 										<template slot-scope="scope">
-												<span :class="tableClassName(scope.row.shifudate,scope.row.zhifustate)">  {{ changeDate(scope.row.shifudate)
+												<span :class="tableClassName(scope.row.shoukuandate,scope.row.paystatus)">  {{ changeDate(scope.row.shoukuandate)
 														}}</span>
 										</template>
 								</el-table-column>
-								<el-table-column prop="skinfo" label="收款账号"   width="180">
-								</el-table-column>
-                <el-table-column prop="zhifustate" label="支付状态" :formatter="formatState" width="100">
+                <el-table-column prop="paystatus" label="状态" :formatter="formatState" width="100">
                 </el-table-column>
-								<el-table-column prop="duizhangstate" label="对账状态" :formatter="formatState2" width="100">
+								<el-table-column prop="duizhangstatus" label="对账状态" :formatter="formatState2" width="100">
 								</el-table-column>
                 <el-table-column label="操作" width="180">
                     <template slot-scope="scope">
@@ -88,8 +82,8 @@
                                   操作<i class="el-icon-caret-bottom el-icon--right"></i>
                               </el-button>
                               <el-dropdown-menu slot="dropdown">
-																	<el-dropdown-item v-if="fun('FPMPS')">
-																			<el-button @click.native="handleRokeBack(scope.$index, scope.row)" :loading="addFormLoading">修改支付状态</el-button>
+																	<el-dropdown-item v-if="ztin(scope.row,[1])&&fun('financeWithdraw')">
+																			<el-button @click.native="handleRokeBack(scope.$index, scope.row)" :loading="addFormLoading">撤回</el-button>
 																	</el-dropdown-item>
                               </el-dropdown-menu>
                           </el-dropdown>
@@ -124,7 +118,7 @@
 <script>
 
     import {
-			actualPaymentPayable,
+			getReceivablePlanList,
 			withdrawReceivable,
 			
 			
@@ -145,9 +139,10 @@
 										
                 },
 								options:[
-									{value:0, label:'未付款',},
-									{value:1, label:'付款成功',},
-									{value:2, label:'付款失败',},
+									{value:1, label:'未付款',},
+									{value:2, label:'支付成功',},
+									{value:3, label:'支付失败',},
+									{value:4, label:'已撤回',},
 								],
 								options2:[
 									{value:1, label:'支付成功',},
@@ -191,14 +186,14 @@
         methods: {
             tableClassName(skdate, srstate){
                 //return 'info-row';
-                if (skdate < new Date() && srstate != 1) {
+                if (skdate < new Date() && srstate != 2) {
                     return 'info-row';
                 } else {
                     return '';
                 }
             },
             ztin(row, arr){
-                var status = arr.indexOf(row.srstate);
+                var status = arr.indexOf(row.paystatus);
                 if (status > -1) {
                     return true;
                 } else {
@@ -212,16 +207,16 @@
                     this.filters.zt = '';
                     this.getReceivable();
                 } else if (tab.index == 1) {
-                    this.filters.zt = 0;
+                    this.filters.zt = 1;
                     this.getReceivable();
                 } else if (tab.index == 2) {
-                    this.filters.zt = 3;
+                    this.filters.zt = 2;
                     this.getReceivable();
                 } else if (tab.index == 3) {
-                    this.filters.zt = 2;
+                    this.filters.zt = 3;
                     this.getReceivable();
                 } else if (tab.index == 4) {
-                    this.filters.zt = 2;
+                    this.filters.zt = 4;
                     this.getReceivable();
                 }
             },
@@ -229,27 +224,23 @@
                 let status = [];
                 status[0] = '押金';
                 status[1] = '房租';
-                status[2] = '补偿三方佣金';
-                status[10] = '退还租金';
-                status[11] = '退还房租';
-                status[20] = '意向金';
-                return status[row.fktype];
+                return status[row.kemu];
             },
             //状态显示转换
             formatState: function (row, column) {
                 let status = [];
-                status[0] = '未付款';
-                status[1] = '付款成功';
-                status[2] = '付款失败';
-                return status[row.zhifustate];
+                status[1] = '未付款';
+                status[2] = '支付成功';
+                status[3] = '支付失败';
+								status[4] = '已撤回';
+                return status[row.paystatus];
             },
 						//对账状态显示转换
 						formatState2: function (row, column) {
 								let status = [];
-								status[0] = '无';
-								status[1] = '付款成功';
-								status[2] = '付款失败';
-								return status[row.duizhangstate];
+								status[1] = '支付成功';
+								status[2] = '支付失败';
+								return status[row.duizhangstatus];
 						},
 						//类型显示转换
 						formatType: function (row, column) {
@@ -283,13 +274,13 @@
                     size: this.pageSize,
                     htno: this.filters.htno,
                     xm: this.filters.xm,
-                    zhifustate: this.filters.status,
-										duizhangstate: this.filters.duizhangstatus,
+                    zt: this.filters.status,
+										dzzt: this.filters.duizhangstatus,
                     sdate: this.filters.startdate,
                     edate: this.filters.enddate, 
                 };
                 this.listLoading = true;
-								actualPaymentPayable(para).then((res) => {
+                getReceivablePlanList(para).then((res) => {
                     this.total = res.data.total;
                     this.Receivable = res.data.data;
                     // this.DataSum = res.data.dataSum;
@@ -314,6 +305,7 @@
 										this.addFormLoading = true;
 										let para = { 
 											tCwSrPlanId: row.tCwSrPlanId,
+											tCwSrSubmitId:row.tCwSrSubmitId,
 											paystatus: 4,
 										};
 										withdrawReceivable(para).then((res) => {

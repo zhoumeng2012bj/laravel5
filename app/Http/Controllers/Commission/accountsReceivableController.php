@@ -140,11 +140,7 @@ class accountsReceivableController extends Controller
         );
         return $response->getBody();
     }
-		//催款跟进列表
-		public function pressmoney(Request $request){
-				$cwid = Input::get('cwid');
-				$currentPage = Input::get('currentPage');
-				$pageSize = Input::get('pageSize');
+		//催
 				$client = new Client([
 						'base_uri' => $this->base_url,
 				]);
@@ -168,3 +164,4 @@ class accountsReceivableController extends Controller
 		}
 
 }
+                                                                                                                                                                                                                   

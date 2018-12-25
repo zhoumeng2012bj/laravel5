@@ -61,8 +61,8 @@
 										 <el-dropdown-menu slot="dropdown" >
 												 <!-- <el-dropdown-item   v-if="scope.row.zhuangtai==0||scope.row.zhuangtai==2" ><el-button v-if="fun('claim')"   @click="handleRokeBack(scope.row)">认领</el-button></el-dropdown-item>
 												 <el-dropdown-item v-if="fun('queryMemo')" ><el-button   @click="handleView(scope.$index, scope.row)">查看备注</el-button></el-dropdown-item> -->
-												 <el-dropdown-item><el-button @click="handleView(scope.$index, scope.row)">提交备注</el-button></el-dropdown-item>
-												 <el-dropdown-item v-if="fun('paSubListDedList')"><el-button @click="handleviewRokeBack(scope.$index,scope.row)">扣款记录</el-button></el-dropdown-item>
+												 <el-dropdown-item><el-button @click="handleView(scope.$index, scope.row)">查看备注</el-button></el-dropdown-item>
+												 <el-dropdown-item v-if="fun('paRiskSubLDedList')"><el-button @click="handleviewRokeBack(scope.$index,scope.row)">扣款记录</el-button></el-dropdown-item>
 												 
 
 										 </el-dropdown-menu>
@@ -235,6 +235,14 @@
                     return newDate.toLocaleDateString()
                 }
             },
+			ztin(row, arr){
+				var status = arr.indexOf(row.tijiaozhuangtai);
+				if (status > -1) {
+						return true;
+				} else {
+						return false;
+				}
+			},
             cancel(){
                 this.resetForm('hedan');
                 this.Visible = false;

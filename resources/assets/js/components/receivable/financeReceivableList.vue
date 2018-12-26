@@ -56,8 +56,8 @@
                                <!-- <el-dropdown-item   v-if="scope.row.zhuangtai==0||scope.row.zhuangtai==2" ><el-button v-if="fun('claim')"   @click="handleRokeBack(scope.row)">认领</el-button></el-dropdown-item> -->
 															 <el-dropdown-item v-if="ztin(scope.row,[0,2])&&fun('receiptsClaim')"><el-button  @click="handleRokeBack(scope.row)">认领</el-button></el-dropdown-item>
                                <el-dropdown-item v-if="fun('receiptsClaimList')"><el-button   @click="handleclaimRecord(scope.$index, scope.row)">认领记录</el-button></el-dropdown-item>
-																<el-dropdown-item v-if="ztin(scope.row,[0,1,2])"><el-button   @click="handleUpload(scope.$index, scope.row)">上传凭证</el-button></el-dropdown-item>
-																<el-dropdown-item v-if="ztin(scope.row,[1,2])"><el-button   @click="handleView(scope.$index, scope.row)">查看凭证</el-button></el-dropdown-item>
+																<el-dropdown-item v-if="ztin(scope.row,[0,1,2])&&fun('RUpload')"><el-button   @click="handleUpload(scope.$index, scope.row)">上传凭证</el-button></el-dropdown-item>
+																<el-dropdown-item v-if="ztin(scope.row,[1,2])&&fun('RRUploadView')"><el-button   @click="handleView(scope.$index, scope.row)">查看凭证</el-button></el-dropdown-item>
                            </el-dropdown-menu>
                        </el-dropdown>
                    </template>

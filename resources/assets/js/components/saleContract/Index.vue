@@ -103,7 +103,7 @@
                             <el-dropdown-item v-if="ztin(scope.row,[6,7,8,9,10,11,12,13])&&fun('saleContactSummary')"><el-button @click="handleSummary(scope.$index, scope.row)">打印核心数据</el-button></el-dropdown-item>
                             <el-dropdown-item  v-if="ztin(scope.row,[0,1,2,3,4,5])&&fun('saleContactZF')"><el-button @click="handleZuofei(scope.$index, scope.row)">合同作废</el-button></el-dropdown-item>
                             <el-dropdown-item  v-if="ztin(scope.row,[6,7,8,9,10,11,12,13,15,16,17])&&fun('saleContactJGD')"><el-button @click="handleJiaogedan(scope.$index, scope.row)">交割单&nbsp;&nbsp;&nbsp;</el-button></el-dropdown-item>
-                            <el-dropdown-item  v-if="ztin(scope.row,[6,7,8,9,10,11,12,13])&&fun('saleContactAppZH')"><el-button @click="handleAppZhanghao(scope.$index, scope.row)">app账号管理</el-button></el-dropdown-item>
+                            <el-dropdown-item  v-if="ztin(scope.row,[6,7,8,9,10,11,12,13])&&fun('saleContactAppZH')"><el-button @click="handleAppZhanghao(scope.$index, scope.row)">用户账号管理</el-button></el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
                 </template>

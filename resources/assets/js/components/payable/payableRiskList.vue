@@ -7,9 +7,6 @@
             <el-form-item label="项目名称:">
                 <el-input v-model="filters.xm" placeholder="请输入项目名称"></el-input>
             </el-form-item>
-            <!-- <el-form-item label="业主名称:">
-                <el-input v-model="filters.yz" placeholder="请输入业主名称"></el-input>
-            </el-form-item><br/> -->
             <el-form-item label="付款日期:">
             <el-date-picker  type = "date" placeholder="请选择开始日期" v-model="filters.startdate">
             </el-date-picker>
@@ -20,15 +17,9 @@
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" icon="search"  v-on:click="getPayable">搜索</el-button>
-                <!-- <el-button v-if="fun('payableAddYXJ')" type="primary" class="el-icon-plus" @click="handleAdd">新增</el-button> -->
             </el-form-item>
         </el-form>
          	<div class="totals_box">
-         		<!-- <p>
-         			合计 <span class="totals">应付金额：{{DataSum.sumMoney}}</span>
-	         		<span class="totals">提交金额：{{DataSum.tijiaoMoney}}</span>
-	         		<span class="totals">实付金额：{{DataSum.shijiMoney}}</span>
-         		</p> -->
          		<p>
          			<span style="color:red;font-size: 14px;">(注：红色日期表示付款已延期，请尽快处理)</span>         			
          		</p>
@@ -38,17 +29,11 @@
             <el-tab-pane label="待提交" name="second"></el-tab-pane>
             <el-tab-pane label="部分提交" name="third"></el-tab-pane>
             <el-tab-pane label="提交完成" name="fourth"></el-tab-pane>
-            <!-- <el-tab-pane label="已完成" name="fifth"></el-tab-pane>
-            <el-tab-pane label="已驳回" name="sixth"></el-tab-pane> -->
             <el-table :data="Payable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中" @selection-change="selsChange" style="width: 100%;">
                 <el-table-column prop="htbianhao" label="合同编号" width="190">
                 </el-table-column>
                 <el-table-column prop="xiangmu" label="项目">
                 </el-table-column>
-               <!-- <el-table-column prop="yezhu" label="业主/租户"  width="100" >
-                </el-table-column>
-                <el-table-column prop="fkfangshi" label="付款方式"  width="95" >
-                </el-table-column> -->
                 <el-table-column prop="monthmoney" label="月租金" width="80" >
                 </el-table-column>
 								<el-table-column prop="fktype" label="类型" width="95"   :formatter="formatFKType">
@@ -68,12 +53,6 @@
 								</el-table-column>
 								<el-table-column prop="windControlState" label="状态"  :formatter="formatState"  width="95">
 								</el-table-column>
-               <!-- <el-table-column prop="tijiaomoney" label="提交金额"  width="95">
-                </el-table-column>
-                <el-table-column prop="shifumoney" label="实付金额"  width="95" >
-                </el-table-column>
-                <el-table-column prop="xiugaizhuangtai" label="修改状态"   width="95">
-                </el-table-column> -->
                 <el-table-column label="操作" width="120">
                        <template slot-scope="scope">
                            <el-dropdown   menu-align="start">
@@ -82,16 +61,7 @@
                                </el-button>
                                <el-dropdown-menu slot="dropdown" >
                                    <el-dropdown-item v-if="ztin(scope.row,[0,1])&&fun('paRiskSub')" ><el-button   @click="handleRokeBack(scope.$index, scope.row)">提交付款</el-button></el-dropdown-item>
-                                   <!-- <el-dropdown-item  v-if="scope.row.xiugaizhuangtai=='已修改'&&fun('payableRecord') "> <el-button  @click="handleOpen(scope.$index, scope.row)">修改记录</el-button> </el-dropdown-item> -->
                                    <el-dropdown-item v-if="ztin(scope.row,[1,2])&&fun('paRiskSubL')"  > <el-button  @click="handleOpenUp(scope.$index, scope.row)">提交记录</el-button> </el-dropdown-item>
-                                   <!-- <el-dropdown-item   v-if="ztin(scope.row,[0,1,2,4])&&fun('payableEidtDate')"><el-button  v-if="scope.row.fktype<20"  @click="handleEdit(scope.$index, scope.row)">编辑付款日期</el-button></el-dropdown-item>
-                                   <el-dropdown-item   v-if="ztin(scope.row,[0,1,2,4])&&fun('payableEidtMoney')"><el-button   v-if="scope.row.fktype<20" @click="handleMoneyEdit(scope.$index, scope.row)">编辑付款金额</el-button></el-dropdown-item>
-                                   <el-dropdown-item v-if="ztin(scope.row,[0,1,2,4])&&fun('payableEidt')">
-                                       <el-button v-if="scope.row.fktype==20" @click="handleEditYS(scope.$index, scope.row)">编辑</el-button>
-                                   </el-dropdown-item>
-                                   <el-dropdown-item v-if="ztin(scope.row,[0,1,2,4])&&fun('payableFinish')">
-                                       <el-button @click="handleFinish(scope.$index, scope.row)">完成</el-button>
-                                   </el-dropdown-item> -->
                                </el-dropdown-menu>
                            </el-dropdown>
                        </template>
@@ -130,153 +100,6 @@
 								<el-button @click.native="rokeBackFormVisible = false">取消</el-button>
 								<el-button type="primary" @click.native="rokeBackSubmit" :loading="rokeBackLoading">确认</el-button>
 						</div>
-        </el-dialog>
-
-
-        <el-dialog :title="YXJ" v-model="addFormVisible" :close-on-click-modal="false">
-            <el-form :model="addForm" label-width="120px" :rules="addFormRules" ref="addForm">
-                <el-row>
-                    <el-col :span="8">
-                        <el-form-item label="楼盘"  prop="loupanName">
-                            <el-select
-                                    v-model="addForm.loupanName"
-                                    filterable
-                                    default-first-option
-                                    remote
-                                    @change="change1"
-                                    placeholder="楼盘"
-                                    :remote-method="remoteMethod1"
-                                    :loading="loupanloading">
-                                <el-option
-                                        v-for="item in options1"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.label">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item  label="楼栋" prop="loudongName">
-                            <el-select
-                                    v-model="addForm.loudongName"
-                                    filterable
-                                    default-first-option
-                                    remote
-                                    @change="change2"
-                                    placeholder="楼栋"
-                                    :remote-method="remoteMethod2"
-                                    :loading="loupanloading">
-                                <el-option
-                                        v-for="item in options2"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.label">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item  label="房间号" prop="houseno">
-                            <el-select
-                                    v-model="addForm.houseno"
-                                    filterable
-                                    allow-create
-                                    default-first-option
-                                    remote
-                                    @change="change3"
-                                    placeholder="房间号"
-                                    :remote-method="remoteMethod3"
-                                    :loading="housenoloading">
-                                <el-option
-                                        v-for="item in options3"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.label">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="12">
-                <el-form-item label="付款日期：" prop="fkdate" >
-                    <el-date-picker type="date" v-model="addForm.fkdate" auto-complete="off"  style="width:100%">
-                    </el-date-picker>
-                </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                <el-form-item label="应付金额：" prop="fkmoney">
-                    <el-input v-model.number="addForm.fkmoney" auto-complete="off"></el-input>
-                </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="12">
-                <el-form-item label="付款方户名：" prop="skzhanhu">
-                    <el-input v-model="addForm.skzhanhu" auto-complete="off"></el-input>
-                </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                <el-form-item label="收款银行：" prop="skyinhang">
-                    <el-input v-model="addForm.skyinhang" auto-complete="off"></el-input>
-                </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-form-item label="收款账号：" prop="zhanghao">
-                    <el-input v-model="addForm.zhanghao" auto-complete="off"></el-input>
-                </el-form-item>
-
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click.native="addFormVisible = false">取消</el-button>
-                <el-button type="primary" @click.native="addFormSubmit" :loading="addFormLoading">保存</el-button>
-            </div>
-        </el-dialog>
-        <el-dialog title="编辑付款日期" v-model="editDateFormVisible" :close-on-click-modal="false" style="width:1000px;margin-left: 250px;">
-            <el-form :model="editDateForm" label-width="120px" :rules="editDateFormRules" ref="editDateForm"  >
-                <el-row>
-                    <el-col :span="10">
-                        <el-form-item label="提前付款：" prop="tiQianDays">
-                            <el-input v-model.number="editDateForm.tiQianDays" auto-complete="off"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="1" style="text-align: right;margin-top: 2px;line-height: 36px;margin-right: 50px;">
-                        天
-                    </el-col>
-                    <el-col :span="10">
-                        <el-form-item label="" prop="isBenQi" style='margin-left: -120px;'>
-                            <el-radio-group v-model="editDateForm.isBenQi" style='display: flex;height: 36px;align-items: center;'>
-                                <el-radio class="radio" label=true>本期</el-radio>
-                                <el-radio class="radio" label=false>所有</el-radio>
-                            </el-radio-group>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click.native="editDateFormVisible = false">取消</el-button>
-                <el-button type="primary" @click.native="editDateFormSubmit" :loading="editDateFormLoading">保存</el-button>
-            </div>
-        </el-dialog>
-
-        <el-dialog title="编辑付款金额" v-model="editMoneyFormVisible" :close-on-click-modal="false" style="width:800px;margin-left: 400px;">
-            <el-form :model="editMoneyForm" label-width="125px" :rules="editMoneyFormRules" ref="editMoneyForm" >
-                <el-row>
-                    <el-col :span="20">
-                        <el-form-item label="本期付款金额：" prop="shouKuanMoney">
-                            <el-input   v-model.number="editMoneyForm.shouKuanMoney" auto-complete="off"></el-input>
-                        </el-form-item>
-                    </el-col>
-
-                </el-row>
-
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click.native="editMoneyFormVisible = false">取消</el-button>
-                <el-button type="primary" @click.native="editMoneyFormSubmit" :loading="editMoneyFormLoading">保存</el-button>
-            </div>
         </el-dialog>
     </el-row>
 </template>
@@ -355,22 +178,6 @@
                         label: '已驳回'
                     }
                 ],
-                //楼盘数据
-                options1: [],
-                list1: [],
-                loupanloading: false,
-                estate: [],//服务器搜索的楼盘数据放入这个数组中
-                // 楼栋数据
-                options2: [],
-                list2: [],
-                loudongloading: false,
-                building: [],//服务器搜索的楼盘数据放入这个数组中
-                // 房间数据
-                options3: [],
-                list3: [],
-                housenoloading: false,
-                house: [],//服务器搜索的楼盘数据放入这个数组中
-                houseData: [],
                 //分页类数据
                 total:0,
                 currentPage:0,
@@ -396,87 +203,12 @@
                         }, trigger: 'blur'
                         }],
                 },
-
-                editDateFormVisible: false,//编辑界面是否显示
-                editDateFormLoading: false,
-                editDateFormRules: {
-                    tiQianDays: [
-                        {required: true, message: '不能为空'},
-                    ],
-                    isBenQi: [
-                        {required: true, message: '不能为空'},
-                    ],
-                },
-                //编辑界面数据
-                editDateForm: {
-                    tiQianDays:'',
-                    isBenQi:'',
-                    tCwFcId:'',
-                    hetongId:'',
-                },
-                editMoneyFormVisible: false,//编辑界面是否显示
-                editMoneyFormLoading: false,
-                editMoneyFormRules: {
-                    shouKuanMoney: [{required: true, message: '不能为空'},
-                        {type: 'number', message: '必须为数字', trigger: 'blur'},
-                        {  required: true, validator: (rule, value, callback) => {
-                            if ( value < 0) {
-                                callback(new Error("不能小于0"));
-                            } else {
-                                callback();
-                            }
-                        }, trigger: 'blur'
-                        }]
-                },
-                //编辑界面数据
-                editMoneyForm: {
-                    shouKuanMoney:'',
-                    yuanMoney:'',
-                    tCwFcId:'',
-                    hetongId:'',
-
-                },
                 //付款界面数据
                 rokeBackForm: {
                     tCwFcId:'',
                     tijiaomoney:'',
                     beizhu:'',
 										shifumoney:'',
-                },
-                YXJ: '',
-                addFormVisible: false,//新增界面是否显示
-                addFormLoading: false,
-                addFormRules: {
-                    fkmoney: [
-                        {required: true, message: '不能为空'},
-                        {type: 'number', message: '必须为数字'}
-                    ],
-                    skzhanhu: [
-                        {required: true, message: '不能为空'},
-                    ],
-                    fkdate: [
-                        {required: true, message: '不能为空'},
-                    ],
-                    zhanghao: [
-                        {required: true, message: '不能为空'},
-                    ],
-                    skyinhang: [
-                        {required: true, message: '不能为空'},
-                    ],
-                },
-
-                //新增界面数据
-                addForm: {
-                    loupanid: '',
-                    loudongid: '',
-                    fkmoney: '',
-                    loupanName: '',
-                    loudongName: '',
-                    houseno: '',
-                    skzhanhu: '',
-                    fkdate: '',
-                    skyinhang: '',
-                    zhanghao: '',
                 },
                 //被选中的权限
                 checked:[],
@@ -552,138 +284,6 @@
             handleOpenUp: function (index, row) {
                 this.$router.push('/payableSubm?id=' + row.tCwFcId);
             },
-            //获取楼盘
-            remoteMethod1(query) {
-                let para = {
-                    str: query
-                };
-                this.loupanloading = true;
-                getLoupanList(para).then((res) => {
-                    let arr = [];
-                    arr[0] = '';
-                    for (var i in res.data) {
-                        arr[i] = res.data [i];
-                    }
-                    this.estate = arr;
-                    this.loupanloading = false;
-                    this.list = this.estate.map((item, index) => {
-                        return {value: index, label: item};
-                    });
-                    if (query !== '') {
-                        this.options1 = this.list.filter(item => {
-                            return item.label.toLowerCase()
-                                    .indexOf(query.toLowerCase()) > -1;
-                        });
-                    } else {
-                        this.options1 = [];
-                    }
-                });
-
-            },
-            //获取楼栋
-            remoteMethod2(query) {
-                let para = {
-                    loupanOmcId: this.addForm.loupanid,
-                };
-                this.loupanloading = true;
-                getLoudongList(para).then((res) => {
-                    let arr = [];
-                    arr[0] = '';
-                    for (var i in res.data) {
-                        arr[i] = res.data [i];
-                    }
-                    this.building = arr;
-                    this.loupanloading = false;
-                    this.list2 = this.building.map((item, index) => {
-                        return {value: index, label: item};
-                    });
-                    if (query !== '') {
-                        this.options2 = this.list2.filter(item => {
-                            return item.label.toLowerCase()
-                                    .indexOf(query.toLowerCase()) > -1;
-                        });
-                    } else {
-                        this.options2 = [];
-                    }
-                });
-
-            },
-            //获取房号
-            remoteMethod3(query) {
-                let para = {
-                    lpid: this.addForm.loupanid,
-                    zdid: this.addForm.loudongid,
-                };
-                this.housenoloading = true;
-                //console.log(para);
-                getFanghaoList(para).then((res) => {
-                    this.houseData = res.data;
-                    let arr = [];
-                    arr[0] = '';
-                    for (var i in res.data) {
-                        arr[res.data[i].id] = res.data[i].fybh;
-                    }
-                    this.house = arr;
-                    this.housenoloading = false;
-                    this.list3 = this.house.map((item, index) => {
-                        return {value: index, label: item};
-                    });
-                    if (query !== '') {
-                        this.options3 = this.list3.filter(item => {
-                            return item.label.toLowerCase()
-                                    .indexOf(query.toLowerCase()) > -1;
-                        });
-                    } else {
-                        this.options3 = [];
-                    }
-                });
-
-            },
-            //得到房间号以后，提取OMC的对应信息
-            change1(){
-                //楼盘
-                for (var x in this.options1) {
-                    if (this.options1[x].label == this.addForm.loupanName) {
-                        this.addForm.loupanid = this.options1[x].value;
-                        this.addForm.loudongName = null;//清除楼栋和房号的缓存
-                        this.addForm.loudongid = null;//清除楼栋和房号的缓存
-                        this.addForm.houseno = null;//清除楼栋和房号的缓存
-                        this.addForm.omcId = null;//清除楼栋和房号的缓存
-                    }
-                }
-            },
-            change2(){
-                //楼栋
-                for (var x in this.options2) {
-                    if (this.options2[x].label == this.addForm.loudongName) {
-                        this.addForm.loudongid = this.options2[x].value;
-                        this.addForm.houseno = null;//清除楼栋和房号的缓存
-                        this.addForm.omcId = null;//清除楼栋和房号的缓存
-                    }
-                }
-            },
-            change3(){
-                //房号
-                for (var x in this.options3){
-                    if(this.options3[x].label==this.addForm.houseno){
-                        this.addForm.omcId=this.options3[x].value;
-                    }
-                }
-                if (this.addForm.omcId == null&& this.addForm.houseno!=null) {
-                    let para = {
-                        loupanOmcId: this.addForm.loupanid,
-                        loudongOmcId: this.addForm.loudongid,
-                        fanghao: this.addForm.houseno,
-                    }
-                    createFanghao(para).then((res => {
-                        this.addForm.omcId = res.data.data;
-                        this.$message({
-                            message: '楼盘字典中不存在该房源，已自动创建',
-                            type: 'success'
-                        });
-                    }))
-                }
-            },
             //获取应付款列表
             getPayable() {
                 let para = {
@@ -708,40 +308,6 @@
                     this.listLoading = false;
                 });
             },
-            //新增应收页面
-            handleAdd: function (index, row) {
-                this.addFormVisible = true;
-                this.YXJ = '新增';
-                this.addForm = {
-                    loupanid: null,
-                    loudongid: null,
-                    fkmoney: '',
-                    loupanName: '',
-                    loudongName: '',
-                    houseno: null,
-                    skzhanhu: '',
-                    fkdate: '',
-                    skyinhang: '',
-                    zhanghao: ''
-                };
-            },
-            //编辑应收页面
-            handleEditYS: function (index, row) {
-                this.YXJ = '编辑';
-                this.addFormVisible = true;
-                this.addForm.tCwFcId = row.tCwFcId;
-                this.addForm.omcId = 1;
-                this.addForm.loupanid = row.loupanid;
-                this.addForm.loudongid = row.loudongid;
-                this.addForm.fkmoney = row.fkmoney;
-                this.addForm.loupanName = row.loupanName;
-                this.addForm.loudongName = row.loudongName;
-                this.addForm.houseno = row.houseno;
-                this.addForm.skzhanhu = row.skzhanhu;
-                this.addForm.skyinhang = row.skyinhang;
-                this.addForm.zhanghao = row.zhanghao;
-                this.addForm.fkdate = row.fkdate;
-            },
             //显示付款界面
             handleRokeBack: function (index, row) {
                 this.rokeBackFormVisible = true;
@@ -754,158 +320,6 @@
                 		beizhu:'',
 										shifumoney:row.fkmoney,
                 };
-            },
-            //显示编辑界面
-            handleEdit: function (index, row) {
-
-                this.editDateFormVisible = true;
-                this.editDateForm = Object.assign({}, row);
-                this.editDateForm = {
-                    tiQianDays:'',
-                    isBenQi:'',
-                    tCwFcId:row.tCwFcId,
-                    hetongId:row.hetongid,
-                };
-            },
-            //显示完成弹框
-            handleFinish: function (index, row) {
-                this.$confirm('确认完成吗？', '提示', {}).then(() => {
-                    let para = {
-                        id: row.tCwFcId,
-                    };
-                    finishPayable(para).then((res) => {
-                        if(res.data.code==200) {
-                            this.$message({
-                                message: '完成成功',
-                                type: 'success'
-                            });
-                        } else{
-                            this.$message({
-                                message: res.data.msg,
-                                type: 'error'
-                            });
-                        }
-                        this.getPayable();
-                    });
-                });
-            },
-
-            //显示编辑界面
-            handleMoneyEdit: function (index, row) {
-
-                this.editMoneyFormVisible = true;
-                this.editMoneyForm = Object.assign({}, row);
-                this.editMoneyForm = {
-                    shouKuanMoney:'',
-                    yuanMoney:'',
-                    tCwFcId:row.tCwFcId,
-                    hetongId:row.hetongid,
-                };
-            },
-            //提交数据
-            addFormSubmit(){
-                this.$refs.addForm.validate((valid) => {
-                    if (valid) {
-                        this.$confirm('确认提交吗？', '提示', {}).then(() => {
-                                this.addFormLoading = true;
-                                let para = Object.assign({}, this.addForm);
-                                if (para.tCwFcId != null && para.tCwFcId != '') {
-                                    editPayable(para).then((res) => {
-                                        this.addFormLoading = false;
-                                        if (res.data.code == 200) {
-                                            this.$message({
-                                                message: '提交成功',
-                                                type: 'success'
-                                            });
-                                        } else {
-                                            this.$message({
-                                                message: res.data.msg,
-                                                type: 'error'
-                                            });
-                                        }
-                                        this.addFormVisible = false;
-                                        this.getPayable();
-                                    });
-                                } else {
-                                    addPayable(para).then((res) => {
-                                        this.addFormLoading = false;
-                                        if (res.data.code == 200) {
-                                            this.$message({
-                                                message: '提交成功',
-                                                type: 'success'
-                                            });
-                                        } else {
-                                            this.$message({
-                                                message: res.data.msg,
-                                                type: 'error'
-                                            });
-                                        }
-                                        this.addFormVisible = false;
-                                        this.getPayable();
-                                    });
-                                }
-                            }
-                        );
-
-                    }
-                });
-            },
-            //编辑
-            editDateFormSubmit: function () {
-                this.$refs.editDateForm.validate((valid) => {
-                    if (valid) {
-                        this.$confirm('确认提交吗？', '提示', {}).then(() => {
-                            this.editDateFormLoading = true;
-                            let para = Object.assign({}, this.editDateForm);
-                            editDate(para).then((res) => {
-                                this.editDateFormLoading = false;
-                                if(res.data.code==200) {
-                                    this.$message({
-                                        message: '提交成功',
-                                        type: 'success'
-                                    });
-                                    this.$refs['editDateForm'].resetFields();
-
-                                }else{
-                                    this.$message({
-                                        message: res.data.msg,
-                                        type: 'error'
-                                    });
-                                }
-                                this.editDateFormVisible = false;
-                                this.getPayable();
-                            });
-                        });
-                    }
-                });
-            },
-            editMoneyFormSubmit: function () {
-                this.$refs.editMoneyForm.validate((valid) => {
-                    if (valid) {
-                        this.$confirm('确认提交吗？', '提示', {}).then(() => {
-                            this.editMoneyFormLoading = true;
-                            let para = Object.assign({}, this.editMoneyForm);
-                            editMoney(para).then((res) => {
-                                this.editMoneyFormLoading = false;
-                                if(res.data.code==200) {
-                                this.$message({
-                                    message: '提交成功',
-                                    type: 'success'
-                                });
-                                this.$refs['editMoneyForm'].resetFields();
-
-                                }else{
-                                    this.$message({
-                                        message: res.data.msg,
-                                        type: 'error'
-                                    });
-                                }
-                                this.editMoneyFormVisible = false;
-                                this.getPayable();
-                            });
-                        });
-                    }
-                });
             },
             //付款
             rokeBackSubmit: function () {

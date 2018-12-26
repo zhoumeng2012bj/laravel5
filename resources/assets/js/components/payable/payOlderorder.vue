@@ -232,7 +232,6 @@
                 };
                 this.listLoading = true;
                 getPayOrder(para).then((res) => {
-					console.log(res.data.data);
                     this.Payable = res.data.data;
                     this.listLoading = false;
                 });
@@ -260,11 +259,12 @@
 
         },
         mounted() {
-			this.getPayable();
-//             function hello() {
-//                 window.print()
-//             }
+            function hello() {
+                window.print()
+            }
+
             document.title = '支出凭证';
+            this.getPayable();
             this.nowDate = new Date().toLocaleDateString();
             setTimeout(hello, 1000);
         }

@@ -63,7 +63,7 @@
 												 <el-dropdown-item v-if="fun('queryMemo')" ><el-button   @click="handleView(scope.$index, scope.row)">查看备注</el-button></el-dropdown-item> -->
 												 <el-dropdown-item><el-button @click="handleView(scope.$index, scope.row)">提交备注</el-button></el-dropdown-item>
 												 <el-dropdown-item v-if="fun('paSubListDedList')"><el-button @click="handleviewRokeBack(scope.$index,scope.row)">扣款记录</el-button></el-dropdown-item>
-												 
+												 <el-dropdown-item><el-button @click="handleDump(scope.$index,scope.row)">打印凭证</el-button></el-dropdown-item>	 
 
 										 </el-dropdown-menu>
 								 </el-dropdown>
@@ -599,6 +599,9 @@
 // 					status: '',
 // 					beizhu: '',
 // 				};
+			},
+			handleDump(index,row){
+				window.open('/#/payOrder?id='+row.tCwFcSubmitId)
 			},
 			formatFKType(row, column){
 					let status = [];

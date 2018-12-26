@@ -126,6 +126,7 @@ import ReceivableView from "./components/receivable/receivableView.vue"; //应�
 //应付
 import PaymentRecord from "./components/payable/paymentRecordList.vue";
 import PayableRecord from "./components/payable/payableRecordList.vue";//应付的付款记录
+import PayablePrintRecord from "./components/payable/payablePrintRecordList.vue";//应付的付款记录payablePrintRecord
 import Payable from "./components/payable/payableList.vue";
 
 
@@ -893,6 +894,12 @@ let routes = [{
 				path: '/payableRecord',
 				component: PayableRecord,
 				name: '付款记录',
+				hidden: true
+			},
+			{
+				path: '/payablePrintRecord',
+				component: PayablePrintRecord,
+				name: '旧的付款记录',
 				hidden: true
 			},
 			{

@@ -107,7 +107,7 @@ class settlementController extends Controller
 
 		]);
 
-		$r = $client->request('POST', '/api/cw/yf/riskSubmit', [
+		$r = $client->request('POST', '/api/cw/yf/riskSubmit2', [
 			'json' => $obj
 		]);
 		return $r->getBody();

@@ -7,9 +7,6 @@
             <el-form-item label="项目名称:">
                 <el-input v-model="filters.xm" placeholder="请输入项目名称"></el-input>
             </el-form-item>
-            <!-- <el-form-item label="业主名称:">
-                <el-input v-model="filters.yz" placeholder="请输入业主名称"></el-input>
-            </el-form-item><br/> -->
             <el-form-item label="付款日期:">
             <el-date-picker  type = "date" placeholder="请选择开始日期" v-model="filters.startdate">
             </el-date-picker>
@@ -20,15 +17,9 @@
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" icon="search"  v-on:click="getPayable">搜索</el-button>
-                <!-- <el-button v-if="fun('payableAddYXJ')" type="primary" class="el-icon-plus" @click="handleAdd">新增</el-button> -->
             </el-form-item>
         </el-form>
          	<div class="totals_box">
-         		<!-- <p>
-         			合计 <span class="totals">应付金额：{{DataSum.sumMoney}}</span>
-	         		<span class="totals">提交金额：{{DataSum.tijiaoMoney}}</span>
-	         		<span class="totals">实付金额：{{DataSum.shijiMoney}}</span>
-         		</p> -->
          		<p>
          			<span style="color:red;font-size: 14px;">(注：红色日期表示付款已延期，请尽快处理)</span>         			
          		</p>
@@ -38,16 +29,11 @@
             <el-tab-pane label="待提交" name="second"></el-tab-pane>
             <el-tab-pane label="已提交" name="third"></el-tab-pane>
             <el-tab-pane label="已撤回" name="fifth"></el-tab-pane>
-            <!-- <el-tab-pane label="已驳回" name="sixth"></el-tab-pane> -->
             <el-table :data="Payable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中" @selection-change="selsChange" style="width: 100%;">
                 <el-table-column prop="hetongbianhao" label="合同编号" width="190">
                 </el-table-column>
                 <el-table-column prop="xiangmu" label="项目">
                 </el-table-column>
-               <!-- <el-table-column prop="yezhu" label="业主/租户"  width="100" >
-                </el-table-column>
-                <el-table-column prop="fkfangshi" label="付款方式"  width="95" >
-                </el-table-column> -->
                 <el-table-column prop="monthmoney" label="月租金" width="80" >
                 </el-table-column>
 								<el-table-column prop="fktype" label="类型" width="95"   :formatter="formatFKType">
@@ -71,12 +57,6 @@
 								</el-table-column>
 								<el-table-column prop="tijiaostate" label="状态"  :formatter="formatState"  width="95">
 								</el-table-column>
-               <!-- <el-table-column prop="tijiaomoney" label="提交金额"  width="95">
-                </el-table-column>
-                <el-table-column prop="shifumoney" label="实付金额"  width="95" >
-                </el-table-column>
-                <el-table-column prop="xiugaizhuangtai" label="修改状态"   width="95">
-                </el-table-column> -->
                 <el-table-column label="操作" width="120">
                        <template slot-scope="scope">
                            <el-dropdown   menu-align="start">
@@ -86,16 +66,7 @@
                                <el-dropdown-menu slot="dropdown" >
 																	<el-dropdown-item v-if="ztin(scope.row,[0])&&fun('EASub')"><el-button   @click="handleRokeBack(scope.$index, scope.row)">提交</el-button></el-dropdown-item>
                                   <el-dropdown-item v-if="ztin(scope.row,[0])&&fun('EADed')"><el-button   @click="handleEditYS(scope.$index, scope.row)">代付扣款</el-button></el-dropdown-item>
-                                   <!-- <el-dropdown-item  v-if="scope.row.xiugaizhuangtai=='已修改'&&fun('payableRecord') "> <el-button  @click="handleOpen(scope.$index, scope.row)">修改记录</el-button> </el-dropdown-item> -->
                                   <el-dropdown-item v-if="ztin(scope.row,[0,1,2])&&fun('EADedL')"> <el-button  @click="handleOpenUp(scope.$index, scope.row)">扣款记录</el-button> </el-dropdown-item>
-                                   <!-- <el-dropdown-item   v-if="ztin(scope.row,[0,1,2,4])&&fun('payableEidtDate')"><el-button  v-if="scope.row.fktype<20"  @click="handleEdit(scope.$index, scope.row)">编辑付款日期</el-button></el-dropdown-item>
-                                   <el-dropdown-item   v-if="ztin(scope.row,[0,1,2,4])&&fun('payableEidtMoney')"><el-button   v-if="scope.row.fktype<20" @click="handleMoneyEdit(scope.$index, scope.row)">编辑付款金额</el-button></el-dropdown-item>
-                                   <el-dropdown-item v-if="ztin(scope.row,[0,1,2,4])&&fun('payableEidt')">
-                                       <el-button v-if="scope.row.fktype==20" @click="handleEditYS(scope.$index, scope.row)">编辑</el-button>
-                                   </el-dropdown-item>
-                                   <el-dropdown-item v-if="ztin(scope.row,[0,1,2,4])&&fun('payableFinish')">
-                                       <el-button @click="handleFinish(scope.$index, scope.row)">完成</el-button>
-                                   </el-dropdown-item> -->
                                </el-dropdown-menu>
                            </el-dropdown>
                        </template>

@@ -126,6 +126,7 @@ import ReceivableView from "./components/receivable/receivableView.vue"; //应�
 //应付
 import PaymentRecord from "./components/payable/paymentRecordList.vue";
 import PayableRecord from "./components/payable/payableRecordList.vue";//应付的付款记录
+import PayablePrintRecord from "./components/payable/payablePrintRecordList.vue";//应付的付款记录payablePrintRecord
 import Payable from "./components/payable/payableList.vue";
 
 
@@ -760,19 +761,19 @@ let routes = [{
 		children: [{
 				path: '/payable',
 				component: Payable,
-				name: '应付款管理（结算）',
+				name: '应付款管理',
 				hidden: fk_payableList
 			},
 			{
 				path: '/payableRisk',
 				component: PayableRisk,
-				name: '应付款管理（风控）',
+				name: '应付款确认',
 				hidden: fk_payableRiskList
 			},
 			{
 				path: '/payableEditAmount',
 				component: PayableEditAmount,
-				name: '财务修改金额列表',
+				name: '应付款扣款',
 				hidden: fk_payableEditAmountList
 			},
 			{
@@ -796,7 +797,7 @@ let routes = [{
 			{
 				path: '/receivableAudit',
 				component: ReceivableAudit,
-				name: '审核列表（首期）',
+				name: '应收审核（首期）',
 				hidden: fk_receivableAuditList
 			},
 			{
@@ -808,25 +809,25 @@ let routes = [{
 			{
 				path: '/receivablePhase',
 				component: ReceivablePhase,
-				name: '应收款管理（二期之后）',
+				name: '应收款管理',
 				hidden: fk_receivablePhaseList
 			},
 			{
 				path: '/receivablePhaseAudit',
 				component: ReceivablePhaseAudit,
-				name: '审核列表（二期之后）',
+				name: '应收审核',
 				hidden: fk_receivablePhaseAuditList
 			},
 			{
 				path: '/receivablePhasePlan',
 				component: ReceivablePhasePlan,
-				name: '应收计划（二期之后）',
+				name: '应收计划',
 				hidden: fk_receivablePhasePlanList
 			},
 			{
 				path: '/receivableFinance',
 				component: ReceivableFinance,
-				name: '应收计划（财务）',
+				name: '应收总计划',
 				hidden: fk_receivableFinanceList
 			},
 			{
@@ -893,6 +894,12 @@ let routes = [{
 				path: '/payableRecord',
 				component: PayableRecord,
 				name: '付款记录',
+				hidden: true
+			},
+			{
+				path: '/payablePrintRecord',
+				component: PayablePrintRecord,
+				name: '旧的付款记录',
 				hidden: true
 			},
 			{

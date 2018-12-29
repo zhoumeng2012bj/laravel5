@@ -311,14 +311,16 @@
             },
             handleSuccess(response, file, fileList){
                 //响应值
-                console.log(response)
                 this.$message({
-                    message: '导入成功',
+                    message: response,
                     type: 'success'
                 });
             },
-            handleError(err, file, fileList){
-                console.log(err);
+            handleError(err, file, fileList){ 
+                this.$message({
+                    message: err,
+                    type: 'error'
+                });
 			},
             beforeUpload(file){
                 //上传前配置

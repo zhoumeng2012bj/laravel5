@@ -39,7 +39,7 @@
                 <el-button type="primary" icon="search" v-on:click="getReceivable">搜索</el-button>
             </el-form-item>
         </el-form>
-        <div class="totals_box">我
+        <div class="totals_box">
         	<p>
 		        <span style="color:red;font-size: 14px;">（注：红色日期表示付款已延期，请尽快处理）</span>
         	</p>

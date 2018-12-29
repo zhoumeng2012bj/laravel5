@@ -374,7 +374,6 @@ class settlementController extends Controller
                 'ss' => $list,
                 'piciUrl'=>$filename,
             ];
-            dd($data);
             $client = new Client([
                 'base_uri' => $this->base_url,
             ]);

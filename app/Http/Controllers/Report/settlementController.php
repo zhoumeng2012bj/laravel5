@@ -361,7 +361,13 @@ class settlementController extends Controller
         $array = explode('.',$_FILES["file"]["name"]);
         $filename=$array[0].date("YmdHis").'.'.$array[1];
         $filePath=$_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR .'..'.DIRECTORY_SEPARATOR .'storage'.DIRECTORY_SEPARATOR .'uploadfiles'.DIRECTORY_SEPARATOR  . $filename;
-        move_uploaded_file($_FILES["file"]["tmp_name"],iconv("UTF-8","gb2312",$filePath) );
+        $upload_file= iconv("UTF-8", "GBK",$filePath );
+        if (move_uploaded_file($_FILES["file"]["tmp_name"],$upload_file)) {
+            $res_file = iconv("GBK", "UTF-8", $upload_file);    // 再从 GBK 转为 UTF-8
+            rename($upload_file, $res_file);   // 重命名一下文件
+        }else{
+            echo "导入失败";die;
+        }
         $reader = Excel::load($filePath);//要开始导入文件，可以使用->load($filename)。回调是可选的。
         $reader = $reader->getSheet(0);//得到Excel的第一页内容，如下图3
         $list= $reader->toArray();
@@ -393,7 +399,7 @@ class settlementController extends Controller
 
                         });
                     })->store('xls')->export('xls');
-                    echo "导入失败，已导出失败数据成功";
+                    echo "处理失败，已导出失败数据成功";
                 } else {
                     echo "导入成功，无失败记录";
                 }

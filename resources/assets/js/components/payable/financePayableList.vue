@@ -44,8 +44,16 @@
 		        <span style="color:red;font-size: 14px;">（注：红色日期表示付款已延期，请尽快处理）</span>
         	</p>
 					<p>
-						<span style="font-size: 14px;border: 1px solid black;padding: 5px;border-radius: 5px;">导入实付记录</span>
-						<span style="font-size: 14px;border: 1px solid black;padding: 5px;border-radius: 5px;">导出异常数据</span>
+						<el-upload
+								style="padding: 5px;border-radius: 5px;"
+								action="/payable/planImportExcel"
+								:on-success="handleSuccess"
+								:show-file-list="false"
+								:multiple="false"
+								:on-error="handleError()"
+						>
+							<el-button size="small" type="primary">导入实付记录</el-button>
+						</el-upload>
 					</p>
         </div>
         
@@ -300,6 +308,18 @@
                     this.listLoading = false;
                 });
             },
+            handleSuccess(response, file, fileList){
+                //响应值
+                console.log(response)
+                this.$message({
+                    message: '导入成功',
+                    type: 'success'
+                });
+            },
+            handleError(err, file, fileList){
+                console.log(err);
+			},
+
             //撤回
             handleRokeBack: function (index, row) {
                 // this.rokeBackFormVisible = true;

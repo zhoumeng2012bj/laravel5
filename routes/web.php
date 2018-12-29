@@ -116,10 +116,8 @@ Route::post('payable/commission','Report\settlementController@commission');//财
 Route::get('payable/plan','Report\settlementController@plan');//应付计划列表
 Route::get('payable/withdrawPaya','Report\settlementController@withdrawPaya');//应付计划列表中的撤回
 Route::get('payable/actualPayment','Report\settlementController@actualPayment');//实付管理列表
-
-
-
-
+Route::get('payable/planExportExcel','Report\settlementController@planExportExcel');//应付计划导出
+Route::post('payable/planImportExcel','Report\settlementController@planImportExcel');//应付计划导入
 
 Route::resource('receivable','Commission\receivableController');
 Route::resource('financeReceivable','Report\financeReceivableController');

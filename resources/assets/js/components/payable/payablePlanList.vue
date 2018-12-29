@@ -34,7 +34,7 @@
          			<span style="color:red;font-size: 14px;">(注：红色日期表示付款已延期，请尽快处理)</span>         			
          		</p>
 						<p>
-							<span style="font-size: 14px;border: 1px solid black;padding: 5px;border-radius: 5px;">导出应付计划</span>
+                            <el-button type="primary"   style="padding: 5px;border-radius: 5px;"   v-on:click="handleExcel">导出应付计划</el-button>
 						</p>
          	</div>
         <el-tabs v-model="activeName2" type="border-card" @tab-click="handleClick">
@@ -747,6 +747,14 @@
                     }
                     this.listLoading = false;
                 });
+            },
+            //获取导出
+            handleExcel() {
+                var htno=this.filters.contractNo ;
+                var xm=this.filters.xm='' ;
+                var sDate=this.filters.startdate==''?'': this.filters.startdate.toLocaleDateString();
+                var eDate=this.filters.enddate==''?'': this.filters.enddate.toLocaleDateString() ;
+                window.open("/payable/planExportExcel?startdate="+sDate+"&enddate="+ eDate+"&xm="+xm+"&htno="+htno);
             },
             //新增应收页面
             handleAdd: function (index, row) {

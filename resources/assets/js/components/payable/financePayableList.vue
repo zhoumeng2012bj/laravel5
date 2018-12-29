@@ -51,6 +51,7 @@
 								:show-file-list="false"
 								:multiple="false"
 								:on-error="handleError()"
+								:before-upload="beforeUpload"
 						>
 							<el-button size="small" type="primary">导入实付记录</el-button>
 						</el-upload>
@@ -319,7 +320,16 @@
             handleError(err, file, fileList){
                 console.log(err);
 			},
-
+            beforeUpload(file){
+                //上传前配置
+                let excelfileExtend = ".xls,.xlsx"//设置文件格式
+                let fileExtend = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+                if (excelfileExtend.indexOf(fileExtend) <= -1) {
+                    this.$message.error('文件格式错误')
+                    return false
+                }
+                return true
+            },
             //撤回
             handleRokeBack: function (index, row) {
                 // this.rokeBackFormVisible = true;

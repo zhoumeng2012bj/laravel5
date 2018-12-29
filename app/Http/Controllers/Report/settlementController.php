@@ -361,7 +361,7 @@ class settlementController extends Controller
         $array = explode('.',$_FILES["file"]["name"]);
         $filename=$array[0].date("YmdHis").'.'.$array[1];
         $filePath=$_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR .'..'.DIRECTORY_SEPARATOR .'storage'.DIRECTORY_SEPARATOR .'uploadfiles'.DIRECTORY_SEPARATOR  . $filename;
-        move_uploaded_file($_FILES["file"]["tmp_name"],$filePath );
+        move_uploaded_file($_FILES["file"]["tmp_name"],iconv("UTF-8","gb2312",$filePath) );
         $reader = Excel::load($filePath);//要开始导入文件，可以使用->load($filename)。回调是可选的。
         $reader = $reader->getSheet(0);//得到Excel的第一页内容，如下图3
         $list= $reader->toArray();
@@ -374,11 +374,34 @@ class settlementController extends Controller
         dd($data);
         $client = new Client([
             'base_uri' => $this->base_url,
-            'headers' =>['access_token'=>'XXXX','app_id'=>'123']
         ]);
-        $response = $client->request('POST', '/api/contract/sf/img/upload', [
+        $response = $client->request('POST', '/api/cw/yf/getDaochuPlan', [
             'json' =>$data
         ]);
-        echo $response->getBody();
+        try {
+            $bk = $response->getBody();
+            $res = json_decode($bk);
+            if ($res->success) {
+                $cellData = $res->data->data;
+                // dd($cellData);
+                if (count($cellData) > 0) {
+
+                    Excel::create($res->data->piciCode, function ($excel) use ($cellData) {
+                        $excel->sheet('score', function ($sheet) use ($cellData) {
+                           // $sheet->getStyle ('F')->getNumberFormat()->setFormatCode ("0.00");
+                            $sheet->rows($cellData);
+
+                        });
+                    })->store('xls')->export('xls');
+                    echo "导入失败，已导出失败数据成功";
+                } else {
+                    echo "导入成功，无失败记录";
+                }
+            } else {
+                echo $res->msg;
+            }
+        } catch (Exception $ex) {
+            echo $ex->getMessage();
+        }
     }
 }

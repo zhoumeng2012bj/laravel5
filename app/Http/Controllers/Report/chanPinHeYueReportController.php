@@ -234,7 +234,7 @@ FKFS,ZJXX,DiZengDate,DiZengLiang,Price,YaJin,NowYueZuJin,NowPrice,NowPriceCha,No
         $headerData=['区域','分区','业主/租户','产品类型','用友编号','楼盘','楼栋','房间号','面积','房间数量','签约年限','收房/出房日',
             '签约日','合同租期','到期日','免租期','免租天数','免租期扣除方式','付款方式','租期/租金','递增日','递增量','单价（元/㎡/天）',
             '业主/租户押金','当前月租金','当前单价','单价差额','租金差额','渠道公司名称+姓名','签约支持','产权证号','房屋坐落',
-            '业主/租户姓名','业主/租户联系方式' ];
+            '业主/租户姓名','业主/租户联系方式'];
         array_unshift($cellData,$headerData);
         //dd($cellData);
         Excel::create('产品合约'.date("YmdHis"),function($excel) use ($cellData){

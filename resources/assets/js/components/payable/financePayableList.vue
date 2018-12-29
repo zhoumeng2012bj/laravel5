@@ -316,11 +316,13 @@
                     type: 'success'
                 });
             },
-            handleError(err, file, fileList){ 
-                this.$message({
-                    message: err,
-                    type: 'error'
-                });
+            handleError(err, file, fileList){
+//                if(err){
+//                this.$message({
+//                    message: err,
+//                    type: 'error'
+//                });
+//               }
 			},
             beforeUpload(file){
                 //上传前配置

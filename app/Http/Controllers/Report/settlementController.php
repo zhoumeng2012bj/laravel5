@@ -361,10 +361,10 @@ class settlementController extends Controller
             return $error;
         }
         $array = explode('.', $_FILES["file"]["name"]);
-        $filename = $array[0] . date("YmdHis") . '.' . $array[1];
-        $filePath = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'uploadfiles' . DIRECTORY_SEPARATOR . $filename;
+        $filename=$array[0] . date("YmdHis");
+        $filenametype = $filename . '.' . $array[1];
+        $filePath = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'uploadfiles' . DIRECTORY_SEPARATOR . $filenametype;
         if (move_uploaded_file($_FILES["file"]["tmp_name"], $filePath)) {
-
             $reader = Excel::load($filePath);//要开始导入文件，可以使用->load($filename)。回调是可选的。
             $reader = $reader->getSheet(0);//得到Excel的第一页内容，如下图3
             $list = $reader->toArray();
@@ -372,8 +372,9 @@ class settlementController extends Controller
             $data = [
                 'phone' => $user->phone,
                 'ss' => $list,
-                'piciUrl'=>$array[0],
+                'piciUrl'=>$filename,
             ];
+            dd($data);
             $client = new Client([
                 'base_uri' => $this->base_url,
             ]);

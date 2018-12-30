@@ -311,6 +311,7 @@
             },
             handleSuccess(response, file, fileList){
                 //响应值
+                 window.open(response );
                 this.$message({
                     message: response,
                     type: 'success'

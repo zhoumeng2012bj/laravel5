@@ -385,7 +385,6 @@ class settlementController extends Controller
                 $res = json_decode($bk);
                 if ($res->success) {
                     $cellData = $res->data->data;
-                    // dd($cellData);
                     if (count($cellData) > 0) {
 
                         Excel::create($res->data->piciCode, function ($excel) use ($cellData) {
@@ -394,13 +393,15 @@ class settlementController extends Controller
                                 $sheet->rows($cellData);
 
                             });
-                        })->store('xls')->export('xls');
-                        echo "处理失败，已导出失败数据成功";
+                        })->store('xls');
+                        //$res['data'] = route('download', ['file' => $res->data->piciCode.'.xls']);
+                        return  '/payable/planImportErrorExcel/'.$res->data->piciCode.'.xls'  ;
+                       // echo  response()->json(["code"=>300,"filepath"=>$res->data->piciCode.'.xls']);
                     } else {
                         echo "导入成功，无失败记录";
                     }
                 } else {
-                    echo $res->msg;
+                    echo "导入失败";
                 }
             } catch (Exception $ex) {
                 echo $ex->getMessage();
@@ -408,5 +409,10 @@ class settlementController extends Controller
         } else {
             echo "导入失败";
         }
+    }
+    public function planImportErrorExcel($file_name)
+    {
+        $file = public_path(    '..' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'exports' . DIRECTORY_SEPARATOR .$file_name);
+        return response()->download($file);
     }
 }

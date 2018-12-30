@@ -311,11 +311,20 @@
             },
             handleSuccess(response, file, fileList){
                 //响应值
-                 window.open(response );
-                this.$message({
-                    message: response,
-                    type: 'success'
-                });
+				if(response.code=='300'){
+                    window.open(response.data );
+                    this.$message({
+                        message: '导入成功，处理失败已下载失败数据',
+                        type: 'success'
+                    });
+				}else{
+                    this.$message({
+                        message: response,
+                        type: 'success'
+                    });
+				}
+
+
             },
             handleError(err, file, fileList){
 //                if(err){

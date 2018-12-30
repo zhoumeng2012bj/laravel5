@@ -118,7 +118,7 @@ Route::get('payable/withdrawPaya','Report\settlementController@withdrawPaya');//
 Route::get('payable/actualPayment','Report\settlementController@actualPayment');//实付管理列表
 Route::get('payable/planExportExcel','Report\settlementController@planExportExcel');//应付计划导出
 Route::post('payable/planImportExcel','Report\settlementController@planImportExcel');//应付计划导入
-Route::get('payable/planImportErrorExcel/{file}', 'Report\settlementController@planImportErrorExcel')->name('download');
+Route::get('payable/planImportErrorExcel/{file}', 'Report\settlementController@planImportErrorExcel');
 Route::resource('receivable','Commission\receivableController');
 Route::resource('financeReceivable','Report\financeReceivableController');
 Route::resource('accountsReceivable','Commission\accountsReceivableController');

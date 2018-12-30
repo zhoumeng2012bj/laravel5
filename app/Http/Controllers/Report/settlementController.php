@@ -395,8 +395,8 @@ class settlementController extends Controller
                             });
                         })->store('xls');
                         //$res['data'] = route('download', ['file' => $res->data->piciCode.'.xls']);
-                        return  '/payable/planImportErrorExcel/'.$res->data->piciCode.'.xls'  ;
-                       // echo  response()->json(["code"=>300,"filepath"=>$res->data->piciCode.'.xls']);
+                       // return  '/payable/planImportErrorExcel/'.$res->data->piciCode.'.xls'  ;
+                        return $data = ['code'=>300,  'data'=> '/payable/planImportErrorExcel/'.$res->data->piciCode.'.xls' ];
                     } else {
                         echo "导入成功，无失败记录";
                     }
@@ -412,7 +412,8 @@ class settlementController extends Controller
     }
     public function planImportErrorExcel($file_name)
     {
-        $file = public_path(    '..' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'exports' . DIRECTORY_SEPARATOR .$file_name);
+        //print_r(phpinfo());die;
+        $file =    '..' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'exports' . DIRECTORY_SEPARATOR .$file_name ;
         return response()->download($file);
     }
 }

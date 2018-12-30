@@ -361,26 +361,27 @@ class settlementController extends Controller
             return $error;
         }
         $array = explode('.', $_FILES["file"]["name"]);
-        $filename=$array[0] . date("YmdHis");
+        $filename = $array[0] . date("YmdHis");
         $filenametype = $filename . '.' . $array[1];
         $filePath = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'uploadfiles' . DIRECTORY_SEPARATOR . $filenametype;
         if (move_uploaded_file($_FILES["file"]["tmp_name"], $filePath)) {
-            $reader = Excel::load($filePath);//要开始导入文件，可以使用->load($filename)。回调是可选的。
-            $reader = $reader->getSheet(0);//得到Excel的第一页内容，如下图3
-            $list = $reader->toArray();
-            $user = Auth::user();
-            $data = [
-                'phone' => $user->phone,
-                'ss' => $list,
-                'piciUrl'=>$filename,
-            ];
-            $client = new Client([
-                'base_uri' => $this->base_url,
-            ]);
-            $response = $client->request('POST', '/api/cw/yf/saveOrder', [
-                'json' => $data
-            ]);
             try {
+                $reader = Excel::load($filePath);//要开始导入文件，可以使用->load($filename)。回调是可选的。
+                $reader = $reader->getSheet(0);//得到Excel的第一页内容，如下图3
+                $list = $reader->toArray();
+                $user = Auth::user();
+                $data = [
+                    'phone' => $user->phone,
+                    'ss' => $list,
+                    'piciUrl' => $filename,
+                ];
+                $client = new Client([
+                    'base_uri' => $this->base_url,
+                ]);
+                $response = $client->request('POST', '/api/cw/yf/saveOrder', [
+                    'json' => $data
+                ]);
+
                 $bk = $response->getBody();
                 $res = json_decode($bk);
                 if ($res->success) {
@@ -395,8 +396,8 @@ class settlementController extends Controller
                             });
                         })->store('xls');
                         //$res['data'] = route('download', ['file' => $res->data->piciCode.'.xls']);
-                       // return  '/payable/planImportErrorExcel/'.$res->data->piciCode.'.xls'  ;
-                        return $data = ['code'=>300,  'data'=> '/payable/planImportErrorExcel/'.$res->data->piciCode.'.xls' ];
+                        // return  '/payable/planImportErrorExcel/'.$res->data->piciCode.'.xls'  ;
+                        return $data = ['code' => 300, 'data' => '/payable/planImportErrorExcel/' . $res->data->piciCode . '.xls'];
                     } else {
                         echo "导入成功，无失败记录";
                     }
@@ -410,10 +411,11 @@ class settlementController extends Controller
             echo "导入失败";
         }
     }
+
     public function planImportErrorExcel($file_name)
     {
         //print_r(phpinfo());die;
-        $file =    '..' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'exports' . DIRECTORY_SEPARATOR .$file_name ;
+        $file = '..' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'exports' . DIRECTORY_SEPARATOR . $file_name;
         return response()->download($file);
     }
 }

@@ -404,7 +404,7 @@ class settlementController extends Controller
                 } else {
                     echo "导入失败";
                 }
-            } catch (Exception $ex) {
+            } catch (\Exception $ex) {
                 echo $ex->getMessage();
             }
         } else {

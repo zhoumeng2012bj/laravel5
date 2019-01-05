@@ -68,6 +68,8 @@
 								</el-table-column>
 								<el-table-column prop="skinfo" label="收款账号"   width="180">
 								</el-table-column>
+                              <el-table-column prop="daochucishu" label="导出次数"    width="95">
+                              </el-table-column>
 								<el-table-column prop="fukuanstate" label="状态"  :formatter="formatState"  width="95">
 								</el-table-column>
                <!-- <el-table-column prop="tijiaomoney" label="提交金额"  width="95">

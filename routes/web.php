@@ -103,7 +103,10 @@ Route::get('receivable/ClaimRdelt','Commission\examineController@ClaimRdelt');//
 Route::post('receivable/fSave','Commission\examineController@fSave');//实收管理列表中的新增
 Route::post('examine/addCopyImage','Commission\examineController@addCopyImage');//实收管理列表中的上传凭证
 Route::get('receivable/ImageList','Commission\examineController@ImageList');//实收管理中的查看上传凭证图片
-Route::get('receivable/ImageListDelete','Commission\examineController@ImageListDelete');//实收管理中的查看上传凭证图片的删除
+Route::get('receivable/accountslist','Commission\examineController@accountslist');//对账
+Route::get('receivable/accountsdatalist','Commission\examineController@accountsdatalist');//对账详情
+Route::post('receivable/accountsdatahandle','Commission\examineController@accountsdatahandle');//对账处理
+Route::get('receivable/accountsdatahandlelist','Commission\examineController@accountsdatahandlelist');//对账处理记录
 
 Route::get('payable/settlement','Report\settlementController@settlement');//应付款管理列表(结算)
 Route::get('payable/payment','Report\settlementController@payment');//应付中付款记录列表
@@ -119,6 +122,7 @@ Route::get('payable/actualPayment','Report\settlementController@actualPayment');
 Route::get('payable/planExportExcel','Report\settlementController@planExportExcel');//应付计划导出
 Route::post('payable/planImportExcel','Report\settlementController@planImportExcel');//应付计划导入
 Route::get('payable/planImportErrorExcel/{file}', 'Report\settlementController@planImportErrorExcel');
+Route::get('payable/planErrorExportExcel','Report\settlementController@planErrorExportExcel');//异常数据导出
 Route::resource('receivable','Commission\receivableController');
 Route::resource('financeReceivable','Report\financeReceivableController');
 Route::resource('accountsReceivable','Commission\accountsReceivableController');

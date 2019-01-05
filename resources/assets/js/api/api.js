@@ -60,7 +60,10 @@ export const claimRecord = params => { return axios.get(`${base}/receivable/Clai
 export const financefSave = params => { return axios.post(`${base}/receivable/fSave` , { params: params }); };//实收管理列表中的新增
 export const receImageList = params => { return axios.get(`${base}/receivable/ImageList`, { params: params }); };//实收管理中的查看上传凭证图片
 export const receiImageDelete = params => { return axios.get(`${base}/receivable/ImageListDelete`, { params: params }); };//实收管理中的查看上传凭证图片的删除
-
+export const accountslist = params => { return axios.get(`${base}/receivable/accountslist`, { params: params }); };//对账
+export const accountsdatalist = params => { return axios.get(`${base}/receivable/accountsdatalist`, { params: params }); };//对账详情
+export const accountsdatahandle = params => { return axios.post(`${base}/receivable/accountsdatahandle` , { params: params }); };//对账处理
+export const accountsdatahandlelist = params => { return axios.get(`${base}/receivable/accountsdatahandlelist`, { params: params }); };//对账处理记录
 
 export const getPaySettlementListPage = params => { return axios.get(`${base}/payable/settlement`, { params: params }); };//应付款管理列表(结算)
 export const getPayablePayment = params => { return axios.get(`${base}/payable/payment`, { params: params }); };//应付中付款记录列表

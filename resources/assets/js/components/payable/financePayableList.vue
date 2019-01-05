@@ -25,16 +25,16 @@
 								</el-option>
 							</el-select>
 						</el-form-item>
-						<el-form-item label="对账状态">
-							<el-select v-model="filters.duizhangstatus" @change="getReceivable" placeholder="请输入对账状态">
-								<el-option
-										v-for="item in options2"
-										:key="item.value"
-										:label="item.label"
-										:value="item.value">
-								</el-option>
-							</el-select>
-						</el-form-item>
+						<!--<el-form-item label="对账状态">-->
+							<!--<el-select v-model="filters.duizhangstatus" @change="getReceivable" placeholder="请输入对账状态">-->
+								<!--<el-option-->
+										<!--v-for="item in options2"-->
+										<!--:key="item.value"-->
+										<!--:label="item.label"-->
+										<!--:value="item.value">-->
+								<!--</el-option>-->
+							<!--</el-select>-->
+						<!--</el-form-item>-->
             <el-form-item>
                 <el-button type="primary" icon="search" v-on:click="getReceivable">搜索</el-button>
             </el-form-item>
@@ -43,7 +43,7 @@
         	<p>
 		        <span style="color:red;font-size: 14px;">（注：红色日期表示付款已延期，请尽快处理）</span>
         	</p>
-					<p>
+					<p style="display: flex;align-items: center;">
 						<el-upload
 								style="padding: 5px;border-radius: 5px;"
 								action="/payable/planImportExcel"
@@ -53,8 +53,12 @@
 								:on-error="handleError()"
 								:before-upload="beforeUpload"
 						>
-							<el-button size="small" type="primary">导入实付记录</el-button>
+							<el-button  type="primary">导入实付记录</el-button>
 						</el-upload>
+						<span style="display:inline-block;height:36px;">
+							<el-button type="primary"  tyle="padding: 5px;border-radius: 5px;"   v-on:click="handleExcel">导出异常数据</el-button>
+						</span>
+
 					</p>
         </div>
         
@@ -88,8 +92,8 @@
 								</el-table-column>
                 <el-table-column prop="zhifustate" label="支付状态" :formatter="formatState" width="100">
                 </el-table-column>
-								<el-table-column prop="duizhangstate" label="对账状态" :formatter="formatState2" width="100">
-								</el-table-column>
+								<!--<el-table-column prop="duizhangstate" label="对账状态" :formatter="formatState2" width="100">-->
+								<!--</el-table-column>-->
                 <el-table-column label="操作" width="180">
                     <template slot-scope="scope">
                         <el-dropdown menu-align="start">
@@ -323,17 +327,23 @@
                         type: 'success'
                     });
 				}
-
-
             },
             handleError(err, file, fileList){
-//                if(err){
-//                this.$message({
-//                    message: err,
-//                    type: 'error'
-//                });
-//               }
+                if(err){
+                this.$message({
+                    message: '导入失败',
+                    type: 'error'
+                });
+               }
 			},
+            //获取导出
+            handleExcel() {
+                var htno=this.filters.htno ;
+                var xm=this.filters.xm='' ;
+                var sDate=this.filters.startdate==''?'': this.filters.startdate.toLocaleDateString();
+                var eDate=this.filters.enddate==''?'': this.filters.enddate.toLocaleDateString() ;
+                window.open("/payable/planErrorExportExcel?startdate="+sDate+"&enddate="+ eDate+"&xm="+xm+"&htno="+htno);
+            },
             beforeUpload(file){
                 //上传前配置
                 let excelfileExtend = ".xls,.xlsx"//设置文件格式

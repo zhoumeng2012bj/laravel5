@@ -123,6 +123,7 @@ import FinanceReceivable from "./components/receivable/financeReceivableList.vue
 import ReceivableClaimRecord from "./components/receivable/receivableClaimRecordList.vue"; //应收认领记录列表
 import ReceivableUpload from "./components/receivable/receivableUpload.vue"; //应收认领记录列表中的上传凭证
 import ReceivableView from "./components/receivable/receivableView.vue"; //应收认领记录列表中的查看凭证
+import ReceivableAccounts from "./components/receivable/receivableAccountsList.vue"; //应收认领记录列表中的查看凭证
 //应付
 import PaymentRecord from "./components/payable/paymentRecordList.vue";
 import PayableRecord from "./components/payable/payableRecordList.vue";//应付的付款记录
@@ -755,39 +756,10 @@ let routes = [{
 	{
 		path: '/',
 		component: navigation,
-		name: '应收应付',
+		name: '应收款管理',
 		iconCls: 'el-icon-document', //图标样式class
 		hidden: fk_account,
-		children: [{
-				path: '/payable',
-				component: Payable,
-				name: '应付款管理',
-				hidden: fk_payableList
-			},
-			{
-				path: '/payableRisk',
-				component: PayableRisk,
-				name: '应付款确认',
-				hidden: fk_payableRiskList
-			},
-			{
-				path: '/payableEditAmount',
-				component: PayableEditAmount,
-				name: '应付款扣款',
-				hidden: fk_payableEditAmountList
-			},
-			{
-				path: '/payablePlan',
-				component: PayablePlan,
-				name: '应付计划',
-				hidden: fk_payablePlanList
-			},
-			{
-				path: '/financePayable',
-				component: FinancePayable,
-				name: '实付款管理',
-				hidden: fk_financePayableList
-			},
+		children: [
 			{
 				path: '/receivable',
 				component: Receivable,
@@ -926,9 +898,56 @@ let routes = [{
 				name: '修改记录',
 				hidden: true
 			},
+            {
+                path: '/paymentAccounts',
+                component: ReceivableAccounts,
+                name: '对账详情',
+                hidden: true
+            },
+
 		]
 
 	},
+    {
+        path: '/',
+        component: navigation,
+        name: '应付款管理',
+        iconCls: 'el-icon-document', //图标样式class
+        hidden: fk_account,
+        children: [{
+            path: '/payable',
+            component: Payable,
+            name: '应付款管理',
+            hidden: fk_payableList
+        },
+            {
+                path: '/payableRisk',
+                component: PayableRisk,
+                name: '应付款确认',
+                hidden: fk_payableRiskList
+            },
+            {
+                path: '/payableEditAmount',
+                component: PayableEditAmount,
+                name: '应付款扣款',
+                hidden: fk_payableEditAmountList
+            },
+            {
+                path: '/payablePlan',
+                component: PayablePlan,
+                name: '应付计划',
+                hidden: fk_payablePlanList
+            },
+            {
+                path: '/financePayable',
+                component: FinancePayable,
+                name: '实付款管理',
+                hidden: fk_financePayableList
+            },
+
+        ]
+
+    },
 	{
 		//版本1
 		path: '/saleContract/dumpx20170719',

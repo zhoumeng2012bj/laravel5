@@ -405,5 +405,86 @@ class examineController extends Controller
 		$response = $client->request('GET', '/api/cw/ys/img/'.$id.'/del');
 		echo $response->getBody();
 	}
-	
+    //对账列表
+    public function accountslist()
+    {
+        $page = Input::get('page');
+        $size = Input::get('pageSize');
+        $zt = Input::get('zt');
+        $sdate = Input::get('sdate');
+        $edate = Input::get('edate');
+        $client = new Client ([
+            'base_uri' => $this->base_url,
+        ]);
+        $response = $client->request('GET', '/api/cw/ys/payreconciliation/list',[
+                'query' => [
+                    'page'=>$page,
+                    'size'=>$size,
+                    'zt'=>$zt,
+                    'sdate'=>$sdate,
+                    'edate'=>$edate,
+                ]
+            ]
+        );
+        echo $response->getBody();
+
+    }
+    //对账详情列表
+    public function accountsdatalist()
+    {
+        $page = Input::get('page');
+        $size = Input::get('pageSize');
+        $zt = Input::get('zt');
+        $sdate = Input::get('sdate');
+        $edate = Input::get('edate');
+        $xm = Input::get('xm');
+        $id = Input::get('id');
+        $client = new Client ([
+            'base_uri' => $this->base_url,
+        ]);
+        $response = $client->request('GET', '/api/cw/ys/planPay/list',[
+                'query' => [
+                    'page'=>$page,
+                    'size'=>$size,
+                    'caozuozhuangtai'=>$zt,
+                    'sdate'=>$sdate,
+                    'edate'=>$edate,
+                    'xm'=>$xm,
+                    'reconciliation_id'=>$id,
+                ]
+            ]
+        );
+        echo $response->getBody();
+    }
+
+    //对账处理
+    public function accountsdatahandle(Request $request)
+    {
+        //以后用户会从OMC取
+        $u = Auth::user();
+        $user= Array(
+            'createuser'=>$u->id,
+            'createusername'=>$u->name,
+        );
+        $obj=array_merge($request->params,$user);
+
+        $client = new Client ([
+            'base_uri' => $this->base_url,
+
+        ]);
+        $r = $client->request('POST', '/api/cw/ys/caiwurenling', [
+            'json' => $obj
+        ]);
+        return $r->getBody();
+    }
+    //处理记录
+    public function accountsdatahandlelist()
+    {
+        $id= Input::get('id');
+        $client = new Client ([
+            'base_uri' => $this->base_url,
+        ]);
+        $response = $client->request('GET', '/api/cw/ys/handle/'.$id.'/query'  );
+        echo $response->getBody();
+    }
 }

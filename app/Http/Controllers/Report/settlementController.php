@@ -283,8 +283,8 @@ class settlementController extends Controller
     {
         $htno = Input::get('htno');
         $xm = Input::get('xm');
-        $sdate = Input::get('sdate');
-        $edate = Input::get('edate');
+        $sdate = Input::get('startdate');
+        $edate = Input::get('enddate');
         $user = Auth::user();
         $phone = $user->phone;
         $client = new Client ([
@@ -417,5 +417,54 @@ class settlementController extends Controller
         //print_r(phpinfo());die;
         $file = '..' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'exports' . DIRECTORY_SEPARATOR . $file_name;
         return response()->download($file);
+    }
+
+
+    //异常数据导出
+    public function planErrorExportExcel()
+    {
+        $htno = Input::get('htno');
+        $xm = Input::get('xm');
+        $sdate = Input::get('startdate');
+        $edate = Input::get('enddate');
+        $user = Auth::user();
+        $phone = $user->phone;
+        $client = new Client ([
+            'base_uri' => $this->base_url,
+        ]);
+        $response = $client->request('GET', '/api/cw/yf/getDaochuPay', [
+                'query' => [
+                    'htno' => $htno,
+                    'xm' => $xm,
+                    'sdate' => $sdate,
+                    'edate' => $edate,
+                    'phone' => $phone,
+                ]
+            ]
+        );
+        try {
+            $bk = $response->getBody();
+            $res = json_decode($bk);
+            if ($res->success) {
+                $cellData = $res->data->data;
+                // dd($cellData);
+                if (count($cellData) > 0) {
+                    Excel::create($res->data->piciCode, function ($excel) use ($cellData) {
+                        $excel->sheet('score', function ($sheet) use ($cellData) {
+                            $sheet->getStyle('F')->getNumberFormat()->setFormatCode("0.00");
+                            $sheet->rows($cellData);
+                        });
+                    })->store('xls')->export('xls');
+                    echo "导出成功";
+                } else {
+                    echo "无符合条件的数据";
+                }
+            } else {
+                echo $res->msg;
+            }
+        } catch (Exception $ex) {
+            echo $ex->getMessage();
+        }
+
     }
 }

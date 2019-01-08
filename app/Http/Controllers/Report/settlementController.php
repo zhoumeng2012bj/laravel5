@@ -311,6 +311,7 @@ class settlementController extends Controller
                     Excel::create($res->data->piciCode, function ($excel) use ($cellData) {
                         $excel->sheet('score', function ($sheet) use ($cellData) {
                             $sheet->getStyle('F')->getNumberFormat()->setFormatCode("0.00");
+                            $sheet->getStyle('B1')->getNumberFormat()->setFormatCode("0.00");
                             $sheet->rows($cellData);
 
                         });

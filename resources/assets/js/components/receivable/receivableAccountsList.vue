@@ -89,8 +89,8 @@
                 <el-form-item label="" prop="remark">
                     处理后会将支付状态与对账状态统一修改为处理时所选择的状态
                 </el-form-item>
-                <el-form-item label="状态：" prop="paystatus">
-                    <el-select v-model="handerForm.paystatus"   placeholder="请选择状态">
+                <el-form-item label="状态：" prop="payState">
+                    <el-select v-model="handerForm.payState"   placeholder="请选择状态">
                         <el-option
                                 v-for="item in optionszt"
                                 :key="item.value"
@@ -198,7 +198,7 @@
                 //付款界面数据
                 handerForm: {
                     tCwSrPlanId: '',
-                    paystatus: '',
+                    payState: '',
                     remark: '',
                 },
             }
@@ -322,7 +322,7 @@
             handleFrom: function (index, row) {
                 this.handerForm = {
                     tCwSrPlanId: row.tCwSrPlanId,
-                    paystatus: '',
+                    payState: '',
                     remark: '',
                 },
                     this.handerFormVisible = true;

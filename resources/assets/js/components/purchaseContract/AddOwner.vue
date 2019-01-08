@@ -67,18 +67,31 @@
                     </el-form-item>
                 </el-col>
             </el-row>
+            <el-form-item label="账户类型" prop="duizhangType" >
+                <el-radio-group v-model="owner.duizhangType" >
+                    <el-radio :label="C">公户</el-radio>
+                    <el-radio :label="B">私户</el-radio>
+                </el-radio-group>
+            </el-form-item>
             <el-row>
                 <el-col :span="8">
-                    <el-form-item label="收款人" prop="shoukuanren" required>
+                    <el-form-item label="户名" prop="shoukuanren" required>
                         <el-input v-model="owner.shoukuanren" :disabled="lydisabled"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="10">
+                    <el-form-item label="银行" prop="shoufangzonghang" required>
+                        <el-input v-model="owner.shoufangzonghang" :disabled="lydisabled"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="8">
                     <el-form-item label="开户行" prop="kaihuhang" required>
                         <el-input v-model="owner.kaihuhang" :disabled="lydisabled"></el-input>
                     </el-form-item>
                 </el-col>
-                <el-col :span="8">
+                <el-col :span="10">
                     <el-form-item label="账号" prop="zhanghao" required>
                         <input v-model="owner.zhanghao" :disabled="lydisabled"
                                style="-webkit-appearance: none;
@@ -96,8 +109,20 @@
                                     outline: 0;
                                     padding: 3px 10px;
                                     transition: border-color .2s cubic-bezier(.645,.045,.355,1);
-                                    width: 100%;"
-                               onkeyup="this.value=this.value.replace(/\D/g,'').replace(/....(?!$)/g,'$& ')" >
+                                    width: 100%;" onkeyup="this.value=this.value.replace(/\D/g,'').replace(/....(?!$)/g,'$& ')"
+                               >
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="8">
+                    <el-form-item label="开户省" prop="shengfen" required>
+                        <el-input v-model="owner.shengfen" :disabled="lydisabled"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="10">
+                    <el-form-item label="市" prop="shi" required>
+                        <el-input v-model="owner.shi" :disabled="lydisabled" ></el-input>
                     </el-form-item>
                 </el-col>
             </el-row>

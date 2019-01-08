@@ -172,6 +172,13 @@
                         },
                     ],
                     //收款人
+                    duizhangType: '',
+                    shoufangzonghang: '',
+                    shengfen: '',
+                    shi: '',
+                    lianhanghao: '',
+                    shoufangzonghangid: '',
+                    shengfenid: '',
                     shoukuanren: '',
                     zhanghao: '',
                     kaihuhang: '',
@@ -410,12 +417,12 @@
                 let para = {
                     id: _this.id,
                 }
-                if(version == 's20180907' || version == 's20180927'){
-                    window.open('/#/purchaseContract/dump'+version+'homepage?id='+_this.id+'&isdump=2&bianhao='+this.bianhao)
+                if (version == 's20180907' || version == 's20180927') {
+                    window.open('/#/purchaseContract/dump' + version + 'homepage?id=' + _this.id + '&isdump=2&bianhao=' + this.bianhao)
                 }
                 window.open('/#/purchaseContract/dump' + version + '?id=' + _this.id + '&isdump=2&bianhao=' + _this.bianhao)
                 window.open('/#/purchaseContract/dump' + version + 'pub?id=' + _this.id + '&isdump=2&bianhao=' + _this.bianhao)
-                if(version == 's20180927'){
+                if (version == 's20180927') {
                     window.open('/#/purchaseContract/dump' + version + 'enclosure?id=' + _this.id + '&isdump=2&bianhao=' + _this.bianhao)
                 }
 
@@ -477,6 +484,13 @@
                 this.owner.qianyuerenId = res.data.data.qianyuerenId;
                 this.owner.oldBianhao = res.data.data.oldBianhao;
                 this.owner.oldID = res.data.data.oldID;
+                this.owner.duizhangType = res.data.data.duizhangType;
+                this.owner.shoufangzonghang = res.data.data.shoufangzonghang;
+                this.owner.shengfen = res.data.data.shengfen;
+                this.owner.shi = res.data.data.shi;
+                this.owner.lianhanghao = res.data.data.lianhanghao;
+                this.owner.shoufangzonghangid = res.data.data.shoufangzonghangid;
+                this.owner.shengfenid = res.data.data.shengfenid;
                 this.addDate.startdate = res.data.data.startdate;
                 this.addDate.enddate = res.data.data.enddate;
                 this.addDate.shoufangdate = res.data.data.shoufangdate;

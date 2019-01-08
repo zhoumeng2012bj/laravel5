@@ -463,8 +463,8 @@ class examineController extends Controller
         //以后用户会从OMC取
         $u = Auth::user();
         $user= Array(
-            'createuser'=>$u->id,
-            'createusername'=>$u->name,
+            'handlePerid'=>$u->id,
+            'handlePersion'=>$u->name,
         );
         $obj=array_merge($request->params,$user);
 
@@ -472,7 +472,7 @@ class examineController extends Controller
             'base_uri' => $this->base_url,
 
         ]);
-        $r = $client->request('POST', '/api/cw/ys/caiwurenling', [
+        $r = $client->request('POST', '/api/cw/ys/save/handle', [
             'json' => $obj
         ]);
         return $r->getBody();

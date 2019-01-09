@@ -436,7 +436,7 @@ class settlementController extends Controller
                 $res = json_decode($bk);
                 if ($res->success) {
                     $cellData = $res->data->data;
-                    if (count($cellData) > 0) {
+                    if (count($cellData) > 1) {
 
                         Excel::create($res->data->piciCode, function ($excel) use ($cellData) {
                             $excel->sheet('score', function ($sheet) use ($cellData) {

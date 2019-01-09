@@ -60,7 +60,7 @@
                                   操作<i class="el-icon-caret-bottom el-icon--right"></i>
                               </el-button>
                               <el-dropdown-menu slot="dropdown">
-																	<el-dropdown-item v-if="ztin(scope.row,[1])&&fun('planWithdraw')">
+																	<el-dropdown-item v-if="ztin(scope.row,[1,3])&&fun('planWithdraw')">
 																			<el-button @click.native="handleRokeBack(scope.$index, scope.row)" :loading="addFormLoading">撤回</el-button>
 																	</el-dropdown-item>
                               </el-dropdown-menu>

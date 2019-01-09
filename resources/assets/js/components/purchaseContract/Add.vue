@@ -185,7 +185,7 @@
                         },
                     ],
                     //收款人
-                    duizhangType: '',
+                    duizhangType: '1',
                     shoufangzonghang: '',
                     shengfen: '',
                     shi: '',

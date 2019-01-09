@@ -82,7 +82,7 @@
                                   操作<i class="el-icon-caret-bottom el-icon--right"></i>
                               </el-button>
                               <el-dropdown-menu slot="dropdown">
-																	<el-dropdown-item v-if="ztin(scope.row,[1])&&fun('financeWithdraw')">
+																	<el-dropdown-item v-if="ztin(scope.row,[1,3])&&fun('financeWithdraw')">
 																			<el-button @click.native="handleRokeBack(scope.$index, scope.row)" :loading="addFormLoading">撤回</el-button>
 																	</el-dropdown-item>
                               </el-dropdown-menu>
@@ -195,11 +195,27 @@
             ztin(row, arr){
                 var status = arr.indexOf(row.paystatus);
                 if (status > -1) {
-                    return true;
+									if(row.paystatus == 3){
+										if(row.duizhangstatus == 2){
+											return true;
+										}else{
+											return false;
+										}
+									}else{
+										return true;
+									}
                 } else {
                     return false;
                 }
             },
+						ztinduizh(row, arr){
+								var status = arr.indexOf(row.duizhangstatus);
+								if (status > -1) {
+										return true;
+								} else {
+										return false;
+								}
+						},
             //标签切换时
             handleClick(tab, event) {
 

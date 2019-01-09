@@ -371,6 +371,7 @@
             selsChange: function (sels) {
                 this.sels = sels;
             },
+						
 
         },
         mounted() {

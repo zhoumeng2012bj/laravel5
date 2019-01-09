@@ -246,7 +246,7 @@
                 status[1] = '未处理';
                 status[2] = '已处理';
                 status[3] = '无需处理';
-                return status[row.pingtaizhuangtai];
+                return status[row.caozuozhuangtai];
             },
             //时间戳转日期格式
             changeDate: function (row, column) {

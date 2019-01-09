@@ -401,8 +401,8 @@
 //                     zt: this.filters.zt,
 //                 };
 								let para = {
-										page: this.pagerl,
-										pageSize: this.pageSizerl,
+										page: this.page,
+										pageSize: this.pageSize,
 										sdate: this.filters.sdate,
 										edate: this.filters.edate,
 										fkzh: this.filters.fkzh,

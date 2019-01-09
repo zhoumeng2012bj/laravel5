@@ -299,7 +299,7 @@
 				if (response.code == '300') {
 					window.open(response.data);
 					this.$message({
-						message: '导入成功，处理失败已下载失败数据',
+						message: '导入成功，处理失败数据已自动下载！',
 						type: 'success'
 					});
 				} else {
@@ -308,6 +308,7 @@
 						type: 'success'
 					});
 				}
+				this.getReceivable();
 			},
 			handleError(err, file, fileList) {
 				if (err) {

@@ -313,11 +313,12 @@
                         this.getReceivable();
                     } else {
                         this.$message({
-                            message: '设置failed',
+                            message: '设置失败',
                             type: 'error'
                         });
                     }
                 });
+                this.handerFormVisible = false;
             },
             //显示处理记录界面
             handleFrom: function (index, row) {

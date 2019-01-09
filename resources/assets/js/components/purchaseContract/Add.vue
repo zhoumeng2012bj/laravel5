@@ -138,6 +138,19 @@
                 },
                 owner: {
                     flag: null,
+										options3: [
+												{
+														value: null,
+														label: null,
+														lianhao: null,
+												}
+										],
+										options4: [
+												{
+														value: null,
+														label: null,
+												}
+										],
                     options1: [
                         {
                             value: null,
@@ -178,6 +191,7 @@
                     shi: '',
                     lianhanghao: '',
                     shoufangzonghangid: '',
+										shoufangzonghanglainghas:'',
                     shengfenid: '',
                     shoukuanren: '',
                     zhanghao: '',
@@ -456,7 +470,24 @@
                     this.owner.chanquanrenList = res.data.data.chanquanrenList;
                 }
                 this.owner.chengzufang = res.data.data.chengzufang;
-
+								
+								this.owner.duizhangType = res.data.data.duizhangType;
+								this.owner.shoufangzonghang = res.data.data.shoufangzonghang;//
+								this.owner.shoufangzonghangid = res.data.data.shoufangzonghangid;
+								this.owner.lianhanghao = res.data.data.lianhanghao;
+								this.owner.shengfen = res.data.data.shengfen;//
+								this.owner.shengfenid = res.data.data.shengfenid;
+								this.owner.options3[0].value = res.data.data.shoufangzonghangid;
+								this.owner.options3[0].label = res.data.data.shoufangzonghang;
+								this.owner.options3[0].lianhao = res.data.data.lianhanghao;
+								this.owner.options4[0].value = res.data.data.shengfenid;
+								this.owner.options4[0].label = res.data.data.shengfen;
+								this.owner.shoukuanren = res.data.data.shoukuanren;//
+								this.owner.kaihuhang = res.data.data.kaihuhang;//
+								this.owner.zhanghao = res.data.data.zhanghao;//
+								this.owner.shi = res.data.data.shi;//
+								
+								
                 this.owner.jujianfang = res.data.data.jujianfang;//
                 this.owner.jujianfangid = res.data.data.jujianfangid;
                 this.owner.jujianfangid2 = res.data.data.jujianfangid;
@@ -471,9 +502,9 @@
                 this.owner.farenzhengjian = res.data.data.farenzhengjian;
                 this.owner.yezhuleixing2 = res.data.data.yezhuleixing;
                 this.owner.farenzhengjian2 = res.data.data.farenzhengjian;
-                this.owner.shoukuanren = res.data.data.shoukuanren;
-                this.owner.kaihuhang = res.data.data.kaihuhang;
-                this.owner.zhanghao = res.data.data.zhanghao;
+                // this.owner.shoukuanren = res.data.data.shoukuanren;
+//                 this.owner.kaihuhang = res.data.data.kaihuhang;
+//                 this.owner.zhanghao = res.data.data.zhanghao;
                 this.owner.dailirenTel = res.data.data.dailirenTel;
                 this.owner.dailirenSex = res.data.data.dailirenSex;
                 this.owner.dailirenId = res.data.data.dailirenId;
@@ -484,13 +515,13 @@
                 this.owner.qianyuerenId = res.data.data.qianyuerenId;
                 this.owner.oldBianhao = res.data.data.oldBianhao;
                 this.owner.oldID = res.data.data.oldID;
-                this.owner.duizhangType = res.data.data.duizhangType;
-                this.owner.shoufangzonghang = res.data.data.shoufangzonghang;
-                this.owner.shengfen = res.data.data.shengfen;
-                this.owner.shi = res.data.data.shi;
-                this.owner.lianhanghao = res.data.data.lianhanghao;
-                this.owner.shoufangzonghangid = res.data.data.shoufangzonghangid;
-                this.owner.shengfenid = res.data.data.shengfenid;
+//                 this.owner.duizhangType = res.data.data.duizhangType;
+//                 this.owner.shoufangzonghang = res.data.data.shoufangzonghang;
+//                 this.owner.shengfen = res.data.data.shengfen;
+//                 this.owner.shi = res.data.data.shi;
+//                 this.owner.lianhanghao = res.data.data.lianhanghao;
+//                 this.owner.shoufangzonghangid = res.data.data.shoufangzonghangid;
+//                 this.owner.shengfenid = res.data.data.shengfenid;
                 this.addDate.startdate = res.data.data.startdate;
                 this.addDate.enddate = res.data.data.enddate;
                 this.addDate.shoufangdate = res.data.data.shoufangdate;

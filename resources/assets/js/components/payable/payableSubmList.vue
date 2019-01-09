@@ -48,6 +48,8 @@
 				</el-table-column>
 				<el-table-column prop="fukuanzhanghao" label="收款账号"   width="180">
 				</el-table-column>
+				<el-table-column prop="status" label="审批状态"  :formatter="formatState2">
+				</el-table-column>
 				<el-table-column prop="zhifustate" label="支付状态"  :formatter="formatState1">
 				</el-table-column>
 				<!-- <el-table-column prop="zhuangtai" label="备注"  :formatter="formatState">
@@ -62,6 +64,8 @@
 												 <!-- <el-dropdown-item   v-if="scope.row.zhuangtai==0||scope.row.zhuangtai==2" ><el-button v-if="fun('claim')"   @click="handleRokeBack(scope.row)">认领</el-button></el-dropdown-item>
 												 <el-dropdown-item v-if="fun('queryMemo')" ><el-button   @click="handleView(scope.$index, scope.row)">查看备注</el-button></el-dropdown-item> -->
 												 <el-dropdown-item><el-button @click="handleView(scope.$index, scope.row)">查看备注</el-button></el-dropdown-item>
+												 <el-dropdown-item v-if="ztin(scope.row,[2,3,4])"><el-button @click="handleAdd(scope.$index, scope.row)">审批意见</el-button></el-dropdown-item>
+
 												 <el-dropdown-item v-if="fun('paRiskSubLDedList')"><el-button @click="handleviewRokeBack(scope.$index,scope.row)">扣款记录</el-button></el-dropdown-item>
 												 
 
@@ -81,10 +85,16 @@
 				<el-button @click.native="rokeBackFormVisible = false">关闭</el-button>
 			</div>
 		</el-dialog>
-		<el-dialog title="审核意见" v-model="rokeBackFormVisiblevie" :close-on-click-modal="false">
-			<el-form v-model="udopinion" label-width="120px"   ref="viewDateForm">
-						{{udopinion==null?'无数据':udopinion}}
-			</el-form>
+		<el-dialog title="审批意见" v-model="addFormVisible" :close-on-click-modal="false">
+			<el-form v-model="shenpr" ref="viewDateForm"  >
+							审批人&nbsp;&nbsp;:&nbsp;&nbsp;{{shenpr==''?'无数据':shenpr}}
+			</el-form><br />
+			<el-form v-model="shenpshij" ref="viewDateForm"  >
+							审批时间&nbsp;&nbsp;:&nbsp;&nbsp;{{shenpshij==''?'无数据':shenpshij}}
+			</el-form><br />
+				<el-form v-model="beizhushenp" ref="viewDateForm">
+							备注&nbsp;&nbsp;:&nbsp;&nbsp;{{beizhushenp==''?'无数据':beizhushenp}}
+				</el-form>
 		</el-dialog>
         <el-dialog title="查看提交备注" v-model="viewDateFormVisible" :close-on-click-modal="false">
         		<el-form v-model="beizhu" label-width="120px"   ref="viewDateForm">
@@ -121,10 +131,14 @@
         data() {
             return {
 				srid:'',
+				shenpr:'',
+				shenpshij:'',
+				beizhushenp:'',
                 rokeBackFormVisible:false,
 				rokeBackFormVisiblevie:false,
 				addFormLoading: false,
 				addFormLoadingbo: false,
+				addFormVisible: false,
 				addFormRules: {
 					
 				},
@@ -236,7 +250,7 @@
                 }
             },
 			ztin(row, arr){
-				var status = arr.indexOf(row.tijiaozhuangtai);
+				var status = arr.indexOf(row.status);
 				if (status > -1) {
 						return true;
 				} else {
@@ -631,6 +645,7 @@
 					status[1] = '待审批';
 					status[2] = '已通过';
 					status[3] = '已驳回';
+					status[4] = '已撤销';
 					return status[row.status];
 			},
 			//认领支付状态显示转换
@@ -700,14 +715,25 @@
 			//时间戳转化为日期
 			timeconversion(timestamp){
 				var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-        var Y = date.getFullYear() + '/';
-        var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '/';
-        var D = date.getDate() + ' ';
-        var h = date.getHours() + ':';
-        var m = date.getMinutes() + ':';
-        var s = date.getSeconds();
-        return Y+M+D;
+				var Y = date.getFullYear() + '/';
+				var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '/';
+				var D = date.getDate() + ' ';
+				var h = date.getHours() + ':';
+				var m = date.getMinutes() + ':';
+				var s = date.getSeconds();
+				return Y+M+D;
 			},	
+			//时间戳转日期格式
+			changetimeDate(time){
+				var date = new Date(time);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+				var Y = date.getFullYear() + '.';
+				var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '.';
+				var D = date.getDate() + ' ';
+				var h = date.getHours() + ':';
+				var m = date.getMinutes() + ':';
+				var s = date.getSeconds();
+				return Y+M+D+h+m+s;
+			},
 			//获取实收款列表
 			getReceivable() {
 				let para = {
@@ -753,7 +779,10 @@
 			},
 			//新增实收页面
 			handleAdd: function (index, row) {
-					this.addFormVisible = true;
+				this.addFormVisible = true;
+				this.shenpr = this.financeReceivable[index].auditname;
+				this.shenpshij = this.changetimeDate(this.financeReceivable[index].auditTime);
+				this.beizhushenp = this.financeReceivable[index].auditDesc;
 			},
 			//显示查看备注页面
 			handleView: function (index, row) {

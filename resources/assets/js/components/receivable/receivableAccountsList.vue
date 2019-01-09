@@ -236,6 +236,7 @@
                 status[2] = '正常';
                 status[3] = '支付失败';
                 status[4] = '对账金额不符';
+								status[5] = '验签失败';
                 return status[row.pingtaizhuangtai];
             },
             //操作状态显示转换

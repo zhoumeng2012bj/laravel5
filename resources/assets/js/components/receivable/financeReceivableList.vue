@@ -517,6 +517,7 @@
         },
         mounted() {
             this.page=1;
+						this.pagerl = 1;
             this.getReceivable();
 
         }

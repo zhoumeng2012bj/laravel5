@@ -28,13 +28,21 @@
         <el-row>
             <el-table :data="lists" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中" @selection-change="selsChange" style="width: 100%;">
                 <!--<if condition="laiyuantype eq 2">-->
-                    <el-table-column prop="zhanghu"  label="收款方户名"  width="150">
+                    <el-table-column prop="zhanghu"  label="户名"  width="100">
                     </el-table-column>
-                    <el-table-column prop="yinhang"  label="收款方银行"  width="220">
+                    <el-table-column prop="yinhang"  label="银行"  width="220"> 
                     </el-table-column>
-                    <el-table-column prop="zhanghao"  label="收款账号"  width="220">
+										<el-table-column prop="zhanghao"  label="开户行"  width="220">
+										</el-table-column>
+                    <el-table-column prop="zhanghao"  label="账号"  width="220">
                     </el-table-column>
-                    <el-table-column prop="tianjiadate" label="添加时间"  :formatter="changeDate"   >
+										<el-table-column prop="zhanghu"  label="开户省">
+										</el-table-column>
+										<el-table-column prop="zhanghu"  label="市">
+										</el-table-column>
+										<el-table-column prop="zhanghu"  label="账户类型" width="100">
+										</el-table-column>
+                    <el-table-column prop="tianjiadate" label="添加时间"  :formatter="changeDate" width="120">
                     </el-table-column>
                     <el-table-column prop="laiyuantype"  label="来源"   :formatter="formatStatus"  >
                     </el-table-column>
@@ -75,29 +83,101 @@
             >
             </el-pagination>
         </el-col>
-        <el-dialog size="tiny" title="付款账号管理" v-model="Visible" :close-on-click-modal="false">
-            <el-form  label-width="120px"  ref="zhanghao" :rules="zhanghaoRules" :model="zhanghao">
-                <el-row>
-                    <el-col :span="20">
-                        <el-form-item label="付款方户名：" prop="zhanghu" required>
-                            <el-input v-model="zhanghao.zhanghu"></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="20">
-                        <el-form-item label="付款银行：" prop="yinhang" required>
-                            <el-input v-model="zhanghao.yinhang"></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="20">
-                        <el-form-item label="付款账号：" prop="zhanghao" required>
-                            <el-input v-model="zhanghao.zhanghao"></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
+        <el-dialog size="tiny" title="付款账号管理" v-model="Visible" :close-on-click-modal="false" label-width="120px">
+            <el-form  label-width="70px"  ref="zhanghao" :rules="zhanghaoRules" :model="zhanghao">
+							<el-form-item label="账户类型" prop="duizhangType" >
+									<el-radio-group v-model="zhanghao.duizhangType" >
+											<el-radio :label="1">公户</el-radio>
+											<el-radio :label="2">私户</el-radio>
+									</el-radio-group>
+							</el-form-item>
+							<el-row>
+									<el-col :span="8">
+											<el-form-item label="户名" prop="zhanghu" required>
+													<el-input v-model="zhanghao.zhanghu" :disabled="lydisabled"></el-input>
+											</el-form-item>
+									</el-col>
+									<el-col :span="10">
+											<el-form-item label="银行" required prop="yinhang">
+													<el-select
+																	v-model="zhanghao.yinhangid"
+																	filterable
+																	default-first-option
+																	remote
+																	@change="change1"
+																	placeholder=""
+																	:remote-method="bankCompany"
+																	:loading="bankCNameloading"
+																	:disabled="lydisabled"
+													>
+															<el-option
+																			v-for="item in options3"
+																			:key="item.value"
+																			:label="item.label"
+																			:value="item.value">
+															</el-option>
+													</el-select>
+											</el-form-item>
+									</el-col>
+							</el-row>
+							<el-row>
+									<el-col :span="8">
+											<el-form-item label="开户行" prop="kaihuhang" required>
+													<el-input v-model="zhanghao.kaihuhang" :disabled="lydisabled"></el-input>
+											</el-form-item>
+									</el-col>
+									<el-col :span="10">
+											<el-form-item label="账号" prop="zhanghao" required>
+													<input v-model="zhanghao.zhanghao" :disabled="lydisabled"
+																style="-webkit-appearance: none;
+																			-moz-appearance: none;
+																			appearance: none;
+																			background-color: #fff;
+																			background-image: none;
+																			border-radius: 4px;
+																			border: 1px solid #bfcbd9;
+																			box-sizing: border-box;
+																			color: #1f2d3d;
+																			font-size: inherit;
+																			height: 36px;
+																			line-height: 1;
+																			outline: 0;
+																			padding: 3px 10px;
+																			transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+																			width: 100%;" onkeyup="this.value=this.value.replace(/\D/g,'').replace(/....(?!$)/g,'$& ')"
+																>
+											</el-form-item>
+									</el-col>
+							</el-row>
+							<el-row>
+									<el-col :span="8">
+											<el-form-item label="开户省" required prop="shengfen">
+													<el-select
+																	v-model="zhanghao.shengfenid"
+																	filterable
+																	default-first-option
+																	remote
+																	@change="change2"
+																	placeholder=""
+																	:remote-method="bankCompany2"
+																	:loading="bankCName2loading"
+																	:disabled="lydisabled"
+													>
+															<el-option
+																			v-for="item in options4"
+																			:key="item.value"
+																			:label="item.label"
+																			:value="item.value">
+															</el-option>
+													</el-select>
+											</el-form-item>
+									</el-col>
+									<el-col :span="10">
+											<el-form-item label="市" prop="shi" required>
+													<el-input v-model="zhanghao.shi" :disabled="lydisabled" ></el-input>
+											</el-form-item>
+									</el-col>
+							</el-row>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click.native="Visible = false">取消</el-button>
@@ -142,13 +222,19 @@
         </el-dialog>
     </el-row>
 </template>
-
+<style>
+		.el-dialog--tiny{width:50%;}
+</style>
 <script>
     import {getPurchaseContractInfo,
         zhanghaoSavePurchaseContract,
         getZhanghaoPurchaseContractList,
         removeZhanghaoPurchaseContract,
         zhanghaoUpdataPurchaseContract,
+				
+				getbankCNameList,
+				getbankCName2List,
+				
         changeSFZhanghao} from '../../api/api';
     export default {
         data() {
@@ -165,13 +251,37 @@
                 Visible:false,
                 aduitVisible:false,
                 editVisible:false,
+								lydisabled:false,
+								bankCNameloading:false,
+								bankCName2loading:false,
+								esbanktate: [],//服务器搜索的银行数据放入这个数组中
+								esbank2tate: [],//服务器搜索的开户省数据放入这个数组中
+								options3: [
+										{
+												value: null,
+												label: null,
+												lianhao: null,
+										}
+								],
+								options4: [
+										{
+												value: null,
+												label: null,
+										}
+								],
                 zhanghao:{
                     hetongid:null,
                     hetongbianhao:null,
                     zhanghu:null,
                     yinhang:null,
+										yinhangid:null,
                     zhanghao:null,
                     hetongtid: 0,
+										duizhangType:null,
+										kaihuhang:null,
+										shengfen:null,
+										shengfenid:null,
+										shi:null,
                 },
                 zhanghaoedit:{
                     hetongid:null,
@@ -195,6 +305,15 @@
                     zhanghao: [
                         { required: true, message: '不能为空'}
                     ],
+										kaihuhang: [
+												{ required: true, message: '不能为空'}
+										],
+										shengfen: [
+												{ required: true, message: '不能为空'}
+										],
+										shi: [
+												{ required: true, message: '不能为空'}
+										],
                 },
                 zhanghaoeditRules:{
                     zhanghu: [
@@ -225,6 +344,88 @@
                     return false;
                 }
             },
+						
+						//银行的chage事件
+						change1(){
+								var arr = this.options3;
+								for (let i=0;i<arr.length;i++ ){
+										if(arr[i].value==this.zhanghao.yinhangid){
+												this.zhanghao.yinhang = arr[i].label;
+										}
+								}
+
+						},
+						//获取银行公司名称
+						bankCompany(query) {
+								let para = {
+										name: query,
+										id:this.zhanghao.yinhangid!=null?this.zhanghao.yinhangid:'',
+								};
+								this.bankCNameloading = true;
+								getbankCNameList(para).then((res) => {
+										let arr = [];
+										arr[0] = '';
+										for ( var i in res.data.data ){
+												arr[i]=res.data.data[i]
+										}
+										this.esbanktate = arr;
+										this.bankCNameloading = false;
+										this.list = this.esbanktate.map((item,index) => {
+												return { value: item.id, label: item.yinhangname , lianhao: item.yinhanglianhao };
+										});
+										if (query !== '') {
+												this.bankCNameloading = true;
+												setTimeout(() => {
+														this.bankCNameloading = false;
+														this.options3 = this.list;
+												}, 200);
+										} else {
+												this.options3 = [];
+										}
+								});
+
+						},
+						//开户省的chage事件
+						change2(){
+								var arr = this.options4;
+								for (let i=0;i<arr.length;i++ ){
+										if(arr[i].value==this.zhanghao.shengfenid){
+												this.zhanghao.shengfen = arr[i].label;
+										}
+								}
+
+						},
+						//获取开户省公司名称
+						bankCompany2(query) {
+								let para = {
+										name: query,
+										id:this.zhanghao.shengfenid!=null?this.zhanghao.shengfenid:'',
+								};
+								this.bankCName2loading = true;
+								getbankCName2List(para).then((res) => {
+										let arr = [];
+										arr[0] = '';
+										for ( var i in res.data.data ){
+												arr[i]=res.data.data[i]
+										}
+										this.esbank2tate = arr;
+										this.bankCName2loading = false;
+										this.list = this.esbank2tate.map((item,index) => {
+												return { value: item.id, label: item.sname };
+										});
+										if (query !== '') {
+												this.bankCName2loading = true;
+												setTimeout(() => {
+														this.bankCName2loading = false;
+														this.options4 = this.list;
+												}, 200);
+										} else {
+												this.options4 = [];
+										}
+								});
+
+						},
+												
             //时间戳转日期格式
             changeDate(row, column){
                 var newDate = new Date();
@@ -434,6 +635,9 @@
                 })
 
             },
+						
+						
+						
 
             //编辑
             editYHZH(index, row){

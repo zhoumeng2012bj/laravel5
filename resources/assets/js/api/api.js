@@ -30,6 +30,10 @@ export const addBrokerCompanyUser = params => { return axios.post(`${base}/broke
 export const editBrokerCompanyUser = params => { return axios.put(`${base}/brokerCompanyUser/`+params.id, { params: params }); };
 export const batchRemoveBrokerCompanyUser = params => { return axios.post(`${base}/brokerCompanyUser/batchRemoveBKUser`, { params: params }); };
 export const getbkNameList = params =>{ return axios.post(`${base}/brokerCompanyUser/getbkNameList`, { params: params }); };
+
+export const getbankCNameList = params => { return axios.get(`${base}/brokerCompanyUser/getbankCNameList`, { params: params }); };//获取银行
+export const getbankCName2List = params => { return axios.get(`${base}/brokerCompanyUser/getbankCName2List`, { params: params }); };//获取省
+
 export const checkbkNameList = params =>{ return axios.post(`${base}/brokerCompany/checkbkNameList`, { params: params }); };
 
 export const getChuFangCommissionListPage = params => { return axios.get(`${base}/chuFangCommission`, { params: params }); };
@@ -76,6 +80,8 @@ export const commissionPayable = params => { return axios.post(`${base}/payable/
 export const getPayableListPlan = params => { return axios.get(`${base}/payable/plan`, { params: params }); };//应付计划列表额列表
 export const withdrawPayable = params => { return axios.get(`${base}/payable/withdrawPaya`, { params: params }); };//应付计划列表中的撤回
 export const actualPaymentPayable = params => { return axios.get(`${base}/payable/actualPayment`, { params: params }); };//实付管理列表
+export const yflistkqrPaymentPayable = params => { return axios.get(`${base}/payable/yflistkqr`, { params: params }); };//应付款确认列表
+export const yfkqrSubmission = params => { return axios.post(`${base}/payable/yfkqr` , { params: params }); };//应付款确认中的审核
 
 
 

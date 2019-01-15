@@ -31,7 +31,7 @@
             <el-tab-pane label="付款成功" name="fourth"></el-tab-pane>
             <el-tab-pane label="付款失败" name="fifth"></el-tab-pane>
 						<el-tab-pane label="已撤销" name="five"></el-tab-pane>
-            <el-table :data="Receivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"
+            <el-table height="500" :data="Receivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"
                       @selection-change="selsChange" style="width: 100%;">
                 <el-table-column prop="hetongbianhao" label="合同编号">
                 </el-table-column>
@@ -163,7 +163,15 @@
             ztin(row, arr){
                 var status = arr.indexOf(row.paystatus);
                 if (status > -1) {
-                    return true;
+									if(row.paystatus == 3){
+										if(row.duizhangstatus == 2 || row.duizhangstatus == null){
+											return true;
+										}else{
+											return false;
+										}
+									}else{
+										return true;
+									}
                 } else {
                     return false;
                 }

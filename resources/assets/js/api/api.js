@@ -71,6 +71,7 @@ export const accountsdatahandlelist = params => { return axios.get(`${base}/rece
 
 export const getPaySettlementListPage = params => { return axios.get(`${base}/payable/settlement`, { params: params }); };//应付款管理列表(结算)
 export const getPayablePayment = params => { return axios.get(`${base}/payable/payment`, { params: params }); };//应付中付款记录列表
+export const getPayableSubmitAudit = params => { return axios.get(`${base}/payable/SubmitAudit`, { params: params }); };//应付款管理的提交记录下的审批记录列表
 export const getPayableDeduction = params => { return axios.get(`${base}/payable/deduction`, { params: params }); };//应付中付款记录列表中的扣款记录列表
 export const submissionPayable = params => { return axios.get(`${base}/payable/submissionpayable`, { params: params }); };//应付款管理列表中的提交付款
 export const riskSubmissionPayable = params => { return axios.post(`${base}/payable/riskSubmi` , { params: params }); };//应付款管理(风控)列表中的提交付款

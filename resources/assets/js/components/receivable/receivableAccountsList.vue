@@ -27,7 +27,7 @@
             </el-form-item>
         </el-form>
 
-        <el-table :data="Receivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"
+        <el-table height="500" :data="Receivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"
                   @selection-change="selsChange" style="width: 100%;">
             <el-table-column prop="xiangmu" label="项目" width="300">
             </el-table-column>
@@ -52,11 +52,11 @@
                             操作<i class="el-icon-caret-bottom el-icon--right"></i>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item v-if=" fun('financeWithdraw')&&scope.row.caozuozhuangtai==1">
+                            <el-dropdown-item v-if="fun('receivableRlHandle')&&scope.row.caozuozhuangtai==1">
                                 <el-button @click.native="handleFrom(scope.$index, scope.row)">处理
                                 </el-button>
                             </el-dropdown-item>
-                            <el-dropdown-item v-if=" fun('paSubList')&&scope.row.caozuozhuangtai==2">
+                            <el-dropdown-item v-if="scope.row.caozuozhuangtai==2">
                                 <el-button @click="handleRokeBack(scope.$index, scope.row)">处理记录</el-button>
                             </el-dropdown-item>
                         </el-dropdown-menu>

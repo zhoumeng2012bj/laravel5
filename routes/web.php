@@ -110,6 +110,7 @@ Route::get('receivable/accountsdatahandlelist','Commission\examineController@acc
 
 Route::get('payable/settlement','Report\settlementController@settlement');//应付款管理列表(结算)
 Route::get('payable/payment','Report\settlementController@payment');//应付中付款记录列表
+Route::get('payable/SubmitAudit','Report\settlementController@SubmitAudit');//应付款管理的提交记录下的审批记录列表
 Route::get('payable/deduction','Report\settlementController@deduction');//应付中付款记录列表中的扣款记录列表
 Route::get('payable/submissionpayable','Report\settlementController@submissionpayable');//应付款管理列表(结算)中的提交付款
 Route::post('payable/riskSubmi','Report\settlementController@riskSubmi');//应付款管理(风控)列表中的提交付款

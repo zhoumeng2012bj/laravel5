@@ -29,9 +29,9 @@
          	</div>
         <el-tabs v-model="activeName2" type="border-card" @tab-click="handleClick">
             <el-tab-pane label="全部" name="first"></el-tab-pane>
-            <el-tab-pane label="待初审" name="second"></el-tab-pane>
-            <el-tab-pane label="初审通过" name="third"></el-tab-pane>
-            <el-tab-pane label="初审驳回" name="fourth"></el-tab-pane>
+            <el-tab-pane label="初审通过" name="second"></el-tab-pane>
+            <el-tab-pane label="复审通过" name="third"></el-tab-pane>
+            <el-tab-pane label="复审驳回" name="fourth"></el-tab-pane>
 						<el-tab-pane label="已撤销" name="five"></el-tab-pane>
             <el-table height="500" :data="Payable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中" @selection-change="selsChange" style="width: 100%;">
                 <el-table-column prop="hetongbianhao" label="合同编号" width="190">
@@ -63,9 +63,9 @@
                                <el-button type="primary" size="normal" splitButton="true">
                                    操作<i class="el-icon-caret-bottom el-icon--right"></i>
                                </el-button>
-                               <el-dropdown-menu slot="dropdown" >
-                                   <el-dropdown-item v-if="ztin(scope.row,[1])&&fun('paRiskSubexat')"><el-button @click="handleRokeBack(scope.$index, scope.row)">审批</el-button></el-dropdown-item>
-                                   <el-dropdown-item v-if="ztin(scope.row,[2,3,6])"  > <el-button  @click="handleOpenUp(scope.$index, scope.row)">审批意见</el-button> </el-dropdown-item>
+                               <el-dropdown-menu slot="dropdown">
+                                   <el-dropdown-item v-if="ztin(scope.row,[2])&&fun('payReviewExamine')"><el-button @click="handleRokeBack(scope.$index, scope.row)">审批</el-button></el-dropdown-item>
+                                   <el-dropdown-item v-if="ztin(scope.row,[4,5,6])"> <el-button  @click="handleOpenUp(scope.$index, scope.row)">审批意见</el-button> </el-dropdown-item>
                                </el-dropdown-menu>
                            </el-dropdown>
                        </template>
@@ -92,8 +92,8 @@
 						<el-input type="textarea" placeholder="审核意见" v-model="rokeBackForm.beizhu"></el-input>
 					</el-form>
 					<div slot="footer" class="dialog-footer">
-						<el-button type="primary" @click.native="addFormSubmit(2)" :loading="addFormLoading">通过</el-button>
-						<el-button type="primary" @click.native="addFormSubmit(3)" :loading="addFormLoadingbo">驳回</el-button>
+						<el-button type="primary" @click.native="addFormSubmit(4)" :loading="addFormLoading">通过</el-button>
+						<el-button type="primary" @click.native="addFormSubmit(5)" :loading="addFormLoadingbo">驳回</el-button>
 						<el-button @click.native="rokeBackFormVisible = false">关闭</el-button>
 					</div>
 				</el-dialog>
@@ -150,6 +150,7 @@
             return {
 								isfirst:'',//1首期 2二期之后 空是全部
 								shouqizit:'',
+								isfushen:1,//1是复审列表
 								addFormVisible: false,
 								addFormLoading: false,
 								addFormLoadingbo: false,
@@ -268,10 +269,10 @@
                 let status = [];
                 status[1] = '待初审';
                 status[2] = '初审通过';
-								status[3] = '初审驳回';
-								status[4] = '复审通过';
-								status[5] = '复审驳回';
-								status[6] = '已撤销';
+                status[3] = '初审驳回';
+                status[4] = '复审通过';
+                status[5] = '复审驳回';
+                status[6] = '已撤销';
                 return status[row.status];
             },
             //时间戳转日期格式
@@ -298,13 +299,13 @@
                     ztStatus = '';
                 }
 								if(tab.index==1){
-										ztStatus = 1;
+										ztStatus = 2;
 								}
 								if(tab.index==2){
-										ztStatus = 7;
+										ztStatus = 4;
 								}
 								if(tab.index==3){
-										ztStatus = 3;
+										ztStatus = 5;
 								}
 								if(tab.index==4){
 										ztStatus = 6;
@@ -329,9 +330,9 @@
             },
             handleOpenUp: function (index, row) {
 							this.addFormVisible = true;
-							this.shenpr = this.Payable[index].auditname;
-							this.shenpshij = this.changetimeDate(this.Payable[index].auditTime);
-							this.beizhu = this.Payable[index].auditDesc;
+							this.shenpr = this.Payable[index].auditnamef;
+							this.shenpshij = this.changetimeDate(this.Payable[index].auditTimef);
+							this.beizhu = this.Payable[index].auditDescf;
             },
             //获取应付款列表
             getPayable() {
@@ -344,6 +345,7 @@
 									sdate: this.filters.startdate,
 									edate: this.filters.enddate,
 									zt2:this.filters.zt2,
+									isfushen:this.isfushen,
                 };
                 this.listLoading = true;
                 yflistkqrPaymentPayable(para).then((res) => {
@@ -463,8 +465,8 @@
         },
         mounted() {
             this.page=1;
-						if(this.fun('paExaminationDown')){
-							if(this.fun('payExaminationTwo')){
+						if(this.fun('payReviewDown')){
+							if(this.fun('payReviewTwo')){
 								this.isfirst='';
 								this.shouqizit='';
 							}else{
@@ -472,7 +474,7 @@
 								this.shouqizit='首期';
 							}
 						}else{
-							if(this.fun('payExaminationTwo')){
+							if(this.fun('payReviewTwo')){
 								this.isfirst=2;
 								this.shouqizit='非首期';
 							}

@@ -21,16 +21,6 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<!--<el-form-item label="对账状态">-->
-			<!--<el-select v-model="filters.duizhangstatus" @change="getReceivable" placeholder="请输入对账状态">-->
-			<!--<el-option-->
-			<!--v-for="item in options2"-->
-			<!--:key="item.value"-->
-			<!--:label="item.label"-->
-			<!--:value="item.value">-->
-			<!--</el-option>-->
-			<!--</el-select>-->
-			<!--</el-form-item>-->
 			<el-form-item>
 				<el-button type="primary" icon="search" v-on:click="getReceivable">搜索</el-button>
 			</el-form-item>
@@ -51,13 +41,7 @@
 			</p>
 		</div>
 
-		<!-- <el-tabs v-model="activeName2" type="border-card" @tab-click="handleClick"> -->
-		<!-- <el-tab-pane label="全部" name="first"></el-tab-pane>
-            <el-tab-pane label="未付款" name="second"></el-tab-pane>
-            <el-tab-pane label="付款成功" name="fourth"></el-tab-pane>
-            <el-tab-pane label="付款失败" name="fifth"></el-tab-pane>
-						<el-tab-pane label="已撤销" name="five"></el-tab-pane> -->
-		<el-table :data="Receivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"
+		<el-table height="500" :data="Receivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"
 		 @selection-change="selsChange" style="width: 100%;">
 			<el-table-column prop="hetongbianhao" label="合同编号">
 			</el-table-column>
@@ -80,6 +64,8 @@
 			<el-table-column prop="skinfo" label="收款账号" width="180">
 			</el-table-column>
 			<el-table-column prop="zhifustate" label="支付状态" :formatter="formatState" width="100">
+			</el-table-column>
+			<el-table-column prop="uuidNum" label="客户标识" width="220">
 			</el-table-column>
 		</el-table>
 		<div style="margin-top:30px"></div>
@@ -286,11 +272,13 @@
 				actualPaymentPayable(para).then((res) => {
 					this.total = res.data.total;
 					this.Receivable = res.data.data;
-					// this.DataSum = res.data.dataSum;
-					//                     if (res.data.dataSum == null) {
-					//                         this.DataSum =
-					//                             {sumMoney: 0, tijiaoMoney: 0, shijiMoney: 0};
-					//                     }
+					for(var i=0;i<this.Receivable.length;i++){
+						if(this.Receivable[i].duizhangType == '1'){
+							this.Receivable[i].uuidNum = "B" + this.Receivable[i].uuidNum;
+						}else{
+							this.Receivable[i].uuidNum = "C" + this.Receivable[i].uuidNum;
+						}
+					}
 					this.listLoading = false;
 				});
 			},

@@ -18,6 +18,7 @@ class settlementController extends Controller
     {
 		$page = Input::get('page');
 		$size = Input::get('pageSize');
+		$isfirst = Input::get('isfirst');
 		$htno = Input::get('htno');
 		$xm = Input::get('xm');
 		$sdate = Input::get('sdate');
@@ -32,6 +33,7 @@ class settlementController extends Controller
 				'query' => [
 					'page' => $page,
 					'size' => $size,
+					'isfirst' => $isfirst,
 					'htno' => $htno,
 					'xm' => $xm,
 					'sdate' => $sdate,
@@ -58,6 +60,19 @@ class settlementController extends Controller
         echo $response->getBody();
 
     }
+	
+	//应付款管理的提交记录下的审批记录列表
+	public function SubmitAudit(Request $request)
+	{
+		$tCwFcId = Input::get('tCwFcId');
+		$tCwFcSubmitId = Input::get('tCwFcSubmitId');
+		$client = new Client ([
+			'base_uri' => $this->base_url,
+		]);
+		$response = $client->request('GET', '/api/cw/yf/approvalRecords?tCwFcId=' . $tCwFcId . '&tCwFcSubmitId=' . $tCwFcSubmitId);
+		echo $response->getBody();
+
+	}
 
     //应付中付款记录列表中的扣款记录列表
     public function deduction(Request $request)
@@ -329,11 +344,13 @@ class settlementController extends Controller
     {
         $page = Input::get('page');
         $size = Input::get('pageSize');
+		$isfirst = Input::get('isfirst');
         $htno = Input::get('htno');
         $xm = Input::get('xm');
         $sdate = Input::get('sdate');
         $edate = Input::get('edate');
         $status = Input::get('zt2');
+		$isfushen = Input::get('isfushen');
 		$user = Auth::user();
 		$phone = $user->phone;
         $client = new Client ([
@@ -343,12 +360,14 @@ class settlementController extends Controller
                 'query' => [
                     'page' => $page,
                     'size' => $size,
+					'isfirst' => $isfirst,
                     'htno' => $htno,
                     'xm' => $xm,
                     'sdate' => $sdate,
                     'edate' => $edate,
 					'phone' => $phone,
                     'status' => $status,
+					'isfushen' => $isfushen
                 ]
             ]
         );
@@ -502,6 +521,7 @@ class settlementController extends Controller
                     Excel::create($res->data->piciCode, function ($excel) use ($cellData) {
                         $excel->sheet('score', function ($sheet) use ($cellData) {
                             $sheet->getStyle('F')->getNumberFormat()->setFormatCode("0.00");
+							$sheet->getStyle('B1')->getNumberFormat()->setFormatCode("0.00");
                             $sheet->rows($cellData);
                         });
                     })->store('xls')->export('xls');

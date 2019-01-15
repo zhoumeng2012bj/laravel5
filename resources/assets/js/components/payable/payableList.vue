@@ -20,6 +20,9 @@
             </el-form-item>
         </el-form>
          	<div class="totals_box">
+						<p>
+							<span style="font-size: 14px;">{{shouqizit}}</span>         			
+						</p>
          		<p>
          			<span style="color:red;font-size: 14px;">(注：红色日期表示付款已延期，请尽快处理)</span>         			
          		</p>
@@ -29,7 +32,7 @@
             <el-tab-pane label="待提交" name="second"></el-tab-pane>
             <el-tab-pane label="部分提交" name="third"></el-tab-pane>
             <el-tab-pane label="提交完成" name="fourth"></el-tab-pane>
-            <el-table :data="Payable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中" @selection-change="selsChange" style="width: 100%;">
+            <el-table height="500" :data="Payable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中" @selection-change="selsChange" style="width: 100%;">
                 <el-table-column prop="htbianhao" label="合同编号" width="190">
                 </el-table-column>
                 <el-table-column prop="xiangmu" label="项目">
@@ -60,8 +63,8 @@
                                    操作<i class="el-icon-caret-bottom el-icon--right"></i>
                                </el-button>
                                <el-dropdown-menu slot="dropdown" >
-                                   <el-dropdown-item v-if="ztin(scope.row,[0,1])&&fun('paRiskSub')" ><el-button   @click="handleRokeBack(scope.$index, scope.row)">提交付款</el-button></el-dropdown-item>
-                                   <el-dropdown-item v-if="ztin(scope.row,[1,2])&&fun('paRiskSubL')"  > <el-button  @click="handleOpenUp(scope.$index, scope.row)">提交记录</el-button> </el-dropdown-item>
+                                   <el-dropdown-item v-if="ztin(scope.row,[0,1])&&fun('paSub')" ><el-button   @click="handleRokeBack(scope.$index, scope.row)">提交付款</el-button></el-dropdown-item>
+                                   <el-dropdown-item v-if="zsstin(scope.row,[0,1,2])&&fun('paSubList')"  > <el-button  @click="handleOpenUp(scope.$index, scope.row)">提交记录</el-button> </el-dropdown-item>
                                </el-dropdown-menu>
                            </el-dropdown>
                        </template>
@@ -138,6 +141,8 @@
         components: {ElForm},
         data(){
             return {
+								isfirst:'',//1首期 2二期之后 空是全部
+								shouqizit:'',
 								tjfuid:'',
                 filters:{
                     contractNo: '',
@@ -226,11 +231,27 @@
             ztin(row,arr){
                 var status = arr.indexOf(row.windControlState);
                 if(status>-1){
-                    return true;
+										return true;
                 }else{
                     return false;
                 }
             },
+						zsstin(row,arr){
+							var status = arr.indexOf(row.windControlState);
+							if(status>-1){
+									if(row.windControlState == 0){
+										if(row.submitStatus == 1){
+											return true;
+										}else{
+											return false;
+										}
+									}else{
+										return true;
+									}
+							}else{
+									return false;
+							}
+						},
             formatFKType(row, column){
                 let status = [];
                 status[0] = '押金';
@@ -289,6 +310,7 @@
                 let para = {
 									page: this.page,
 									pageSize: this.pageSize,
+									isfirst: this.isfirst,
 									htno: this.filters.contractNo,
 									xm: this.filters.xm,
 									sdate: this.filters.startdate,
@@ -376,6 +398,20 @@
         },
         mounted() {
             this.page=1;
+						if(this.fun('payDown')){
+							if(this.fun('payTwo')){
+								this.isfirst='';
+								this.shouqizit='';
+							}else{
+								this.isfirst=1;
+								this.shouqizit='首期';
+							}
+						}else{
+							if(this.fun('payTwo')){
+								this.isfirst=2;
+								this.shouqizit='非首期';
+							}
+						}
             this.getPayable();
 
         }

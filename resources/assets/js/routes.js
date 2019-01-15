@@ -131,14 +131,16 @@ import PayablePrintRecord from "./components/payable/payablePrintRecordList.vue"
 import Payable from "./components/payable/payableList.vue";
 
 
-import PayableRisk from "./components/payable/payableRiskList.vue"; //应付款管理（风控）
+import PayableRisk from "./components/payable/payableRiskList.vue"; //应付款初审
+import PayableReview from "./components/payable/payableReviewList.vue"; //应付款复审
 import PayableEditAmount from "./components/payable/payableEditAmountList.vue"; //财务修改金额列表
 import PayablePlan from "./components/payable/payablePlanList.vue"; //应付计划
 import PayableDeduction from "./components/payable/payableDeductionList.vue";//应付的扣款记录
 import PayableSubm from "./components/payable/payableSubmList.vue";//应付（风控）的扣提交记录
 import PayableFinanceSubm from "./components/payable/payableFinanceSubmList.vue";//应付（风控）的扣提交记录
+import PayableSubmitAudit from "./components/payable/payableSubmitAuditList.vue";//应付款管理的提交记录下的审核记录
 
-
+import Recharge from "./components/recharge/rechargeList.vue"; //应付款管理（风控）
 
 
 import FinancePayable from "./components/payable/financePayableList.vue";
@@ -179,9 +181,9 @@ var fk_permission, fk_permission_user, fk_permission_role, fk_permission_per,
 	fk_contract, fk_contract_purchase, fk_contract_sale, fk_version,
 	fk_brokerCompany, fk_brokerCompanyList, fk_brokerCompanyUserList, fk_brokerUserList,
 	fk_commission, fk_shouFangCommission, fk_chuFangCommission,
-	fk_account, fk_payableList, fk_payableRiskList, fk_payableEditAmountList, fk_payablePlanList, fk_financePayableList,
+	fk_account,fk_payMoney,fk_recharge, fk_payableList, fk_payableRiskList, fk_payableReviewList, fk_payableEditAmountList, fk_payablePlanList, fk_financePayableList,
 	fk_receivableList, fk_receivableAuditList, fk_receivablePlanList, fk_receivablePhaseList, fk_receivablePhaseAuditList,
-	fk_receivablePhasePlanList, fk_receivableFinanceList, fk_receivableReconciliationList, fk_financeReceivableList,
+	fk_receivablePhasePlanList, fk_receivableFinanceList, fk_receivableReconciliationList, fk_financeReceivableList, fk_rechargeList,
 	fk_setPassword, fk_reportList, fk_shoufangReport, fk_chufangReport, fk_chanpinReport, fk_fangyuanXKReport,
 	fk_jinggengReport, fk_projectReport, fk_projectSaleReport, fk_qdCompanyList, fk_commissionReport, fk_coreDataReport,
 	fk_commissionAuditList,
@@ -202,8 +204,11 @@ fun('commission') == true ? fk_commission = false : fk_commission = true;
 fun('shouFangCommission') == true ? fk_shouFangCommission = false : fk_shouFangCommission = true;
 fun('chuFangCommission') == true ? fk_chuFangCommission = false : fk_chuFangCommission = true;
 fun('account') == true ? fk_account = false : fk_account = true;
+fun('payMoney') == true ? fk_payMoney = false : fk_payMoney = true;
+fun('recharge') == true ? fk_recharge = false : fk_recharge = true;
 fun('payableSettlement') == true ? fk_payableList = false : fk_payableList = true;
 fun('payableRisk') == true ? fk_payableRiskList = false : fk_payableRiskList = true;
+fun('payReviewROA') == true ? fk_payableReviewList = false : fk_payableReviewList = true;
 fun('payableEditAmount') == true ? fk_payableEditAmountList = false : fk_payableEditAmountList = true;
 fun('payablePlan') == true ? fk_payablePlanList = false : fk_payablePlanList = true;
 fun('financePayable') == true ? fk_financePayableList = false : fk_financePayableList = true;
@@ -217,6 +222,9 @@ fun('receivableFinance') == true ? fk_receivableFinanceList = false : fk_receiva
 fun('receivableReconciliation') == true ? fk_receivableReconciliationList = false : fk_receivableReconciliationList =
 	true;
 fun('financeReceivable') == true ? fk_financeReceivableList = false : fk_financeReceivableList = true;
+
+fun('recharge') == true ? fk_rechargeList = false : fk_rechargeList = true;
+
 fun('setPassword') == true ? fk_setPassword = false : fk_setPassword = true;
 fun('reportList') == true ? fk_reportList = false : fk_reportList = true;
 fun('shoufangReport') == true ? fk_shoufangReport = false : fk_shoufangReport = true;
@@ -893,6 +901,12 @@ let routes = [{
 				hidden: true
 			},
 			{
+				path: '/payableSubmitAudit',
+				component: PayableSubmitAudit,
+				name: '审批记录',
+				hidden: true
+			},
+			{
 				path: '/paymentRecord',
 				component: PaymentRecord,
 				name: '修改记录',
@@ -913,7 +927,7 @@ let routes = [{
         component: navigation,
         name: '应付款管理',
         iconCls: 'el-icon-document', //图标样式class
-        hidden: fk_account,
+        hidden: fk_payMoney,
         children: [{
             path: '/payable',
             component: Payable,
@@ -923,9 +937,15 @@ let routes = [{
             {
                 path: '/payableRisk',
                 component: PayableRisk,
-                name: '应付款确认',
+                name: '应付款初审',
                 hidden: fk_payableRiskList
             },
+			{
+				path: '/payableReview',
+				component: PayableReview,
+				name: '应付款复审',
+				hidden: fk_payableReviewList
+			},
             {
                 path: '/payableEditAmount',
                 component: PayableEditAmount,
@@ -948,6 +968,25 @@ let routes = [{
         ]
 
     },
+	{
+		path: '/',
+		component: navigation,
+		name: '充值',
+		iconCls: 'el-icon-document', //图标样式class
+		hidden: fk_recharge,
+		children: [{
+			path: '/recharge',
+			component: Recharge,
+			name: '充值',
+			hidden: fk_rechargeList
+		},
+// 			{
+// 				path: '/payableRisk',
+// 				component: PayableRisk,
+// 				name: '应付款确认',
+// 				hidden: fk_payableRiskList
+// 			},
+		]},
 	{
 		//版本1
 		path: '/saleContract/dumpx20170719',

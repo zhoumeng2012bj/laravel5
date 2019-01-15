@@ -65,7 +65,6 @@
 										 <el-dropdown-menu slot="dropdown" >
 												 <el-dropdown-item><el-button @click="handleView(scope.$index, scope.row)">查看备注</el-button></el-dropdown-item>
 												 <el-dropdown-item v-if="ztin(scope.row,[2,3,4,5,6])"><el-button @click="handleAdd(scope.$index, scope.row)">审批记录</el-button></el-dropdown-item>
-
 												 <el-dropdown-item v-if="fun('paSubListDedList')"><el-button @click="handleviewRokeBack(scope.$index,scope.row)">扣款记录</el-button></el-dropdown-item>
 												 
 
@@ -781,17 +780,12 @@
 			},
 			//新增实收页面
 			handleAdd: function (index, row) {
-				// this.addFormVisible = true;
 				this.$router.push('/payableSubmitAudit?id=' + row.tCwFcId + '&subid=' + row.tCwFcSubmitId);
-// 				this.shenpr = this.financeReceivable[index].auditname;
-// 				this.shenpshij = this.changetimeDate(this.financeReceivable[index].auditTime);
-// 				this.beizhushenp = this.financeReceivable[index].auditDesc;
 			},
 			//显示查看备注页面
 			handleView: function (index, row) {
 				this.beizhu = this.financeReceivable[index].beizhu;
 				this.viewDateFormVisible = true;
-				// this.viewDateForm  = Object.assign({}, row);
 			},
 			//提交审核的数据1 通过 2驳回
 			addFormSubmit(type){

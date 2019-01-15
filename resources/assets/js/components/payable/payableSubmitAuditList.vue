@@ -47,7 +47,7 @@
         <el-row class="rowspacing">
             <el-table height="500" :data="financeReceivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"   style="width: 100%;">
 							
-				<el-table-column prop="createtime" label="审批日期" :formatter="changeDate1">
+				<el-table-column prop="createtime" label="审批时间" :formatter="changeDate1">
 				</el-table-column>
 				<el-table-column prop="spusername" label="审批人">
 				</el-table-column>
@@ -651,9 +651,9 @@
 			},
 			//时间戳转日期格式
 			changeDate1(value){
-					var newDate = new Date();
-					newDate.setTime(value.createtime);
-					return newDate.toLocaleDateString()
+				var newDate = new Date();
+				newDate.setTime(value.createtime);
+				return newDate.toLocaleString()
 			},
 			//时间戳转日期格式
 			changeDate2(row, column){

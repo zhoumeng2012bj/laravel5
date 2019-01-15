@@ -65,6 +65,7 @@
                                </el-button>
                                <el-dropdown-menu slot="dropdown" >
                                    <el-dropdown-item v-if="ztin(scope.row,[1])&&fun('paRiskSubexat')"><el-button @click="handleRokeBack(scope.$index, scope.row)">审批</el-button></el-dropdown-item>
+																	 <el-dropdown-item v-if="ztin(scope.row,[2,3,4,5,6])"><el-button @click="handleAdd(scope.$index, scope.row)">审批记录</el-button></el-dropdown-item>
                                    <el-dropdown-item v-if="ztin(scope.row,[2,3,6])"  > <el-button  @click="handleOpenUp(scope.$index, scope.row)">审批意见</el-button> </el-dropdown-item>
                                </el-dropdown-menu>
                            </el-dropdown>
@@ -327,6 +328,9 @@
             handleOpen: function (index, row) {
                 this.$router.push('/paymentRecord?id=' + row.tCwFcId);
             },
+						handleAdd: function (index, row) {
+							this.$router.push('/payableSubmitAudit?id=' + row.tCwFcId + '&subid=' + row.tCwFcSubmitId);
+						},
             handleOpenUp: function (index, row) {
 							this.addFormVisible = true;
 							this.shenpr = this.Payable[index].auditname;

@@ -33,8 +33,8 @@
          		<p>
          			<span style="color:red;font-size: 14px;">(注：红色日期表示付款已延期，请尽快处理)</span>         			
          		</p>
-						<p>
-                            <el-button type="primary"   style="padding: 5px;border-radius: 5px;"   v-on:click="handleExcel">导出应付计划</el-button>
+						<p v-if="fun('payableExport')">
+							<el-button type="primary"   style="padding: 5px;border-radius: 5px;"   v-on:click="handleExcel">导出应付计划</el-button>
 						</p>
          	</div>
         <el-tabs v-model="activeName2" type="border-card" @tab-click="handleClick">

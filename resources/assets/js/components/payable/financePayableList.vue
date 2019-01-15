@@ -30,11 +30,11 @@
 				<span style="color:red;font-size: 14px;">（注：红色日期表示付款已延期，请尽快处理）</span>
 			</p>
 			<p style="display: flex;align-items: center;">
-				<el-upload style="padding: 5px;border-radius: 5px;" action="/payable/planImportExcel" :on-success="handleSuccess"
+				<el-upload v-if="fun('payableImportRecords')" style="padding: 5px;border-radius: 5px;" action="/payable/planImportExcel" :on-success="handleSuccess"
 				 :show-file-list="false" :multiple="false" :on-error="handleError()" :before-upload="beforeUpload">
 					<el-button type="primary">导入实付记录</el-button>
 				</el-upload>
-				<span style="display:inline-block;height:36px;">
+				<span v-if="fun('payableExportData')" style="display:inline-block;height:36px;">
 					<el-button type="primary" tyle="padding: 5px;border-radius: 5px;" v-on:click="handleExcel">导出异常数据</el-button>
 				</span>
 

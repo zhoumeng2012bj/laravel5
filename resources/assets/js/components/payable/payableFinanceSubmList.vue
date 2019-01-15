@@ -5,7 +5,7 @@
 			 style="width: 100%;">
 				<el-table-column prop="faqiren" label="修改人">
 				</el-table-column>
-				<el-table-column prop="tijiaodate" label="修改时间" :formatter="changeDate1">
+				<el-table-column prop="tijiaodate" label="修改时间" :formatter="changeDate1" width="200">
 				</el-table-column>
 				<el-table-column prop="wuye" label="代缴物业">
 				</el-table-column>
@@ -93,7 +93,7 @@
 			changeDate1(value) {
 				var newDate = new Date();
 				newDate.setTime(value.tijiaodate);
-				return newDate.toLocaleDateString()
+				return newDate.toLocaleString()
 			},
 			//时间戳转日期格式
 			changeDate2(row, column) {

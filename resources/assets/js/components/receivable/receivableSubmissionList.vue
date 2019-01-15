@@ -42,9 +42,7 @@
 				</el-table-column>
 				<el-table-column prop="persnoname" label="发起人" >
 				</el-table-column>
-				<el-table-column prop="audittime" label="审批时间" :formatter="changeDate2">
-				</el-table-column>
-				<el-table-column prop="auditname" label="审批人">
+				<el-table-column prop="auditname" label="当前节点">
 				</el-table-column>
 				<el-table-column prop="status" label="审批状态"  :formatter="formatState2" >
 				</el-table-column>
@@ -61,9 +59,9 @@
 										 <el-dropdown-menu slot="dropdown" >
 												 <!-- <el-dropdown-item   v-if="scope.row.zhuangtai==0||scope.row.zhuangtai==2" ><el-button v-if="fun('claim')"   @click="handleRokeBack(scope.row)">认领</el-button></el-dropdown-item>
 												 <el-dropdown-item v-if="fun('queryMemo')" ><el-button   @click="handleView(scope.$index, scope.row)">查看备注</el-button></el-dropdown-item> -->
-												 <el-dropdown-item v-if="ztin(scope.row,[1])"><el-button @click="handleRokeBack(scope.row)">审核</el-button></el-dropdown-item>
-												 <el-dropdown-item v-if="ztin(scope.row,[2,3])"><el-button @click="handleviewRokeBack(scope.$index,scope.row)">审核意见</el-button></el-dropdown-item>
-												 <el-dropdown-item v-if="ztin(scope.row,[1,2,3])"><el-button @click="handleView(scope.$index, scope.row)">查看备注</el-button></el-dropdown-item>
+												 <!--<el-dropdown-item v-if="ztin(scope.row,[1])"><el-button @click="handleRokeBack(scope.row)">审核</el-button></el-dropdown-item>-->
+												 <el-dropdown-item v-if="ztin(scope.row,[2,3,4,5])"><el-button @click="handleviewRokeBack(scope.$index,scope.row)">审批记录</el-button></el-dropdown-item>
+												 <el-dropdown-item v-if="ztin(scope.row,[1,2,3,4,5])"><el-button @click="handleView(scope.$index, scope.row)">查看备注</el-button></el-dropdown-item>
 
 										 </el-dropdown-menu>
 								 </el-dropdown>
@@ -597,15 +595,7 @@
 			},
 			//审核意见的审批
 			handleviewRokeBack(index, row){
-				this.udopinion = this.financeReceivable[index].auditdesc;
-				this.rokeBackFormVisiblevie = true;
-				// this.renlingData.tCwSrCaiwuId=row.tCwSrCaiwuId;
-// 				this.addForm = Object.assign({}, row);
-// 				this.addForm = {
-// 					tCwSrSubmitId: row.tCwSrSubmitId,
-// 					status: '',
-// 					beizhu: '',
-// 				};
+                this.$router.push('/receivableSubmissionAudit?id=' + row.tCwSrSubmitId);
 			},
 			formatFKType(row, column){
 					let status = [];
@@ -626,9 +616,11 @@
 			//审批状态显示转换
 			formatState2: function (row, column) {
 					let status = [];
-					status[1] = '待审批';
-					status[2] = '已通过';
-					status[3] = '已驳回';
+                status[1] = '待初审';
+                status[2] = '初审通过';
+                status[3] = '初审驳回';
+                status[4] = '复审通过';
+                status[5] = '复审驳回';
 					return status[row.status];
 			},
 			//认领支付状态显示转换

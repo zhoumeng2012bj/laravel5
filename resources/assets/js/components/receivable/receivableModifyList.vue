@@ -301,14 +301,14 @@
             changeDate1(value){
                 var newDate = new Date();
                 newDate.setTime(value.updatedate);
-                return newDate.toLocaleDateString()
+                return newDate.toLocaleString()
             },
             //时间戳转日期格式
             changeDate2(row, column){
                 if(row.audittime!=null) {
                     var newDate = new Date();
                     newDate.setTime(row.audittime);
-                    return newDate.toLocaleDateString()
+                    return newDate.toLocaleString()
                 }
             },
             //标签切换时

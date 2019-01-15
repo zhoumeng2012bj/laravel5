@@ -47,6 +47,7 @@ class examineController extends Controller
 			echo $response->getBody();
 
 	}
+
 	//修改记录列表
 	public function modify(Request $request)
 	{
@@ -77,7 +78,23 @@ class examineController extends Controller
 			echo $response->getBody();
 
 	}
-	
+    //提交审核记录列表
+    public function submiauditlist(Request $request)
+    {
+        $id = Input::get('id');
+        $client = new Client ([
+            'base_uri' => $this->base_url,
+        ]);
+
+        $response = $client->request('GET', '/api/cw/ys/submit/auditxinxilist',[
+                'query' => [
+                    'id'=>$id,
+                ]
+            ]
+        );
+        echo $response->getBody();
+
+    }
 	public function addYXJ(Request $request)
 	{
 		//以后用户会从OMC取

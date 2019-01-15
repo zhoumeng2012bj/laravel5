@@ -16,39 +16,36 @@ class settlementController extends Controller
     //应付款管理列表(结算)
     public function settlement(Request $request)
     {
-        $page = Input::get('page');
-        $size = Input::get('pageSize');
-        $htno = Input::get('htno');
-        $xm = Input::get('xm');
-        $sdate = Input::get('sdate');
-        $edate = Input::get('edate');
-        $listState = Input::get('listState');
-        $zt = Input::get('zt');
-        $zt2 = Input::get('zt2');
-        $client = new Client ([
-            'base_uri' => $this->base_url,
-        ]);
-        $user = Auth::user();
-        $phone = $user->phone;
-        $response = $client->request('GET', '/api/cw/yf/settlementList', [
-                'query' => [
-                    'page' => $page,
-                    'size' => $size,
-                    'zt' => $zt,
-                    'htno' => $htno,
-                    'xm' => $xm,
-                    'sdate' => $sdate,
-                    'edate' => $edate,
-                    'listState' => $listState,
-                    'zt2' => $zt2,
-                    'phone' => $phone,
+		$page = Input::get('page');
+		$size = Input::get('pageSize');
+		$isfirst = Input::get('isfirst');
+		$htno = Input::get('htno');
+		$xm = Input::get('xm');
+		$sdate = Input::get('sdate');
+		$edate = Input::get('edate');
+		$zt2 = Input::get('zt2');
+		$client = new Client ([
+			'base_uri' => $this->base_url,
+		]);
+		$user = Auth::user();
+		$phone = $user->phone;
+		$response = $client->request('GET', '/api/cw/yf/settlementList', [
+				'query' => [
+					'page' => $page,
+					'size' => $size,
+					'isfirst' => $isfirst,
+					'htno' => $htno,
+					'xm' => $xm,
+					'sdate' => $sdate,
+					'edate' => $edate,
+					'zt2' => $zt2,
+					'phone' => $phone,
 
-                ]
-            ]
-        );
-        echo $response->getBody();
-
-    }
+				]
+			]
+		);
+		echo $response->getBody();
+	}
 
     //应付中付款记录列表
     public function payment(Request $request)
@@ -63,6 +60,19 @@ class settlementController extends Controller
         echo $response->getBody();
 
     }
+	
+	//应付款管理的提交记录下的审批记录列表
+	public function SubmitAudit(Request $request)
+	{
+		$tCwFcId = Input::get('tCwFcId');
+		$tCwFcSubmitId = Input::get('tCwFcSubmitId');
+		$client = new Client ([
+			'base_uri' => $this->base_url,
+		]);
+		$response = $client->request('GET', '/api/cw/yf/approvalRecords?tCwFcId=' . $tCwFcId . '&tCwFcSubmitId=' . $tCwFcSubmitId);
+		echo $response->getBody();
+
+	}
 
     //应付中付款记录列表中的扣款记录列表
     public function deduction(Request $request)
@@ -329,6 +339,64 @@ class settlementController extends Controller
 
     }
 
+	//应付款确认的列表
+    public function yflistkqr(Request $request)
+    {
+        $page = Input::get('page');
+        $size = Input::get('pageSize');
+		$isfirst = Input::get('isfirst');
+        $htno = Input::get('htno');
+        $xm = Input::get('xm');
+        $sdate = Input::get('sdate');
+        $edate = Input::get('edate');
+        $status = Input::get('zt2');
+		$isfushen = Input::get('isfushen');
+		$user = Auth::user();
+		$phone = $user->phone;
+        $client = new Client ([
+            'base_uri' => $this->base_url,
+        ]);
+        $response = $client->request('GET', '/api/cw/yf/FcAuditList', [
+                'query' => [
+                    'page' => $page,
+                    'size' => $size,
+					'isfirst' => $isfirst,
+                    'htno' => $htno,
+                    'xm' => $xm,
+                    'sdate' => $sdate,
+                    'edate' => $edate,
+					'phone' => $phone,
+                    'status' => $status,
+					'isfushen' => $isfushen
+                ]
+            ]
+        );
+        echo $response->getBody();
+
+    }
+	
+	//应付款确认中的审核
+	public function yfkqr(Request $request)
+	{
+		//以后用户会从OMC取
+		$u = Auth::user();
+		$user = Array(
+			'spuser' => $u->id,
+			'spusername' => $u->name,
+		);
+		$obj = array_merge($request->params, $user);
+
+		// dd( json_encode( $obj));
+		$client = new Client ([
+			'base_uri' => $this->base_url,
+
+		]);
+		$r = $client->request('POST', '/api/cw/yf/saveFcReject', [
+			'json' => $obj
+		]);
+		return $r->getBody();
+	}
+	
     public function planImportExcel()
     {
         //PHP上传失败
@@ -387,7 +455,7 @@ class settlementController extends Controller
                 $res = json_decode($bk);
                 if ($res->success) {
                     $cellData = $res->data->data;
-                    if (count($cellData) > 0) {
+                    if (count($cellData) > 1) {
 
                         Excel::create($res->data->piciCode, function ($excel) use ($cellData) {
                             $excel->sheet('score', function ($sheet) use ($cellData) {
@@ -453,6 +521,7 @@ class settlementController extends Controller
                     Excel::create($res->data->piciCode, function ($excel) use ($cellData) {
                         $excel->sheet('score', function ($sheet) use ($cellData) {
                             $sheet->getStyle('F')->getNumberFormat()->setFormatCode("0.00");
+							$sheet->getStyle('B1')->getNumberFormat()->setFormatCode("0.00");
                             $sheet->rows($cellData);
                         });
                     })->store('xls')->export('xls');

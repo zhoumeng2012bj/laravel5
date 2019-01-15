@@ -13,16 +13,8 @@
 							<el-date-picker type="date" placeholder="请选择结束日期" v-model="filters.edate">
 							</el-date-picker>
 					</el-form-item>
-					<!-- <el-form-item>
-            <el-form-item label="付款银行:">
-                <el-input v-model="filters.fkyh" placeholder="请输入付款银行"></el-input>
-            </el-form-item>
-            <el-form-item label="付款账号:">
-                <el-input v-model="filters.fkzh" placeholder="请输入付款账号"></el-input>
-            </el-form-item> -->
             <el-form-item>
                 <el-button type="primary" icon="search"  v-on:click="getReceivable">搜索</el-button>
-                <!-- <el-button type="primary" class="el-icon-plus"  v-if="fun('claimAdd')"  @click="handleAdd">新增</el-button> -->
 								<el-button type="primary" class="el-icon-plus" @click="handleAdd">新增</el-button>
             </el-form-item>
         </el-form>
@@ -38,10 +30,6 @@
             </el-table-column>
             <el-table-column prop="fukuanzhanghu" label="付款方户名"  >
             </el-table-column>
-           <!-- <el-table-column prop="renlingmoney" label="已认领金额"   >
-            </el-table-column>
-            <el-table-column prop="shengyvmoney" label="剩余金额"  >
-            </el-table-column> -->
             <el-table-column  label="付款银行及账号"   :formatter="formatskyh">
             </el-table-column>
             <el-table-column prop="zhuangtai" label="状态"  :formatter="formatState"  >
@@ -53,7 +41,6 @@
                                操作<i class="el-icon-caret-bottom el-icon--right"></i>
                            </el-button>
                            <el-dropdown-menu slot="dropdown" >
-                               <!-- <el-dropdown-item   v-if="scope.row.zhuangtai==0||scope.row.zhuangtai==2" ><el-button v-if="fun('claim')"   @click="handleRokeBack(scope.row)">认领</el-button></el-dropdown-item> -->
 															 <el-dropdown-item v-if="ztin(scope.row,[0,2])&&fun('receiptsClaim')"><el-button  @click="handleRokeBack(scope.row)">认领</el-button></el-dropdown-item>
                                <el-dropdown-item v-if="fun('receiptsClaimList')"><el-button   @click="handleclaimRecord(scope.$index, scope.row)">认领记录</el-button></el-dropdown-item>
 																<el-dropdown-item v-if="ztin(scope.row,[0,1,2])&&fun('RUpload')"><el-button   @click="handleUpload(scope.$index, scope.row)">上传凭证</el-button></el-dropdown-item>
@@ -111,19 +98,10 @@
                 </el-table-column>
 								<el-table-column prop="kemu" label="类型"  :formatter="formatFKType" >
 								</el-table-column>
-								
-                <!-- <el-table-column prop="sktype" label="收款科目"    :formatter="formatFKType"  >
-                </el-table-column> -->
-                <!-- <el-table-column prop="skmoney" label="应收房租"  >
-                </el-table-column> -->
                 <el-table-column prop="shoukuanmoney" label="应付金额"   >
                 </el-table-column>
                 <el-table-column prop="tijiaomoney" label="提交金额"  >
                 </el-table-column>
-                <!-- <el-table-column prop="shiugaizhuangtai" label="修改状态"    >
-                </el-table-column>
-                <el-table-column prop="srstate" label="支付状态"  :formatter="formatRLState" >
-                </el-table-column> -->
             </el-table>
             <div style="margin-top:30px"></div>
             <!-- 分页-->
@@ -401,8 +379,8 @@
 //                     zt: this.filters.zt,
 //                 };
 								let para = {
-										page: this.pagerl,
-										pageSize: this.pageSizerl,
+										page: this.page,
+										pageSize: this.pageSize,
 										sdate: this.filters.sdate,
 										edate: this.filters.edate,
 										fkzh: this.filters.fkzh,
@@ -517,6 +495,7 @@
         },
         mounted() {
             this.page=1;
+						this.pagerl = 1;
             this.getReceivable();
 
         }

@@ -201,6 +201,34 @@ class brokerCompanyUserController extends Controller
         echo $response->getBody();
 
     }
+		
+		//获取银行账号
+		public function getbankCNameList(Request $request)
+		{
+				$client = new Client([
+						'base_uri' => $this->base_url,
+						'timeout'  => 2.0,
+
+				]);
+				$bkName = Input::get('name');
+				$response = $client->request('GET', '/api/contract/yhzh/banklist?name='.$bkName);
+				echo $response->getBody();
+
+		}
+		
+		//获取省
+		public function getbankCName2List(Request $request)
+		{
+				$client = new Client([
+						'base_uri' => $this->base_url,
+						'timeout'  => 2.0,
+
+				]);
+				$bkName = Input::get('name');
+				$response = $client->request('GET', '/api/contract/yhzh/citylist?name='.$bkName);
+				echo $response->getBody();
+
+		}
 
     //渠道等级
     public function getQDDJDicList(Request $request)

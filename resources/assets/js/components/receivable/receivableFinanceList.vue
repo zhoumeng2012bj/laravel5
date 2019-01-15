@@ -44,14 +44,7 @@
 		        <span style="color:red;font-size: 14px;">（注：红色日期表示收款已延期，请尽快处理）</span>
         	</p>
         </div>
-        
-        <!-- <el-tabs v-model="activeName2" type="border-card" @tab-click="handleClick"> -->
-           <!-- <el-tab-pane label="全部" name="first"></el-tab-pane>
-            <el-tab-pane label="未付款" name="second"></el-tab-pane>
-            <el-tab-pane label="付款成功" name="fourth"></el-tab-pane>
-            <el-tab-pane label="付款失败" name="fifth"></el-tab-pane>
-						<el-tab-pane label="已撤销" name="five"></el-tab-pane> -->
-            <el-table :data="Receivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"
+            <el-table height="500" :data="Receivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"
                       @selection-change="selsChange" style="width: 100%;">
                 <el-table-column prop="hetongbianhao" label="合同编号">
                 </el-table-column>
@@ -82,7 +75,7 @@
                                   操作<i class="el-icon-caret-bottom el-icon--right"></i>
                               </el-button>
                               <el-dropdown-menu slot="dropdown">
-																	<el-dropdown-item v-if="ztin(scope.row,[1])&&fun('financeWithdraw')">
+																	<el-dropdown-item v-if="ztin(scope.row,[1,3])&&fun('financeWithdraw')">
 																			<el-button @click.native="handleRokeBack(scope.$index, scope.row)" :loading="addFormLoading">撤回</el-button>
 																	</el-dropdown-item>
                               </el-dropdown-menu>
@@ -104,7 +97,6 @@
                 >
                 </el-pagination>
             </el-col>
-        <!-- </el-tabs> -->
     </el-row>
 </template>
 <style>
@@ -195,7 +187,15 @@
             ztin(row, arr){
                 var status = arr.indexOf(row.paystatus);
                 if (status > -1) {
-                    return true;
+									if(row.paystatus == 3){
+										if(row.duizhangstatus == 2 || row.duizhangstatus == null){
+											return true;
+										}else{
+											return false;
+										}
+									}else{
+										return true;
+									}
                 } else {
                     return false;
                 }

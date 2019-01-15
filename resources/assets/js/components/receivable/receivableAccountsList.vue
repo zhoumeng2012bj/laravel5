@@ -27,7 +27,7 @@
             </el-form-item>
         </el-form>
 
-        <el-table :data="Receivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"
+        <el-table height="500" :data="Receivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"
                   @selection-change="selsChange" style="width: 100%;">
             <el-table-column prop="xiangmu" label="项目" width="300">
             </el-table-column>
@@ -52,11 +52,11 @@
                             操作<i class="el-icon-caret-bottom el-icon--right"></i>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item v-if=" fun('financeWithdraw')&&scope.row.caozuozhuangtai==1">
+                            <el-dropdown-item v-if="fun('receivableRlHandle')&&scope.row.caozuozhuangtai==1">
                                 <el-button @click.native="handleFrom(scope.$index, scope.row)">处理
                                 </el-button>
                             </el-dropdown-item>
-                            <el-dropdown-item v-if=" fun('paSubList')&&scope.row.caozuozhuangtai==2">
+                            <el-dropdown-item v-if="scope.row.caozuozhuangtai==2">
                                 <el-button @click="handleRokeBack(scope.$index, scope.row)">处理记录</el-button>
                             </el-dropdown-item>
                         </el-dropdown-menu>
@@ -236,6 +236,7 @@
                 status[2] = '正常';
                 status[3] = '支付失败';
                 status[4] = '对账金额不符';
+								status[5] = '验签失败';
                 return status[row.pingtaizhuangtai];
             },
             //操作状态显示转换
@@ -245,7 +246,7 @@
                 status[1] = '未处理';
                 status[2] = '已处理';
                 status[3] = '无需处理';
-                return status[row.pingtaizhuangtai];
+                return status[row.caozuozhuangtai];
             },
             //时间戳转日期格式
             changeDate: function (row, column) {

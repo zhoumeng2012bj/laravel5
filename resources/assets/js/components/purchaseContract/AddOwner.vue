@@ -67,10 +67,10 @@
                     </el-form-item>
                 </el-col>
             </el-row>
-            <el-form-item label="账户类型" prop="duizhangType" >
+            <el-form-item label="账户类型" prop="duizhangType" required>
                 <el-radio-group v-model="owner.duizhangType" >
-                    <el-radio :label="C">公户</el-radio>
-                    <el-radio :label="B">私户</el-radio>
+                    <el-radio label="1">公户</el-radio>
+                    <el-radio label="2">私户</el-radio>
                 </el-radio-group>
             </el-form-item>
             <el-row>
@@ -79,11 +79,28 @@
                         <el-input v-model="owner.shoukuanren" :disabled="lydisabled"></el-input>
                     </el-form-item>
                 </el-col>
-                <el-col :span="10">
-                    <el-form-item label="银行" prop="shoufangzonghang" required>
-                        <el-input v-model="owner.shoufangzonghang" :disabled="lydisabled"></el-input>
-                    </el-form-item>
-                </el-col>
+								<el-col :span="10">
+										<el-form-item label="银行" required prop="shoufangzonghang">
+												<el-select
+																v-model="owner.shoufangzonghangid"
+																filterable
+																default-first-option
+																remote
+																@change="change1"
+																placeholder=""
+																:remote-method="bankCompany"
+																:loading="bankCNameloading"
+																:disabled="lydisabled"
+												>
+														<el-option
+																		v-for="item in owner.options3"
+																		:key="item.value"
+																		:label="item.label"
+																		:value="item.value">
+														</el-option>
+												</el-select>
+										</el-form-item>
+								</el-col>
             </el-row>
             <el-row>
                 <el-col :span="8">
@@ -115,11 +132,28 @@
                 </el-col>
             </el-row>
             <el-row>
-                <el-col :span="8">
-                    <el-form-item label="开户省" prop="shengfen" required>
-                        <el-input v-model="owner.shengfen" :disabled="lydisabled"></el-input>
-                    </el-form-item>
-                </el-col>
+								<el-col :span="8">
+										<el-form-item label="开户省" required prop="shengfen">
+												<el-select
+																v-model="owner.shengfenid"
+																filterable
+																default-first-option
+																remote
+																@change="change2"
+																placeholder=""
+																:remote-method="bankCompany2"
+																:loading="bankCName2loading"
+																:disabled="lydisabled"
+												>
+														<el-option
+																		v-for="item in owner.options4"
+																		:key="item.value"
+																		:label="item.label"
+																		:value="item.value">
+														</el-option>
+												</el-select>
+										</el-form-item>
+								</el-col>
                 <el-col :span="10">
                     <el-form-item label="市" prop="shi" required>
                         <el-input v-model="owner.shi" :disabled="lydisabled" ></el-input>
@@ -281,6 +315,13 @@
     import {purchaseEditable} from '../../global'
     import {
         getbkNameList,
+				getbankCNameList,
+				getbankCName2List,
+				
+				
+				
+				
+				
         getBrokerCompanyUserListPage,
         checkSFbianhao,
     } from '../../api/api';;
@@ -289,9 +330,13 @@
             return {
                 labelPosition:'right',
                 bkNameloading:false,
+								bankCNameloading:false,
+								bankCName2loading:false,
                 bkryNameloading:false,
                 lydisabled:false,
                 estate: [],//服务器搜索的渠道公司数据放入这个数组中
+								esbanktate: [],//服务器搜索的银行数据放入这个数组中
+								esbank2tate: [],//服务器搜索的开户省数据放入这个数组中
                 editVisible:true,
                 editOwnerRules :{
                     shoukuanren: [
@@ -303,6 +348,15 @@
                     zhanghao: [
                         { required: true, message: '不能为空' }
                     ],
+										shoufangzonghang: [
+												{ required: true, message: '不能为空' }
+										],
+										shengfen: [
+												{ required: true, message: '不能为空' }
+										],
+										shi: [
+												{ required: true, message: '不能为空' }
+										],
 
                 },
             }
@@ -336,6 +390,86 @@
                     this.owner.flag = valid;
                 });
             },
+						//银行的chage事件
+						change1(){
+								var arr = this.owner.options3;
+								for (let i=0;i<arr.length;i++ ){
+										if(arr[i].value==this.owner.shoufangzonghangid){
+												this.owner.shoufangzonghang = arr[i].label;
+												this.owner.lianhanghao = arr[i].lianhao;
+										}
+								}
+
+						},
+						//获取银行公司名称
+						bankCompany(query) {
+								let para = {
+										name: query,
+										id:this.owner.shoufangzonghangid!=null?this.owner.shoufangzonghangid:'',
+								};
+								this.bankCNameloading = true;
+								getbankCNameList(para).then((res) => {
+										let arr = [];
+										arr[0] = '';
+										for ( var i in res.data.data ){
+												arr[i]=res.data.data[i]
+										}
+										this.esbanktate = arr;
+										this.bankCNameloading = false;
+										this.list = this.esbanktate.map((item,index) => {
+												return { value: item.id, label: item.yinhangname , lianhao: item.yinhanglianhao };
+										});
+										if (query !== '') {
+												this.bankCNameloading = true;
+												setTimeout(() => {
+														this.bankCNameloading = false;
+														this.owner.options3 = this.list;
+												}, 200);
+										} else {
+												this.owner.options3 = [];
+										}
+								});
+
+						},
+						//开户省的chage事件
+						change2(){
+								var arr = this.owner.options4;
+								for (let i=0;i<arr.length;i++ ){
+										if(arr[i].value==this.owner.shengfenid){
+												this.owner.shengfen = arr[i].label;
+										}
+								}
+						},
+						//获取开户省公司名称
+						bankCompany2(query) {
+								let para = {
+										name: query,
+										id:this.owner.shengfenid!=null?this.owner.shengfenid:'',
+								};
+								this.bankCName2loading = true;
+								getbankCName2List(para).then((res) => {
+										let arr = [];
+										arr[0] = '';
+										for ( var i in res.data.data ){
+												arr[i]=res.data.data[i]
+										}
+										this.esbank2tate = arr;
+										this.bankCName2loading = false;
+										this.list = this.esbank2tate.map((item,index) => {
+												return { value: item.id, label: item.sname };
+										});
+										if (query !== '') {
+												this.bankCName2loading = true;
+												setTimeout(() => {
+														this.bankCName2loading = false;
+														this.owner.options4 = this.list;
+												}, 200);
+										} else {
+												this.owner.options4 = [];
+										}
+								});
+
+						},
             changeOnSelect1(){
                 var arr = this.owner.options1;
                 for (let i=0;i<arr.length;i++ ){

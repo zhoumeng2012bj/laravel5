@@ -30,6 +30,10 @@ export const addBrokerCompanyUser = params => { return axios.post(`${base}/broke
 export const editBrokerCompanyUser = params => { return axios.put(`${base}/brokerCompanyUser/`+params.id, { params: params }); };
 export const batchRemoveBrokerCompanyUser = params => { return axios.post(`${base}/brokerCompanyUser/batchRemoveBKUser`, { params: params }); };
 export const getbkNameList = params =>{ return axios.post(`${base}/brokerCompanyUser/getbkNameList`, { params: params }); };
+
+export const getbankCNameList = params => { return axios.get(`${base}/brokerCompanyUser/getbankCNameList`, { params: params }); };//获取银行
+export const getbankCName2List = params => { return axios.get(`${base}/brokerCompanyUser/getbankCName2List`, { params: params }); };//获取省
+
 export const checkbkNameList = params =>{ return axios.post(`${base}/brokerCompany/checkbkNameList`, { params: params }); };
 
 export const getChuFangCommissionListPage = params => { return axios.get(`${base}/chuFangCommission`, { params: params }); };
@@ -68,6 +72,7 @@ export const getReceiveAuditList = params => { return axios.get(`${base}/receiva
 
 export const getPaySettlementListPage = params => { return axios.get(`${base}/payable/settlement`, { params: params }); };//应付款管理列表(结算)
 export const getPayablePayment = params => { return axios.get(`${base}/payable/payment`, { params: params }); };//应付中付款记录列表
+export const getPayableSubmitAudit = params => { return axios.get(`${base}/payable/SubmitAudit`, { params: params }); };//应付款管理的提交记录下的审批记录列表
 export const getPayableDeduction = params => { return axios.get(`${base}/payable/deduction`, { params: params }); };//应付中付款记录列表中的扣款记录列表
 export const submissionPayable = params => { return axios.get(`${base}/payable/submissionpayable`, { params: params }); };//应付款管理列表中的提交付款
 export const riskSubmissionPayable = params => { return axios.post(`${base}/payable/riskSubmi` , { params: params }); };//应付款管理(风控)列表中的提交付款
@@ -77,6 +82,8 @@ export const commissionPayable = params => { return axios.post(`${base}/payable/
 export const getPayableListPlan = params => { return axios.get(`${base}/payable/plan`, { params: params }); };//应付计划列表额列表
 export const withdrawPayable = params => { return axios.get(`${base}/payable/withdrawPaya`, { params: params }); };//应付计划列表中的撤回
 export const actualPaymentPayable = params => { return axios.get(`${base}/payable/actualPayment`, { params: params }); };//实付管理列表
+export const yflistkqrPaymentPayable = params => { return axios.get(`${base}/payable/yflistkqr`, { params: params }); };//应付款确认列表
+export const yfkqrSubmission = params => { return axios.post(`${base}/payable/yfkqr` , { params: params }); };//应付款确认中的审核
 
 
 

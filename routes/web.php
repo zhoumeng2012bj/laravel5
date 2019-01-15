@@ -111,6 +111,7 @@ Route::get('receivable/submiauditlist','Commission\examineController@submiauditl
 
 Route::get('payable/settlement','Report\settlementController@settlement');//应付款管理列表(结算)
 Route::get('payable/payment','Report\settlementController@payment');//应付中付款记录列表
+Route::get('payable/SubmitAudit','Report\settlementController@SubmitAudit');//应付款管理的提交记录下的审批记录列表
 Route::get('payable/deduction','Report\settlementController@deduction');//应付中付款记录列表中的扣款记录列表
 Route::get('payable/submissionpayable','Report\settlementController@submissionpayable');//应付款管理列表(结算)中的提交付款
 Route::post('payable/riskSubmi','Report\settlementController@riskSubmi');//应付款管理(风控)列表中的提交付款
@@ -120,6 +121,8 @@ Route::post('payable/commission','Report\settlementController@commission');//财
 Route::get('payable/plan','Report\settlementController@plan');//应付计划列表
 Route::get('payable/withdrawPaya','Report\settlementController@withdrawPaya');//应付计划列表中的撤回
 Route::get('payable/actualPayment','Report\settlementController@actualPayment');//实付管理列表
+Route::get('payable/yflistkqr','Report\settlementController@yflistkqr');//应付款确认列表
+Route::post('payable/yfkqr','Report\settlementController@yfkqr');//应付款确认中的审核
 Route::get('payable/planExportExcel','Report\settlementController@planExportExcel');//应付计划导出
 Route::post('payable/planImportExcel','Report\settlementController@planImportExcel');//应付计划导入
 Route::get('payable/planImportErrorExcel/{file}', 'Report\settlementController@planImportErrorExcel');
@@ -226,6 +229,10 @@ Route::group(['prefix' => 'brokerCompany'], function () {
 //渠道公司人员
 Route::group(['prefix' => 'brokerCompanyUser'], function () {
     Route::post('getbkNameList','BrokerCompany\brokerCompanyUserController@getbkNameList');
+	
+	Route::get('getbankCNameList','BrokerCompany\brokerCompanyUserController@getbankCNameList');//获取银行
+	Route::get('getbankCName2List','BrokerCompany\brokerCompanyUserController@getbankCName2List');//获取省
+	
     Route::post('changeBrokerCompanyUserStatus','BrokerCompany\brokerCompanyUserController@changeBrokerCompanyUserStatus');
     Route::post('getQDDJDicList','BrokerCompany\brokerCompanyUserController@getQDDJDicList');
     Route::post('checkPhone','BrokerCompany\brokerCompanyUserController@checkPhone');

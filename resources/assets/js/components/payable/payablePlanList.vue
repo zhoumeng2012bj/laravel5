@@ -33,8 +33,8 @@
          		<p>
          			<span style="color:red;font-size: 14px;">(注：红色日期表示付款已延期，请尽快处理)</span>         			
          		</p>
-						<p>
-                            <el-button type="primary"   style="padding: 5px;border-radius: 5px;"   v-on:click="handleExcel">导出应付计划</el-button>
+						<p v-if="fun('payableExport')">
+							<el-button type="primary"   style="padding: 5px;border-radius: 5px;"   v-on:click="handleExcel">导出应付计划</el-button>
 						</p>
          	</div>
         <el-tabs v-model="activeName2" type="border-card" @tab-click="handleClick">
@@ -44,7 +44,7 @@
             <el-tab-pane label="已撤回" name="fourth"></el-tab-pane>
             <!-- <el-tab-pane label="已完成" name="fifth"></el-tab-pane>
             <el-tab-pane label="已驳回" name="sixth"></el-tab-pane> -->
-            <el-table :data="Payable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中" @selection-change="selsChange" style="width: 100%;">
+            <el-table height="500" :data="Payable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中" @selection-change="selsChange" style="width: 100%;">
                 <el-table-column prop="hetongbianhao" label="合同编号" width="190"    >
                 </el-table-column>
                 <el-table-column prop="xiangmu" label="项目">

@@ -16,8 +16,8 @@
                     <el-col :span="6">
                         <span >类型：{{type}}</span>
                     </el-col>
-									</el-row>
-									<el-row class="rowspacing">
+				</el-row>
+				<el-row class="rowspacing">
                     <el-col :span="6">
                         <span>周期： {{hzouqi}}</span>
                     </el-col>
@@ -31,31 +31,28 @@
 							<span>实际应付： {{sjys}}</span>
 					</el-col>
                 </el-row>
+				<el-row class="rowspacing">
+					<el-col :span="6">
+							<span>提交日期： {{tjdata}}</span>
+					</el-col>
+					<el-col :span="6">
+							<span>提交金额： {{tijje}}</span>
+					</el-col>
+					<el-col :span="6">
+							<span>发起人： {{fqren}}</span>
+					</el-col>
+				</el-row>
             </li>
         </el-row>
         <el-row class="rowspacing">
             <el-table height="500" :data="financeReceivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"   style="width: 100%;">
 							
-				<el-table-column prop="tijiaodate" label="提交日期" :formatter="changeDate1">
+				<el-table-column prop="createtime" label="审批时间" :formatter="changeDate1">
 				</el-table-column>
-				<el-table-column prop="tijiaomoney" label="提交金额">
-				</el-table-column>
-				<el-table-column prop="daifumoney" label="代付金额">
-				</el-table-column>
-				<el-table-column prop="shifumoney" label="实付金额">
-				</el-table-column>
-				<el-table-column prop="faqiren" label="发起人" >
-				</el-table-column>
-				<el-table-column prop="fukuanzhanghao" label="收款账号"   width="180">
-				</el-table-column>
-				<el-table-column prop="nodeName" label="当前节点">
+				<el-table-column prop="spusername" label="审批人">
 				</el-table-column>
 				<el-table-column prop="status" label="审批状态"  :formatter="formatState2">
 				</el-table-column>
-				<el-table-column prop="zhifustate" label="支付状态"  :formatter="formatState1">
-				</el-table-column>
-				<!-- <el-table-column prop="zhuangtai" label="备注"  :formatter="formatState">
-				</el-table-column> -->
 				<el-table-column label="操作" width="120">
 						 <template slot-scope="scope">
 								 <el-dropdown   menu-align="start">
@@ -63,11 +60,7 @@
 												 操作<i class="el-icon-caret-bottom el-icon--right"></i>
 										 </el-button>
 										 <el-dropdown-menu slot="dropdown" >
-												 <el-dropdown-item><el-button @click="handleView(scope.$index, scope.row)">查看备注</el-button></el-dropdown-item>
-												 <el-dropdown-item v-if="ztin(scope.row,[2,3,4,5,6])"><el-button @click="handleAdd(scope.$index, scope.row)">审批记录</el-button></el-dropdown-item>
-												 <el-dropdown-item v-if="fun('paSubListDedList')"><el-button @click="handleviewRokeBack(scope.$index,scope.row)">扣款记录</el-button></el-dropdown-item>
-												 
-
+												 <el-dropdown-item><el-button @click="handleView(scope.$index, scope.row)">审批意见</el-button></el-dropdown-item>
 										 </el-dropdown-menu>
 								 </el-dropdown>
 						 </template>
@@ -95,7 +88,7 @@
 							备注&nbsp;&nbsp;:&nbsp;&nbsp;{{beizhushenp==''?'无数据':beizhushenp}}
 				</el-form>
 		</el-dialog>
-        <el-dialog title="查看提交备注" v-model="viewDateFormVisible" :close-on-click-modal="false">
+        <el-dialog title="审批意见" v-model="viewDateFormVisible" :close-on-click-modal="false">
         		<el-form v-model="beizhu" label-width="120px"   ref="viewDateForm">
 						{{beizhu==null?'无数据':beizhu}}
         		</el-form>
@@ -119,6 +112,7 @@
 		
 				getPayablePayment,
 				bleSubmission,
+				getPayableSubmitAudit,
 				
 				getReceivableListPage,
 				editReceivable,
@@ -130,6 +124,7 @@
         data() {
             return {
 				srid:'',
+				subid:'',
 				shenpr:'',
 				shenpshij:'',
 				beizhushenp:'',
@@ -158,6 +153,9 @@
 				ysdata:'',
 				ysjine:'',
 				sjys:'',
+				tjdata:'',
+				tijje:'',
+				fqren:'',
 				
 				
 				financeReceivable:[],
@@ -430,18 +428,6 @@
                     }
                 }
             },
-//             getSaleContract(id){
-//                 getPurchaseContractInfo(id).then((res)=>{
-//                     if(res.data.code=='200'){
-//                         this.fuzhi(res);
-//                     }else {
-//                         this.$message({
-//                             message: '获取数据失败',
-//                             type: 'error'
-//                         });
-//                     }
-//                 })
-//             },
             selsChange: function (sels) {
                 this.sels = sels;
             },
@@ -665,9 +651,9 @@
 			},
 			//时间戳转日期格式
 			changeDate1(value){
-					var newDate = new Date();
-					newDate.setTime(value.tijiaodate);
-					return newDate.toLocaleDateString()
+				var newDate = new Date();
+				newDate.setTime(value.createtime);
+				return newDate.toLocaleString()
 			},
 			//时间戳转日期格式
 			changeDate2(row, column){
@@ -738,11 +724,12 @@
 			//获取实收款列表
 			getReceivable() {
 				let para = {
-					id: this.srid,
+					tCwFcId: this.srid,
+					tCwFcSubmitId: this.subid,
 				};
 				this.listLoading = true;
-				getPayablePayment(para).then((res) => {
-					this.financeReceivable = res.data.data.dfInfos;
+				getPayableSubmitAudit(para).then((res) => {
+					this.financeReceivable = res.data.data.auditinfos;
 					for(var i=0;i<this.financeReceivable.length;i++){
 						this.financeReceivable[i].fukuanzhanghao = this.financeReceivable[i].fukuanyinhang + this.financeReceivable[i].fukuanzhanghao;
 					}
@@ -758,6 +745,9 @@
 					this.ysdata = this.timeconversion(res.data.data.fkdate);
 					this.ysjine = res.data.data.fkmoney;
 					this.sjys = res.data.data.shifumoney;
+					this.tjdata = this.timeconversion(res.data.data.submitXinxi.tijiaodate);
+					this.tijje = res.data.data.submitXinxi.tijiaomoney;
+					this.fqren = res.data.data.submitXinxi.faqiren;
 					this.listLoading = false;
 				});
 			},
@@ -780,12 +770,17 @@
 			},
 			//新增实收页面
 			handleAdd: function (index, row) {
-				this.$router.push('/payableSubmitAudit?id=' + row.tCwFcId + '&subid=' + row.tCwFcSubmitId);
+				// this.addFormVisible = true;
+				this.$router.push('/payableFinanceSubm?id=' + row.tCwFcSubmitId);
+// 				this.shenpr = this.financeReceivable[index].auditname;
+// 				this.shenpshij = this.changetimeDate(this.financeReceivable[index].auditTime);
+// 				this.beizhushenp = this.financeReceivable[index].auditDesc;
 			},
 			//显示查看备注页面
 			handleView: function (index, row) {
 				this.beizhu = this.financeReceivable[index].beizhu;
 				this.viewDateFormVisible = true;
+				// this.viewDateForm  = Object.assign({}, row);
 			},
 			//提交审核的数据1 通过 2驳回
 			addFormSubmit(type){
@@ -865,14 +860,15 @@
 					this.renlingData.tCwSrId=val.tCwSrId;
 
 			},
-			selsChange(val,row){
-					this.$refs.multipleTable.clearSelection();
-					this.$refs.multipleTable.toggleRowSelection(row);
-			},
+// 			selsChange(val,row){
+// 					this.$refs.multipleTable.clearSelection();
+// 					this.$refs.multipleTable.toggleRowSelection(row);
+// 			},
         },
         mounted(){
 			this.srid = this.$route.query.id;
-			this.hedan.qiandanren[0].contractid = this.$route.query.id;
+			this.subid = this.$route.query.subid;
+			// this.hedan.qiandanren[0].contractid = this.$route.query.id;
 			this.page=1;
 			this.getReceivable();
         }

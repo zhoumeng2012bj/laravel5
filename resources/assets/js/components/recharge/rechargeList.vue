@@ -1,20 +1,51 @@
 <template>
     <el-row>
         <el-form :inline="true" :model="filters" class="demo-form-inline" label-width="80px">
-            <el-form-item label="合同编号:">
+            <el-form-item label="户名:">
                 <el-input v-model="filters.htno" placeholder="请输入合同编号"></el-input>
             </el-form-item>
-            <el-form-item label="项目名称:">
+            <!-- <el-form-item label="项目名称:">
                 <el-input v-model="filters.xm" placeholder="请输入项目名称"></el-input>
-            </el-form-item>
-            <el-form-item label="收款日期:">
-                <el-date-picker type="date" placeholder="请选择开始日期" v-model="filters.startdate">
-                </el-date-picker>
-            </el-form-item>
-            <el-form-item label="至">
-                <el-date-picker type="date" placeholder="请选择结束日期" v-model="filters.enddate">
-                </el-date-picker>
-            </el-form-item>
+            </el-form-item> -->
+            
+						<el-form-item label="支付状态">
+							<el-select v-model="filters.status" @change="getReceivable" placeholder="请输入支付状态">
+								<el-option
+										v-for="item in options"
+										:key="item.value"
+										:label="item.label"
+										:value="item.value">
+								</el-option>
+							</el-select>
+						</el-form-item>
+						<el-form-item label="对账状态">
+							<el-select v-model="filters.duizhangstatus" @change="getReceivable" placeholder="请输入对账状态">
+								<el-option
+										v-for="item in options2"
+										:key="item.value"
+										:label="item.label"
+										:value="item.value">
+								</el-option>
+							</el-select>
+						</el-form-item>
+						<el-form-item label="操作状态">
+							<el-select v-model="filters.duizhangstatus" @change="getReceivable" placeholder="请输入对账状态">
+								<el-option
+										v-for="item in options2"
+										:key="item.value"
+										:label="item.label"
+										:value="item.value">
+								</el-option>
+							</el-select>
+						</el-form-item><br />
+						<el-form-item label="充值时间:">
+								<el-date-picker type="date" placeholder="请选择开始日期" v-model="filters.startdate">
+								</el-date-picker>
+						</el-form-item>
+						<el-form-item label="至">
+								<el-date-picker type="date" placeholder="请选择结束日期" v-model="filters.enddate">
+								</el-date-picker>
+						</el-form-item>
             <el-form-item>
                 <el-button type="primary" icon="search" v-on:click="getReceivable">搜索</el-button>
             </el-form-item>
@@ -23,14 +54,10 @@
         	<p>
 		        <span style="color:red;font-size: 14px;">（注：红色日期表示收款已延期，请尽快处理）</span>
         	</p>
+					<p>
+						<el-button type="primary" @click="addContract"> 充值 </el-button>
+					</p>
         </div>
-        
-        <el-tabs v-model="activeName2" type="border-card" @tab-click="handleClick">
-            <el-tab-pane label="全部" name="first"></el-tab-pane>
-            <el-tab-pane label="未付款" name="second"></el-tab-pane>
-            <el-tab-pane label="付款成功" name="fourth"></el-tab-pane>
-            <el-tab-pane label="付款失败" name="fifth"></el-tab-pane>
-						<el-tab-pane label="已撤销" name="five"></el-tab-pane>
             <el-table height="500" :data="Receivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"
                       @selection-change="selsChange" style="width: 100%;">
                 <el-table-column prop="hetongbianhao" label="合同编号">
@@ -53,6 +80,8 @@
 								</el-table-column>
                 <el-table-column prop="paystatus" label="状态" :formatter="formatState" width="100">
                 </el-table-column>
+								<el-table-column prop="duizhangstatus" label="对账状态" :formatter="formatState2" width="100">
+								</el-table-column>
                 <el-table-column label="操作" width="180">
                     <template slot-scope="scope">
                         <el-dropdown menu-align="start">
@@ -60,8 +89,8 @@
                                   操作<i class="el-icon-caret-bottom el-icon--right"></i>
                               </el-button>
                               <el-dropdown-menu slot="dropdown">
-																	<el-dropdown-item v-if="ztin(scope.row,[1,3])&&fun('planWithdraw')">
-																			<el-button @click.native="handleRokeBack(scope.$index, scope.row)" :loading="addFormLoading">撤回</el-button>
+																	<el-dropdown-item v-if="ztin(scope.row,[1,3])&&fun('financeWithdraw')">
+																			<el-button @click.native="handleRokeBack(scope.$index, scope.row)" :loading="addFormLoading">处理</el-button>
 																	</el-dropdown-item>
                               </el-dropdown-menu>
                           </el-dropdown>
@@ -82,7 +111,56 @@
                 >
                 </el-pagination>
             </el-col>
-        </el-tabs>
+						<el-dialog size="tiny" title="充值" v-model="Visible" :close-on-click-modal="false" label-width="120px">
+								<el-form  label-width="80px"  ref="zhanghao" :rules="zhanghaoRules" :model="zhanghao">
+									<el-form-item label="账户类型" prop="duizhangtype">
+											<el-radio-group v-model="zhanghao.duizhangtype" >
+													<el-radio label="1">公户</el-radio>
+													<el-radio label="2">私户</el-radio>
+											</el-radio-group>
+									</el-form-item>
+									<el-row>
+											<el-col :span="15">
+													<el-form-item label="户名">
+															<el-input v-model="zhanghao.huming"></el-input>
+													</el-form-item>
+											</el-col>
+									</el-row>
+									<el-row>
+											<el-col :span="15">
+													<el-form-item label="银行">
+															<el-input v-model="zhanghao.yinhang"></el-input>
+													</el-form-item>
+											</el-col>
+									</el-row>
+									<el-row>
+											<el-col :span="15">
+													<el-form-item label="账号">
+															<el-input v-model="zhanghao.zhanghao"></el-input>
+													</el-form-item>
+											</el-col>
+									</el-row>
+									<el-row>
+											<el-col :span="15">
+													<el-form-item label="金额" prop="jine" required>
+															<el-input v-model="zhanghao.jine" ></el-input>
+													</el-form-item>
+											</el-col>
+									</el-row>
+								</el-form>
+								<div slot="footer" class="dialog-footer">
+										<el-button @click.native="Visible = false">取消</el-button>
+										<el-button type="primary" @click.native="handleEnd" :loading="Loading">提交</el-button>
+								</div>
+						</el-dialog>
+						<el-dialog size="tiny" title="确认支付" v-model="Vizhifusible" :close-on-click-modal="false" label-width="120px">
+								<div class="zhifudis tishizhfu">请在打开的支付页面中完成支付！</div><br />
+								<div class="zhifudis">支付完成前请不要关闭此窗口</div>
+								<div slot="footer" class="dialog-footer">
+									<el-button type="primary" @click.native="handleZhifuEnd" :loading="Loading">已完成支付</el-button>
+									<el-button @click.native="Visible = false">未完成支付</el-button>
+								</div>
+						</el-dialog>
     </el-row>
 </template>
 <style>
@@ -90,7 +168,8 @@
 	.el-table .info-row {
 			color: red;
 	}
-
+	.zhifudis{display: flex;justify-content: center;}
+	.tishizhfu{font-size: 16px;color: black;}
 </style>
 
 <script>
@@ -98,7 +177,7 @@
     import {
 			getReceivablePlanList,
 			withdrawReceivable,
-			
+			zhanghaoSavePurchaseContract,
 			
     } from '../../api/api';
     import ElForm from "../../../../../node_modules/element-ui/packages/form/src/form";
@@ -112,10 +191,20 @@
                     xm: '',
                     startdate: '',
                     enddate: '',
-                    zt: 1,
-										dzzt:'',
+                    status: '',
+										duizhangstatus:'',
+										
                 },
-
+								options:[
+									{value:1, label:'未付款',},
+									{value:2, label:'支付成功',},
+									{value:3, label:'支付失败',},
+									{value:4, label:'已撤回',},
+								],
+								options2:[
+									{value:1, label:'支付成功',},
+									{value:2, label:'支付失败',},
+								],
                 optionszt: [
                     {
                         value: 0,
@@ -149,6 +238,24 @@
                 addFormLoading: false,
                 //被选中的权限
                 checked: [],
+								zhanghao:{
+									duizhangtype:'1',
+									huming:null,
+									yinhang:null,
+									zhanghao:null,
+									jine:null,
+								},
+								zhanghaoRules:{
+									duizhangtype: [
+											{ required: true, message: '不能为空'}
+									],
+									jine: [
+											{ required: true, message: '不能为空'}
+									],
+								},
+								Visible:false,
+								Vizhifusible:false,
+								Loading:false,
             }
         },
         methods: {
@@ -178,6 +285,7 @@
             },
             //标签切换时
             handleClick(tab, event) {
+
                 if (tab.index == 0) {
                     this.filters.zt = '';
                     this.getReceivable();
@@ -205,11 +313,18 @@
             formatState: function (row, column) {
                 let status = [];
                 status[1] = '未付款';
-                status[2] = '付款成功';
-                status[3] = '付款失败';
+                status[2] = '支付成功';
+                status[3] = '支付失败';
 								status[4] = '已撤回';
                 return status[row.paystatus];
             },
+						//对账状态显示转换
+						formatState2: function (row, column) {
+								let status = [];
+								status[1] = '支付成功';
+								status[2] = '支付失败';
+								return status[row.duizhangstatus];
+						},
 						//类型显示转换
 						formatType: function (row, column) {
 								let status = [];
@@ -240,11 +355,10 @@
                 let para = {
                     page: this.page,
                     size: this.pageSize,
-										isfirst:1,
                     htno: this.filters.htno,
                     xm: this.filters.xm,
-                    zt: this.filters.zt,
-										dzzt: '',
+                    zt: this.filters.status,
+										dzzt: this.filters.duizhangstatus,
                     sdate: this.filters.startdate,
                     edate: this.filters.enddate, 
                 };
@@ -260,6 +374,40 @@
                     this.listLoading = false;
                 });
             },
+						
+						//充值
+						addContract(){
+								this.Visible = true;
+								this.zhanghao= {
+									duizhangtype:'1',
+									huming:null,
+									yinhang:null,
+									zhanghao:null,
+									jine:null,
+								}
+						},
+						handleEnd(index,row){
+							this.$refs.zhanghao.validate((valid) => {
+									if(valid){
+											let para1 = this.zhanghao;
+											this.Visible = false;
+											zhanghaoSavePurchaseContract(para1).then((res)=>{
+													if(res.data.code!='200'){
+															this.$message({
+																	message: '数据没有保存成功',
+																	type: 'error'
+															});
+													}
+													this.resetForm('zhanghao');
+											});
+									}
+							});
+
+						},
+						//支付的弹框
+						handleZhifuEnd(){
+							this.Vizhifusible = true;
+						},
             //撤回
             handleRokeBack: function (index, row) {
                 // this.rokeBackFormVisible = true;

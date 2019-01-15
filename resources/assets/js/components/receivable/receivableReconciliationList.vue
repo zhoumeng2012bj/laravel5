@@ -27,7 +27,7 @@
 
         </el-form>
 
-            <el-table :data="Receivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"
+            <el-table height="500" :data="Receivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"
                       @selection-change="selsChange" style="width: 100%;">
                 <el-table-column prop="reconciliationDate" label="日期"   :formatter="changeDate">
                 </el-table-column>

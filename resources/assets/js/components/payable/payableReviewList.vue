@@ -29,11 +29,12 @@
          	</div>
         <el-tabs v-model="activeName2" type="border-card" @tab-click="handleClick">
             <el-tab-pane label="全部" name="first"></el-tab-pane>
-            <el-tab-pane label="待提交" name="second"></el-tab-pane>
-            <el-tab-pane label="部分提交" name="third"></el-tab-pane>
-            <el-tab-pane label="提交完成" name="fourth"></el-tab-pane>
+            <el-tab-pane label="初审通过" name="second"></el-tab-pane>
+            <el-tab-pane label="复审通过" name="third"></el-tab-pane>
+            <el-tab-pane label="复审驳回" name="fourth"></el-tab-pane>
+						<el-tab-pane label="已撤销" name="five"></el-tab-pane>
             <el-table height="500" :data="Payable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中" @selection-change="selsChange" style="width: 100%;">
-                <el-table-column prop="htbianhao" label="合同编号" width="190">
+                <el-table-column prop="hetongbianhao" label="合同编号" width="190">
                 </el-table-column>
                 <el-table-column prop="xiangmu" label="项目">
                 </el-table-column>
@@ -43,18 +44,18 @@
 								</el-table-column>
 								<el-table-column prop="zhouqi" label="周期">
 								</el-table-column>
-								<el-table-column prop="fkdate" label="应付日期" width="120"   >
+								<el-table-column prop="fukuandate" label="应付日期" width="120"   >
 										<template slot-scope="scope">
-												<span :class="tableClassName(scope.row.fkdate,scope.row.fkstate)">  {{ changeDate(scope.row.fkdate) }}</span>
+												<span :class="tableClassName(scope.row.fukuandate,scope.row.fkstate)">  {{ changeDate(scope.row.fukuandate) }}</span>
 										</template>
 								</el-table-column>
-								<el-table-column prop="fkmoney" label="应付金额" width="110">
+								<el-table-column prop="fukuanmoney" label="应付金额" width="110">
 								</el-table-column>
-								<el-table-column prop="tijiaomoney" label="已提交金额" width="110">
+								<el-table-column prop="tijiaomoney" label="提交金额" width="110">
 								</el-table-column>
 								<el-table-column prop="skinfo" label="收款账号"   width="180">
 								</el-table-column>
-								<el-table-column prop="windControlState" label="状态"  :formatter="formatState"  width="95">
+								<el-table-column prop="status" label="状态"  :formatter="formatState"  width="95">
 								</el-table-column>
                 <el-table-column label="操作" width="120">
                        <template slot-scope="scope">
@@ -62,9 +63,10 @@
                                <el-button type="primary" size="normal" splitButton="true">
                                    操作<i class="el-icon-caret-bottom el-icon--right"></i>
                                </el-button>
-                               <el-dropdown-menu slot="dropdown" >
-                                   <el-dropdown-item v-if="ztin(scope.row,[0,1])&&fun('paSub')" ><el-button   @click="handleRokeBack(scope.$index, scope.row)">提交付款</el-button></el-dropdown-item>
-                                   <el-dropdown-item v-if="zsstin(scope.row,[0,1,2])&&fun('paSubList')"  > <el-button  @click="handleOpenUp(scope.$index, scope.row)">提交记录</el-button> </el-dropdown-item>
+                               <el-dropdown-menu slot="dropdown">
+                                   <el-dropdown-item v-if="ztin(scope.row,[2])&&fun('payReviewExamine')"><el-button @click="handleRokeBack(scope.$index, scope.row)">审批</el-button></el-dropdown-item>
+																	 <el-dropdown-item v-if="ztin(scope.row,[2,3,4,5,6])"><el-button @click="handleAdd(scope.$index, scope.row)">审批记录</el-button></el-dropdown-item>
+                                   <el-dropdown-item v-if="ztin(scope.row,[4,5,6])"> <el-button  @click="handleOpenUp(scope.$index, scope.row)">审批意见</el-button> </el-dropdown-item>
                                </el-dropdown-menu>
                            </el-dropdown>
                        </template>
@@ -86,30 +88,35 @@
                 </el-pagination>
             </el-col>
         </el-tabs>
-        <el-dialog title="提交付款" v-model="rokeBackFormVisible" :close-on-click-modal="false">
-            <el-form :model="rokeBackForm" label-width="120px" :rules="rokeBackFormRules" ref="rokeBackForm"  >
-                <el-row>
-                    <el-col :span="8">
-                    <el-form-item label="付款金额：" prop="tijiaomoney">
-                        <el-input    v-model.number="rokeBackForm.tijiaomoney" auto-complete="off"></el-input>
-                    </el-form-item>
-                    </el-col>
-                </el-row>
-								<el-form-item   label="备注：" prop="beizhu">
-										<el-input type="textarea" v-model="rokeBackForm.beizhu" auto-complete="off"></el-input>
-								</el-form-item>
-            </el-form>
-						<div slot="footer" class="dialog-footer">
-								<el-button @click.native="rokeBackFormVisible = false">取消</el-button>
-								<el-button type="primary" @click.native="rokeBackSubmit" :loading="rokeBackLoading">确认</el-button>
-						</div>
-        </el-dialog>
+				<el-dialog title="审核" v-model="rokeBackFormVisible" :close-on-click-modal="false">
+					<el-form :model="rokeBackForm" label-width="100px" ref="rokeBackForm">
+						<el-input type="textarea" placeholder="审核意见" v-model="rokeBackForm.beizhu"></el-input>
+					</el-form>
+					<div slot="footer" class="dialog-footer">
+						<el-button type="primary" @click.native="addFormSubmit(4)" :loading="addFormLoading">通过</el-button>
+						<el-button type="primary" @click.native="addFormSubmit(5)" :loading="addFormLoadingbo">驳回</el-button>
+						<el-button @click.native="rokeBackFormVisible = false">关闭</el-button>
+					</div>
+				</el-dialog>
+				<el-dialog title="审批意见" v-model="addFormVisible" :close-on-click-modal="false">
+					<el-form v-model="shenpr" ref="viewDateForm"  >
+									审批人&nbsp;&nbsp;:&nbsp;&nbsp;{{shenpr==null?'无数据':shenpr}}
+					</el-form><br />
+					<el-form v-model="shenpshij" ref="viewDateForm"  >
+									审批时间&nbsp;&nbsp;:&nbsp;&nbsp;{{shenpshij==null?'无数据':shenpshij}}
+					</el-form><br />
+						<el-form v-model="beizhu" ref="viewDateForm">
+									备注&nbsp;&nbsp;:&nbsp;&nbsp;{{beizhu==null?'无数据':beizhu}}
+						</el-form>
+				</el-dialog>
     </el-row>
 </template>
 <style>
     .el-table .info-row {
         color:red;
     }
+		.el-table .cell{text-align: left !important;}
+		.el-textarea__inner{height: 200px;}
    /*.el-form-item__content{
    		margin-left: 10px!important;
    }*/
@@ -119,7 +126,8 @@
     import {
 			getPaySettlementListPage,
 			riskSubmissionPayable,
-			
+			yfkqrSubmission,
+			yflistkqrPaymentPayable,
 			
 			
 			
@@ -143,6 +151,18 @@
             return {
 								isfirst:'',//1首期 2二期之后 空是全部
 								shouqizit:'',
+								isfushen:1,//1是复审列表
+								addFormVisible: false,
+								addFormLoading: false,
+								addFormLoadingbo: false,
+								beizhu:'',
+								shenpr:'',
+								shenpshij:'',
+								addForm: {
+										tCwSrSubmitId:'',
+										status: '',
+										beizhu: '',
+								},
 								tjfuid:'',
                 filters:{
                     contractNo: '',
@@ -210,10 +230,9 @@
                 },
                 //付款界面数据
                 rokeBackForm: {
-                    tCwFcId:'',
-                    tijiaomoney:'',
+                    tCwFcSubmitId:'',
                     beizhu:'',
-										shifumoney:'',
+										status:'',
                 },
                 //被选中的权限
                 checked:[],
@@ -229,29 +248,13 @@
                 }
             },
             ztin(row,arr){
-                var status = arr.indexOf(row.windControlState);
+                var status = arr.indexOf(row.status);
                 if(status>-1){
-										return true;
+                    return true;
                 }else{
                     return false;
                 }
             },
-						zsstin(row,arr){
-							var status = arr.indexOf(row.windControlState);
-							if(status>-1){
-									if(row.windControlState == 0){
-										if(row.submitStatus == 1){
-											return true;
-										}else{
-											return false;
-										}
-									}else{
-										return true;
-									}
-							}else{
-									return false;
-							}
-						},
             formatFKType(row, column){
                 let status = [];
                 status[0] = '押金';
@@ -265,10 +268,13 @@
             //状态显示转换
             formatState: function (row, column) {
                 let status = [];
-                status[0] = '待提交';
-                status[1] = '部分提交';
-								status[2] = '提交完成';
-                return status[row.windControlState];
+                status[1] = '待初审';
+                status[2] = '初审通过';
+                status[3] = '初审驳回';
+                status[4] = '复审通过';
+                status[5] = '复审驳回';
+                status[6] = '已撤销';
+                return status[row.status];
             },
             //时间戳转日期格式
             changeDate(fkdate){
@@ -276,14 +282,35 @@
                 newDate.setTime(fkdate);
                 return newDate.toLocaleDateString()
             },
+						//时间戳转日期格式
+						changetimeDate(time){
+							var date = new Date(time);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+							var Y = date.getFullYear() + '.';
+							var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '.';
+							var D = date.getDate() + ' ';
+							var h = date.getHours() + ':';
+							var m = date.getMinutes() + ':';
+							var s = date.getSeconds();
+							return Y+M+D+h+m+s;
+						},
             //标签切换时
             handleClick(tab, event) {
                 var ztStatus = null;
                 if(tab.index==0){
                     ztStatus = '';
-                }else{
-                    ztStatus = tab.index -1;
                 }
+								if(tab.index==1){
+										ztStatus = 2;
+								}
+								if(tab.index==2){
+										ztStatus = 4;
+								}
+								if(tab.index==3){
+										ztStatus = 5;
+								}
+								if(tab.index==4){
+										ztStatus = 6;
+								}
                 this.filters.zt2 = ztStatus;
                 this.getPayable();
 
@@ -302,8 +329,14 @@
             handleOpen: function (index, row) {
                 this.$router.push('/paymentRecord?id=' + row.tCwFcId);
             },
+						handleAdd: function (index, row) {
+							this.$router.push('/payableSubmitAudit?id=' + row.tCwFcId + '&subid=' + row.tCwFcSubmitId);
+						},
             handleOpenUp: function (index, row) {
-                this.$router.push('/payableSubm?id=' + row.tCwFcId);
+							this.addFormVisible = true;
+							this.shenpr = this.Payable[index].auditnamef;
+							this.shenpshij = this.changetimeDate(this.Payable[index].auditTimef);
+							this.beizhu = this.Payable[index].auditDescf;
             },
             //获取应付款列表
             getPayable() {
@@ -316,9 +349,10 @@
 									sdate: this.filters.startdate,
 									edate: this.filters.enddate,
 									zt2:this.filters.zt2,
+									isfushen:this.isfushen,
                 };
                 this.listLoading = true;
-                getPaySettlementListPage(para).then((res) => {
+                yflistkqrPaymentPayable(para).then((res) => {
                     this.total = res.data.total;
                     this.Payable = res.data.data;
                     this.DataSum=res.data.dataSum;
@@ -332,16 +366,54 @@
             //显示付款界面
             handleRokeBack: function (index, row) {
                 this.rokeBackFormVisible = true;
+// 								this.addForm = Object.assign({}, row);
+// 								this.addForm = {
+// 									tCwSrSubmitId: row.tCwSrSubmitId,
+// 									status: '',
+// 									beizhu: '',
+// 								};
                 this.rokeBackForm  = Object.assign({}, row);
-								this.xianzaje = Number(row.fkmoney) - Number(row.tijiaomoney);
-								this.tjjexz = Number(row.tijiaomoney);
                 this.rokeBackForm = {
-                		tCwFcId:row.tCwFcId,
-                		tijiaomoney:'',
+                		tCwFcSubmitId:row.tCwFcSubmitId,
                 		beizhu:'',
-										shifumoney:row.fkmoney,
+                		status:'',
                 };
             },
+						
+						//提交审核的数据2 通过 3驳回
+						addFormSubmit(type){
+							this.rokeBackForm.status = type;
+							this.$refs.rokeBackForm.validate((valid) => {
+								if (valid) {
+									this.$confirm('确认提交吗？', '提示', {}).then(() => {
+											let para = Object.assign({}, this.rokeBackForm);
+											yfkqrSubmission(para).then((res) => {
+												if(this.rokeBackForm.status == 2){
+													this.addFormLoading = false;
+												}else{
+													this.addFormLoadingbo = false;
+												}
+												if(res.data.code==200) {
+													this.$message({
+															message: '提交成功',
+															type: 'success'
+													});
+													this.$refs['rokeBackForm'].resetFields();
+													this.rokeBackFormVisible = false;
+													this.getPayable();
+												} else{
+														this.$message({
+																message: res.data.msg,
+																type: 'error'
+														});
+												}
+											});
+									});
+								}
+							});
+						},
+						
+						
             //付款
             rokeBackSubmit: function () {
 							if(this.rokeBackForm.tijiaomoney > this.xianzaje){
@@ -393,13 +465,12 @@
             selsChange: function (sels) {
                 this.sels = sels;
             },
-						
 
         },
         mounted() {
             this.page=1;
-						if(this.fun('payDown')){
-							if(this.fun('payTwo')){
+						if(this.fun('payReviewDown')){
+							if(this.fun('payReviewTwo')){
 								this.isfirst='';
 								this.shouqizit='';
 							}else{
@@ -407,7 +478,7 @@
 								this.shouqizit='首期';
 							}
 						}else{
-							if(this.fun('payTwo')){
+							if(this.fun('payReviewTwo')){
 								this.isfirst=2;
 								this.shouqizit='非首期';
 							}

@@ -792,12 +792,7 @@ let routes = [{
                 name: '应收复审（首期）',
                 hidden: fk_receivableTwoAuditFirstList
             },
-            {
-                path: '/receivableTwoAudit2',
-                component: ReceivableTwoAudit,
-                name: '应收复审',
-                hidden: fk_receivableTwoAuditTwoList
-            },
+
 			{
 				path: '/receivablePlan',
 				component: ReceivablePlan,
@@ -816,6 +811,12 @@ let routes = [{
 				name: '应收审核',
 				hidden: fk_receivablePhaseAuditList
 			},
+            {
+                path: '/receivableTwoAudit2',
+                component: ReceivableTwoAudit,
+                name: '应收复审',
+                hidden: fk_receivableTwoAuditTwoList
+            },
 			{
 				path: '/receivablePhasePlan',
 				component: ReceivablePhasePlan,

@@ -12,11 +12,11 @@
             </el-form-item> -->
             <!-- <br/> -->
             <el-form-item label="收款日期:">
-                <el-date-picker type="date" placeholder="请选择开始日期" v-model="filters.startdate">
+                <el-date-picker type="date" value-format="yyyy-MM-dd" placeholder="请选择开始日期" v-model="filters.startdate">
                 </el-date-picker>
             </el-form-item>
             <el-form-item label="至">
-                <el-date-picker type="date" placeholder="请选择结束日期" v-model="filters.enddate">
+                <el-date-picker type="date" value-format="yyyy-MM-dd" placeholder="请选择结束日期" v-model="filters.enddate">
                 </el-date-picker>
             </el-form-item>
             <el-form-item>
@@ -143,9 +143,7 @@
         </el-tabs>
         <el-dialog title="审核" size="tiny" v-model="rokeBackFormVisible" :close-on-click-modal="false">
         	<el-form :model="addForm" label-width="100px" ref="addForm">
-                <el-form-item label="" prop="remark">
-                    审批通过后，这条记录会同步至应收计划中，并显示在客户的付款计划中，请知晓
-                </el-form-item>
+                <p style="margin-bottom: 10px;margin-top: -10px;"> 审批通过后，这条记录会同步至应收计划中，并显示在客户的付款计划中，请知晓。 </p>
         		<el-input type="textarea" placeholder="审核意见" v-model="addForm.beizhu"></el-input>
         	</el-form>
         	<div slot="footer" class="dialog-footer">

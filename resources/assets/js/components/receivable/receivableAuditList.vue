@@ -36,18 +36,11 @@
 
         <el-tabs v-model="activeName2" type="border-card" @tab-click="handleClick">
             <el-tab-pane label="全部" name="first"></el-tab-pane>
-<<<<<<< HEAD
-            <el-tab-pane label="待审核" name="second"></el-tab-pane>
-            <el-tab-pane label="已通过" name="fourth"></el-tab-pane>
-            <el-tab-pane label="已驳回" name="fifth"></el-tab-pane>
-            <el-table height="500" :data="Receivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"
-=======
             <el-tab-pane label="待初审" name="second"></el-tab-pane>
             <el-tab-pane label="初审通过" name="fourth"></el-tab-pane>
             <el-tab-pane label="初审驳回" name="fifth"></el-tab-pane>
             <el-table :data="Receivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"
->>>>>>> 973c45d9aae5b4034aea5e43428bb4f34d586901
-                      @selection-change="selsChange" style="width: 100%;">
+ @selection-change="selsChange" style="width: 100%;">
                 <el-table-column prop="hetongbianhao" label="合同编号" width="200">
                 </el-table-column>
                 <el-table-column prop="xiangmu" label="项目">

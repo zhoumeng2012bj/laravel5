@@ -116,7 +116,12 @@ import ReceivablePhaseAudit from "./components/receivable/receivablePhaseAuditLi
 import ReceivablePhasePlan from "./components/receivable/receivablePhasePlanList.vue"; //应收计划列表（二期）
 import ReceivableFinance from "./components/receivable/receivableFinanceList.vue"; //应收计划财务列表
 import ReceivableReconciliation from "./components/receivable/receivableReconciliationList.vue"; //应收对账列表
+import ReceivableTwoAudit  from "./components/receivable/receivablePhaseTwoAuditList.vue"; //应收复审列表
+import ReceivableTwoAudit1  from "./components/receivable/receivableTwoAuditList.vue"; //应收复审列表(首期)
+import ReceivableSubmissionAudit  from "./components/receivable/receivableSubmissionAuditList.vue";//审批记录
+
 import ReceivableCollect from "./components/receivable/receivableCollect.vue";
+
 import ReceivableModify from "./components/receivable/receivableModifyList.vue"; //应收修改记录列表
 import ReceivableSubmission from "./components/receivable/receivableSubmissionList.vue"; //应收提交记录列表
 import FinanceReceivable from "./components/receivable/financeReceivableList.vue"; //实收管理列表
@@ -186,7 +191,7 @@ var fk_permission, fk_permission_user, fk_permission_role, fk_permission_per,
 	fk_receivablePhasePlanList, fk_receivableFinanceList, fk_receivableReconciliationList, fk_financeReceivableList, fk_rechargeList,
 	fk_setPassword, fk_reportList, fk_shoufangReport, fk_chufangReport, fk_chanpinReport, fk_fangyuanXKReport,
 	fk_jinggengReport, fk_projectReport, fk_projectSaleReport, fk_qdCompanyList, fk_commissionReport, fk_coreDataReport,
-	fk_commissionAuditList,
+	fk_commissionAuditList,fk_receivableTwoAuditFirstList,fk_receivableTwoAuditTwoList,
 	fk_commissionBalanceList, fk_approvalDump, fk_daikanReport;
 fun('permission') == true ? fk_permission = false : fk_permission = true;
 fun('permission') == true ? fk_permission_user = false : fk_permission_user = true;
@@ -241,7 +246,8 @@ fun('commissionAuditList') == true ? fk_commissionAuditList = false : fk_commiss
 fun('approvalDump') == true ? fk_approvalDump = false : fk_approvalDump = true;
 fun('commissionBalanceList') == true ? fk_commissionBalanceList = false : fk_commissionBalanceList = true;
 fun('daikanReport') == true ? fk_daikanReport = false : fk_daikanReport = true;
-
+fun('receivableTwoAuditFirstList') == true ? fk_receivableTwoAuditFirstList = false : fk_receivableTwoAuditFirstList = true;
+fun('receivableTwoAuditTwoList') == true ? fk_receivableTwoAuditTwoList = false : fk_receivableTwoAuditTwoList = true;
 
 let routes = [{
 		path: '/login',
@@ -780,6 +786,18 @@ let routes = [{
 				name: '应收审核（首期）',
 				hidden: fk_receivableAuditList
 			},
+            {
+                path: '/receivableTwoAudit1',
+                component: ReceivableTwoAudit1,
+                name: '应收复审（首期）',
+                hidden: fk_receivableTwoAuditFirstList
+            },
+            {
+                path: '/receivableTwoAudit2',
+                component: ReceivableTwoAudit,
+                name: '应收复审',
+                hidden: fk_receivableTwoAuditTwoList
+            },
 			{
 				path: '/receivablePlan',
 				component: ReceivablePlan,
@@ -918,7 +936,12 @@ let routes = [{
                 name: '对账详情',
                 hidden: true
             },
-
+            {
+                path: '/receivableSubmissionAudit',
+                component: ReceivableSubmissionAudit,
+                name: '审批记录列表',
+                hidden: true
+            },
 		]
 
 	},

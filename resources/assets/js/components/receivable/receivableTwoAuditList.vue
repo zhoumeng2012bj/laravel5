@@ -36,17 +36,10 @@
         
         <el-tabs v-model="activeName2" type="border-card" @tab-click="handleClick">
             <el-tab-pane label="全部" name="first"></el-tab-pane>
-<<<<<<< HEAD
-            <el-tab-pane label="待审核" name="second"></el-tab-pane>
-            <el-tab-pane label="已通过" name="fourth"></el-tab-pane>
-            <el-tab-pane label="已驳回" name="fifth"></el-tab-pane>
-            <el-table height="500" :data="Receivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"
-=======
-            <el-tab-pane label="待初审" name="second"></el-tab-pane>
-            <el-tab-pane label="初审通过" name="fourth"></el-tab-pane>
-            <el-tab-pane label="初审驳回" name="fifth"></el-tab-pane>
+            <el-tab-pane label="初审通过" name="second"></el-tab-pane>
+            <el-tab-pane label="复审通过" name="fourth"></el-tab-pane>
+            <el-tab-pane label="复审驳回" name="fifth"></el-tab-pane>
             <el-table :data="Receivable" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中"
->>>>>>> 973c45d9aae5b4034aea5e43428bb4f34d586901
                       @selection-change="selsChange" style="width: 100%;">
                 <el-table-column prop="hetongbianhao" label="合同编号" width="200">
                 </el-table-column>
@@ -100,10 +93,10 @@
                                   <el-dropdown-item v-if="ztin(scope.row,[0,1,3,4])&&fun('receivableEidtDate')">
                                       <el-button  v-if="scope.row.sktype<20"  @click="handleEdit(scope.$index, scope.row)">编辑收款日期</el-button>
                                   </el-dropdown-item> -->
-																	<el-dropdown-item v-if="ztin(scope.row,[1])&&fun('erELExamine')">
+																	<el-dropdown-item v-if="ztin(scope.row,[2])&&fun('ELExamineAudit')">
 																			<el-button @click="handleRokeBack(scope.$index, scope.row)">审批</el-button>
 																	</el-dropdown-item>
-																	<el-dropdown-item v-if="ztin(scope.row,[2,3,4,5])">
+																	<el-dropdown-item v-if="ztin(scope.row,[2,4,5])">
 																			<el-button @click="handleEditYS(scope.$index, scope.row)">审批记录</el-button>
 																	</el-dropdown-item>
 																	<!-- <el-dropdown-item>
@@ -148,14 +141,16 @@
                 </el-pagination>
             </el-col>
         </el-tabs>
-        <el-dialog title="审核"  size="tiny"  v-model="rokeBackFormVisible" :close-on-click-modal="false">
+        <el-dialog title="审核" size="tiny" v-model="rokeBackFormVisible" :close-on-click-modal="false">
         	<el-form :model="addForm" label-width="100px" ref="addForm">
-
+                <el-form-item label="" prop="remark">
+                    审批通过后，这条记录会同步至应收计划中，并显示在客户的付款计划中，请知晓
+                </el-form-item>
         		<el-input type="textarea" placeholder="审核意见" v-model="addForm.beizhu"></el-input>
         	</el-form>
         	<div slot="footer" class="dialog-footer">
-        		<el-button type="primary" @click.native="addFormSubmit(1)" :loading="addFormLoading">通过</el-button>
-        		<el-button type="primary" @click.native="addFormSubmit(2)" :loading="addFormLoadingbo">驳回</el-button>
+        		<el-button type="primary" @click.native="addFormSubmit(3)" :loading="addFormLoading">通过</el-button>
+        		<el-button type="primary" @click.native="addFormSubmit(4)" :loading="addFormLoadingbo">驳回</el-button>
         		<el-button @click.native="rokeBackFormVisible = false">关闭</el-button>
         	</div>
         </el-dialog>
@@ -255,7 +250,7 @@
                     xm: '',
                     startdate: '',
                     enddate: '',
-                    zt: 1,
+                    zt: 2,
                 },
 								beizhu:'',
                 optionszt: [
@@ -425,16 +420,16 @@
             handleClick(tab, event) {
 
                 if (tab.index == 0) {
-                    this.filters.zt = '';
-                    this.getReceivable();
-                } else if (tab.index == 1) {
-                    this.filters.zt = 1;
-                    this.getReceivable();
-                } else if (tab.index == 2) {
                     this.filters.zt = 6;
                     this.getReceivable();
+                } else if (tab.index == 1) {
+                    this.filters.zt = 2;
+                    this.getReceivable();
+                } else if (tab.index == 2) {
+                    this.filters.zt = 4;
+                    this.getReceivable();
                 } else if (tab.index == 3) {
-                    this.filters.zt = 3;
+                    this.filters.zt = 5;
                     this.getReceivable();
                 }
             },
@@ -647,13 +642,14 @@
                 let para = {
                     page: this.page,
                     size: this.pageSize,
-										isfirst:2,
+					isfirst:1,
                     htno: this.filters.htno,
                     xm: this.filters.xm,
                     zt: this.filters.zt,
                     startdate: this.filters.startdate,
                     enddate: this.filters.enddate,
                 };
+                console.log(para);
                 this.listLoading = true;
                 getReceivableAuditList(para).then((res) => {
                     this.total = res.data.total;
@@ -726,7 +722,7 @@
 							this.$refs.addForm.validate((valid) => {
 								if (valid) {
 									this.$confirm('确认提交吗？', '提示', {}).then(() => {
-											if(this.addForm.status == 1){
+											if(this.addForm.status == 3){
 												this.addFormLoading = true;
 											}else{
 												this.addFormLoadingbo = true;
@@ -734,7 +730,7 @@
 											
 											let para = Object.assign({}, this.addForm);
 											bleSubmission(para).then((res) => {
-												if(this.addForm.status == 1){
+												if(this.addForm.status == 3){
 													this.addFormLoading = false;
 												}else{
 													this.addFormLoadingbo = false;
@@ -752,7 +748,7 @@
 																type: 'error'
 														});
 												}
-												if(this.addForm.status == 1){
+												if(this.addForm.status == 3){
 													this.addFormLoading = false;
 												}else{
 													this.addFormLoadingbo = false;

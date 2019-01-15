@@ -107,6 +107,7 @@ Route::get('receivable/accountslist','Commission\examineController@accountslist'
 Route::get('receivable/accountsdatalist','Commission\examineController@accountsdatalist');//对账详情
 Route::post('receivable/accountsdatahandle','Commission\examineController@accountsdatahandle');//对账处理
 Route::get('receivable/accountsdatahandlelist','Commission\examineController@accountsdatahandlelist');//对账处理记录
+Route::get('receivable/submiauditlist','Commission\examineController@submiauditlist');//提交记录列表
 
 Route::get('payable/settlement','Report\settlementController@settlement');//应付款管理列表(结算)
 Route::get('payable/payment','Report\settlementController@payment');//应付中付款记录列表

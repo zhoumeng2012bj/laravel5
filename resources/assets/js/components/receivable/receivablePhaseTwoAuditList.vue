@@ -143,9 +143,8 @@
         </el-tabs>
         <el-dialog title="审核"  size="tiny"  v-model="rokeBackFormVisible" :close-on-click-modal="false">
         	<el-form :model="addForm" label-width="100px" ref="addForm">
-                <el-form-item label="" prop="remark">
-                    审批通过后，这条记录会同步至应收计划中，并显示在客户的付款计划中，请知晓
-                </el-form-item>
+                   <p style="margin-bottom: 10px;margin-top: -10px;">审批通过后，这条记录会同步至应收计划中，并显示在客户的付款计划中，请知晓。</p>
+
                 <el-input type="textarea" placeholder="审核意见" v-model="addForm.beizhu"></el-input>
         	</el-form>
         	<div slot="footer" class="dialog-footer">

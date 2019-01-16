@@ -99,6 +99,7 @@
 																	<el-dropdown-item v-if="ztin(scope.row,[2,4,5])">
 																			<el-button @click="handleEditYS(scope.$index, scope.row)">审批记录</el-button>
 																	</el-dropdown-item>
+                                  <el-dropdown-item v-if="ztin(scope.row,[1,2,3,4,5])"><el-button @click="handleView(scope.$index, scope.row)">查看备注</el-button></el-dropdown-item>
 																	<!-- <el-dropdown-item>
 																			<el-button @click="handleEditYS(scope.$index, scope.row)">修改应收金额</el-button>
 																	</el-dropdown-item>
@@ -205,6 +206,11 @@
                 <el-button type="primary" @click.native="editMoneyFormSubmit" :loading="editMoneyFormLoading">保存
                 </el-button>
             </div>
+        </el-dialog>
+        <el-dialog title="查看备注" v-model="viewDateFormVisible" :close-on-click-modal="false">
+            <el-form v-model="beizhu" label-width="120px"   ref="viewDateForm">
+                {{beizhu==null?'无数据':beizhu}}
+            </el-form>
         </el-dialog>
     </el-row>
 </template>
@@ -391,7 +397,12 @@
 										status: '',
 										beizhu: '',
                 },
-								
+                viewDateFormVisible: false,//查看界面是否显示
+                //查看界面数据
+                viewDateForm: {
+                    beizhu:'',
+                },
+                beizhu:null,
 
                 //被选中的权限
                 checked: [],
@@ -462,7 +473,12 @@
 								status[1] = '待审批';
 								return status[row.srstate];
 						},
-
+            //显示查看备注页面
+            handleView: function (index, row) {
+                this.beizhu = this.Receivable[index].beizhu;
+                this.viewDateFormVisible = true;
+                // this.viewDateForm  = Object.assign({}, row);
+            },
             //时间戳转日期格式
             changeDate(skdate){
                 if(skdate!=null) {

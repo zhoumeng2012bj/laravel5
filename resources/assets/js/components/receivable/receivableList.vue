@@ -104,7 +104,7 @@
 								<el-dropdown-item v-if="ztin(scope.row,[1,2,3])&&fun('modificationRecord')">
 									<el-button @click="handleCollect(scope.$index, scope.row)">修改记录</el-button>
 								</el-dropdown-item>
-								<el-dropdown-item v-if="ztin(scope.row,[2,3])&&fun('submissionRecords')">
+								<el-dropdown-item v-if="ztin(scope.row,[1,2,3])&&fun('submissionRecords')">
 									<el-button @click="handleSubmission(scope.$index, scope.row)">提交记录</el-button>
 								</el-dropdown-item>
 								<!-- <el-dropdown-item v-if="ztin(scope.row,[0,1,3,4])&&fun('receivableEidtMoney')">

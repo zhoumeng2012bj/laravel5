@@ -127,6 +127,9 @@ Route::get('payable/planExportExcel','Report\settlementController@planExportExce
 Route::post('payable/planImportExcel','Report\settlementController@planImportExcel');//应付计划导入
 Route::get('payable/planImportErrorExcel/{file}', 'Report\settlementController@planImportErrorExcel');
 Route::get('payable/planErrorExportExcel','Report\settlementController@planErrorExportExcel');//异常数据导出
+Route::get('payable/rechargeList','Report\settlementController@rechargeList');//充值列表
+Route::post('payable/saveRecharge','Report\settlementController@saveRecharge');//充值列表中的充值提交
+
 Route::resource('receivable','Commission\receivableController');
 Route::resource('financeReceivable','Report\financeReceivableController');
 Route::resource('accountsReceivable','Commission\accountsReceivableController');

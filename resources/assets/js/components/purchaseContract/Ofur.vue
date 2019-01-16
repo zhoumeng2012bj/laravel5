@@ -7,16 +7,6 @@
 		</div>
 		<el-dialog title="新增优化方案" :visible.sync="dialogFormVisible">
 			<el-form :model="form" :rules="addformRules" ref="form">
-			<!-- 	<el-form-item label="方案制定日期" :label-width="formLabelWidth">
-					<div class="block">
-						<el-date-picker
-							v-model="form.plandate"
-							type="date"
-							placeholder="选择日期"
-							@change="followchage()">
-						</el-date-picker>
-					</div>
-				</el-form-item> -->
 				<el-form-item label="方案制定日期" prop="plandate" :label-width="formLabelWidth">
 						<el-date-picker type="date" placeholder="请输入方案制定日期"v-model="form.plandate">
 						</el-date-picker>
@@ -287,7 +277,7 @@
 						if(res.data.code == 200)　{
 							this.total = res.data.total;
 							for(var i=0;i<res.data.data.length;i++){
-								res.data.data[i].followdate = this.followchage(res.data.data[i].followdate);
+								res.data.data[i].followdate = this.timeconversion(res.data.data[i].followdate);
 								res.data.data[i].createtime = this.followchage(res.data.data[i].createtime);
 								res.data.data[i].optimizationnum = this.youhuacishu(res.data.data[i].optimizationnum);
 							}
@@ -433,6 +423,17 @@
 			followchage(nS){
 				var datetime=new Date(parseInt(nS)).toLocaleString().replace(/:\d{1,2}$/,' ');
 				return datetime.replace('/','-').replace('/','-');
+			},
+			//时间戳转化为日期
+			timeconversion(timestamp) {
+				var date = new Date(timestamp); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
+				var Y = date.getFullYear() + '/';
+				var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '/';
+				var D = date.getDate() + ' ';
+				var h = date.getHours() + ':';
+				var m = date.getMinutes() + ':';
+				var s = date.getSeconds();
+				return Y + M + D;
 			},
 			youhuacishu(num){
 				if(num == 1){

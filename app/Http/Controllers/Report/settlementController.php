@@ -537,4 +537,55 @@ class settlementController extends Controller
         }
 
     }
+	
+	//充值列表
+	public function rechargeList(Request $request)
+	{
+		$page = Input::get('page');
+		$size = Input::get('size');
+		$accountName = Input::get('accountName');
+		$sDate = Input::get('sDate');
+		$eDate = Input::get('eDate');
+		$rechargeStatus = Input::get('rechargeStatus');
+		$payStatus = Input::get('payStatus');
+		$maintainStatus = Input::get('maintainStatus');
+		$client = new Client ([
+			'base_uri' => $this->base_url,
+		]);
+		$response = $client->request('GET', '/api/cw/yf/rechargeRecords', [
+				'query' => [
+					'page' => $page,
+					'size' => $size,
+					'accountName' => $accountName,
+					'sDate' => $sDate,
+					'eDate' => $eDate,
+					'rechargeStatus' => $rechargeStatus,
+					'payStatus' => $payStatus,
+					'maintainStatus' => $maintainStatus,
+				]
+			]
+		);
+		echo $response->getBody();
+
+	}
+	//充值列表中的充值提交
+	public function saveRecharge(Request $request)
+	{
+		//以后用户会从OMC取
+		$u = Auth::user();
+		$user = Array(
+			'rechargeUid' => $u->id,
+			'recharge_uname' => $u->name,
+		);
+		$obj = array_merge($request->params, $user);
+
+		$client = new Client ([
+			'base_uri' => $this->base_url,
+
+		]);
+		$r = $client->request('POST', '/api/cw/yf/rechargeSubmit', [
+			'json' => $obj
+		]);
+		return $r->getBody();
+	}
 }

@@ -66,7 +66,6 @@
                                <el-dropdown-menu slot="dropdown" >
                                    <el-dropdown-item v-if="ztin(scope.row,[1])&&fun('paRiskSubexat')"><el-button @click="handleRokeBack(scope.$index, scope.row)">审批</el-button></el-dropdown-item>
 																	 <el-dropdown-item v-if="ztin(scope.row,[2,3,4,5,6])"><el-button @click="handleAdd(scope.$index, scope.row)">审批记录</el-button></el-dropdown-item>
-                                   <el-dropdown-item v-if="ztin(scope.row,[2,3,6])"  > <el-button  @click="handleOpenUp(scope.$index, scope.row)">审批意见</el-button> </el-dropdown-item>
                                </el-dropdown-menu>
                            </el-dropdown>
                        </template>
@@ -98,17 +97,6 @@
 						<el-button @click.native="rokeBackFormVisible = false">关闭</el-button>
 					</div>
 				</el-dialog>
-				<el-dialog title="审批意见" v-model="addFormVisible" :close-on-click-modal="false">
-					<el-form v-model="shenpr" ref="viewDateForm"  >
-									审批人&nbsp;&nbsp;:&nbsp;&nbsp;{{shenpr==null?'无数据':shenpr}}
-					</el-form><br />
-					<el-form v-model="shenpshij" ref="viewDateForm"  >
-									审批时间&nbsp;&nbsp;:&nbsp;&nbsp;{{shenpshij==null?'无数据':shenpshij}}
-					</el-form><br />
-						<el-form v-model="beizhu" ref="viewDateForm">
-									备注&nbsp;&nbsp;:&nbsp;&nbsp;{{beizhu==null?'无数据':beizhu}}
-						</el-form>
-				</el-dialog>
     </el-row>
 </template>
 <style>
@@ -117,9 +105,6 @@
     }
 		.el-table .cell{text-align: left !important;}
 		.el-textarea__inner{height: 200px;}
-   /*.el-form-item__content{
-   		margin-left: 10px!important;
-   }*/
 </style>
 <script>
 
@@ -151,12 +136,8 @@
             return {
 								isfirst:'',//1首期 2二期之后 空是全部
 								shouqizit:'',
-								addFormVisible: false,
 								addFormLoading: false,
 								addFormLoadingbo: false,
-								beizhu:'',
-								shenpr:'',
-								shenpshij:'',
 								addForm: {
 										tCwSrSubmitId:'',
 										status: '',
@@ -331,12 +312,6 @@
 						handleAdd: function (index, row) {
 							this.$router.push('/payableSubmitAudit?id=' + row.tCwFcId + '&subid=' + row.tCwFcSubmitId);
 						},
-            handleOpenUp: function (index, row) {
-							this.addFormVisible = true;
-							this.shenpr = this.Payable[index].auditname;
-							this.shenpshij = this.changetimeDate(this.Payable[index].auditTime);
-							this.beizhu = this.Payable[index].auditDesc;
-            },
             //获取应付款列表
             getPayable() {
                 let para = {

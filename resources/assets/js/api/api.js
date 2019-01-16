@@ -86,6 +86,8 @@ export const yflistkqrPaymentPayable = params => { return axios.get(`${base}/pay
 export const yfkqrSubmission = params => { return axios.post(`${base}/payable/yfkqr` , { params: params }); };//应付款确认中的审核
 
 
+export const getRechargeList = params => { return axios.get(`${base}/payable/rechargeList`, { params: params }); };//充值列表
+export const saveRecharge= params => { return axios.post(`${base}/payable/saveRecharge`, {params:params}); };//充值列表中的充值提交
 
 
 

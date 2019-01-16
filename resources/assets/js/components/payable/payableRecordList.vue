@@ -590,15 +590,6 @@
 			//扣款记录
 			handleviewRokeBack(index, row){
 				this.$router.push('/payableFinanceSubm?id=' + row.tCwFcSubmitId);
-// 				this.udopinion = this.financeReceivable[index].auditdesc;
-// 				this.rokeBackFormVisiblevie = true;
-				// this.renlingData.tCwSrCaiwuId=row.tCwSrCaiwuId;
-// 				this.addForm = Object.assign({}, row);
-// 				this.addForm = {
-// 					tCwSrSubmitId: row.tCwSrSubmitId,
-// 					status: '',
-// 					beizhu: '',
-// 				};
 			},
 			handleDump(index,row){
 				window.open('/#/payOrder?id='+row.tCwFcSubmitId)

@@ -27,7 +27,6 @@
         </el-row>
         <el-row>
             <el-table :data="lists" highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中" @selection-change="selsChange" style="width: 100%;">
-                <!--<if condition="laiyuantype eq 2">-->
                     <el-table-column prop="zhanghu"  label="户名"  width="100">
                     </el-table-column>
                     <el-table-column prop="shoufangzonghang"  label="银行"  width="220"> 

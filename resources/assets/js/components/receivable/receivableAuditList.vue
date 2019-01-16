@@ -393,7 +393,7 @@
             //显示查看备注页面
             handleView: function (index, row) {
                 this.beizhu = this.Receivable[index].beizhu;
-                this.viewDateFormVisible = true; 
+                this.viewDateFormVisible = true;
                 // this.viewDateForm  = Object.assign({}, row);
             },
             //标签切换时

@@ -428,8 +428,8 @@ class examineController extends Controller
         $page = Input::get('page');
         $size = Input::get('pageSize');
         $zt = Input::get('zt');
-        $sdate = Input::get('sdate');
-        $edate = Input::get('edate');
+        $sdate = Input::get('startdate');
+        $edate = Input::get('enddate');
         $client = new Client ([
             'base_uri' => $this->base_url,
         ]);
